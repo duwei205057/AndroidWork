@@ -1,0 +1,2 @@
+include ':app', ':buildSrc', ':hack', ':hack', ':realmdb'
+project(':realmdb').projectDir = new File('realm')

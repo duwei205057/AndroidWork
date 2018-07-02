@@ -1,0 +1,210 @@
+import com.android.build.gradle.LibraryPlugin
+import org.aspectj.bridge.IMessage
+import org.aspectj.bridge.MessageHandler
+import org.aspectj.tools.ajc.Main
+
+
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+//apply plugin: com.inject.PluginImpl
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.aspectj:aspectjtools:1.8.1'
+    }
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
+
+    defaultConfig {
+        applicationId "com.dw"
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 1
+        versionName "8.8." + getDateVersionName()
+        manifestPlaceholders = [CUR_DATE: getDateVersionName()]
+        multiDexEnabled true
+    }
+    dexOptions {
+        incremental false
+        javaMaxHeapSize "2048M"
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+
+
+        androidTest.setRoot('tests')
+    }
+    signingConfigs {
+        release {
+            storeFile file('a.keystore')
+            storePassword 'android'
+            keyAlias 'android'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("String","ABC","\"aa\"")
+            resValue("string","sogou_ime_name1","AA")
+            applicationIdSuffix = ".debug"
+            versionNameSuffix "-dw"
+//            minifyEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        oppo.initWith(buildTypes.release)
+        oppo{
+            applicationIdSuffix = "oem"
+            versionNameSuffix "-oppo"
+        }
+    }
+
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    applicationVariants.all { variant->
+        if(variant.buildType.name == "release"){
+            def dexTask = project.tasks.findByName("transformClassesWithDexForRelease")
+            def preDexTask = project.tasks.findByName("transformClassesWithPreDexForRelease")
+            if(preDexTask) {
+                project.logger.error "======preDexTask======"
+                preDexTask.inputs.files.files.each {file ->
+                    project.logger.error "inputs =$file.absolutePath"
+                }
+
+                preDexTask.outputs.files.files.each {file ->
+                    project.logger.error "outputs =$file.absolutePath"
+                }
+            }
+            if(dexTask) {
+                project.logger.error "======dexTask======"
+                dexTask.inputs.files.files.each {file ->
+                    project.logger.error "inputs =$file.absolutePath"
+                }
+
+                dexTask.outputs.files.files.each {file ->
+                    project.logger.error "outputs =$file.absolutePath"
+                }
+            }
+        }
+
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+
+def getDateVersionName() {
+    String today = new Date().format("yyMMdd")
+    return today
+}
+
+/*task askForPasswords << {
+    // Must create String because System.readPassword() returns char[]
+    // (and assigning that below fails silently)
+    def storePw = new String(System.console().readPassword("Keystore password: "))
+    def keyPw  = new String(System.console().readPassword("Key password: "))
+
+    android.signingConfigs.release.storePassword = storePw
+    android.signingConfigs.release.keyPassword = keyPw
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
+    }
+}*/
+
+dependencies {
+    compile files('libs/dex2jar.jar')
+    compile files('libs/dictutils.jar')
+    compile files('libs/dom4j-1.6.1.jar')
+    compile files('libs/jclasslib.jar')
+    compile project(':hack')
+    //    compile project(':realm')
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.squareup.okio:okio:1.13.0'
+    /*compile 'com.sky.slog:slog:0.4.0'*/
+    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'org.aspectj:aspectjtools:1.8.1'
+    //    compile 'com.android.tools.build:gradle:1.5.0'
+    compile 'org.javassist:javassist:3.20.0-GA'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    //    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
+    compile project(':realmdb')
+}
+ext {
+    local = 'Hello from build.gradle'
+}
+task printProperties << {
+    println local        // Local extra property
+    println propertiesFile        // Property from file
+    if (project.hasProperty('cmd')) {
+        println cmd        // Command line property
+    }
+    println System.properties['cmd']
+}
+
+final def log = project.logger
+final def variants = project.android.applicationVariants
+
+variants.all { variant ->
+    if (!variant.buildType.isDebuggable()) {
+        log.debug("Skipping non-debuggable build type '${variant.buildType.name}'.")
+        return;
+    }
+
+    JavaCompile javaCompile = variant.javaCompile
+    javaCompile.doLast {
+        String[] args = ["-showWeaveInfo",
+                         "-1.5",
+                         "-inpath", javaCompile.destinationDir.toString(),
+                         "-aspectpath", javaCompile.classpath.asPath,
+                         "-d", javaCompile.destinationDir.toString(),
+                         "-classpath", javaCompile.classpath.asPath,
+                         "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
+        log.debug "ajc args: " + Arrays.toString(args)
+
+        MessageHandler handler = new MessageHandler(true);
+        new Main().run(args, handler);
+        for (IMessage message : handler.getMessages(null, true)) {
+            switch (message.getKind()) {
+                case IMessage.ABORT:
+                case IMessage.ERROR:
+                case IMessage.FAIL:
+                    log.error message.message, message.thrown
+                    break;
+                case IMessage.WARNING:
+                    log.warn message.message, message.thrown
+                    break;
+                case IMessage.INFO:
+                    log.info message.message, message.thrown
+                    break;
+                case IMessage.DEBUG:
+                    log.debug message.message, message.thrown
+                    break;
+            }
+        }
+    }
+}
