@@ -27,7 +27,8 @@
 
         <activity android:name="com.dw.touchable.MotionActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"/>
+                  android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
+                  android:process=":remote"/>
         <activity android:name="com.dw.voice.VoiceContainerActivity"/>
         <activity android:name="com.dw.gif.GifActivity"/>
         <activity android:name="com.database.IntroExampleActivity"/>

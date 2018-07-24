@@ -163,7 +163,13 @@ task printProperties << {
     if (project.hasProperty('cmd')) {
         println cmd        // Command line property
     }
-    println System.properties['cmd']
+    println System.properties['cmd']  //gradle printProperties -Dcmd='Hello from System.properties'
+    Enumeration e =  System.properties.propertyNames();
+    while(e.hasMoreElements()){
+        String el = e.nextElement()
+        println el + "=" + System.properties[el]
+    }
+
 }
 
 final def log = project.logger
