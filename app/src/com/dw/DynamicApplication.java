@@ -12,9 +12,14 @@ import android.os.Build;
 import android.util.Log;
 
 import com.dw.touchable.MotionActivity;
+import com.dw.utils.Helper;
 import com.dw.utils.PingBackUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +50,9 @@ public class DynamicApplication extends Application{
         }
 
         Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+"am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
-        Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ Build.CPU_ABI+" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) + " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) + " MaxHeap="+Runtime.getRuntime().maxMemory());
+        Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
+                " ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) + " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
+                " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
         try {
             File optimiseFile = getDir("dex", Context.MODE_PRIVATE);
             File dexFilePath = new File("/sdcard/app_dex");
@@ -71,4 +78,5 @@ public class DynamicApplication extends Application{
         }
         return null;
     }
+
 }

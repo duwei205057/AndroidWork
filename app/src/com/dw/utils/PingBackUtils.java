@@ -62,7 +62,7 @@ public class PingBackUtils {
         FileInputStream stream = null;
         for (int i = 0; i < getNumberOfCPUCores(); i++) {
             String filename =
-                    "/1sys/devices/system/cpu/cpu" + i + "/cpufreq/cpuinfo_max_freq";
+                    "/sys/devices/system/cpu/cpu" + i + "/cpufreq/cpuinfo_max_freq";
             File cpuInfoMaxFreqFile = new File(filename);
             if (cpuInfoMaxFreqFile.exists()) {
                 byte[] buffer = new byte[128];
@@ -93,8 +93,7 @@ public class PingBackUtils {
         }
         if (maxFreq == -1) {
             try {
-                stream = new FileInputStream("/sdcard/sogou/cpuinfo");
-//                stream = new FileInputStream("/proc/cpuinfo");
+                stream = new FileInputStream("/proc/cpuinfo");
                 InputStreamReader bis = new InputStreamReader(stream);
                 BufferedReader br = new BufferedReader(bis);
                 String line;
@@ -126,13 +125,64 @@ public class PingBackUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+                StreamUtil.closeStream(stream);
+            }
+        }
+        return new int[]{maxFreq, maxFreqNum};
+    }
+
+    public static String getCpuName() {
+        FileInputStream stream = null;
+        String cpuName = null;
+        try {
+            stream = new FileInputStream("/proc/cpuinfo");
+            InputStreamReader ir = new InputStreamReader(stream);
+            BufferedReader br = new BufferedReader(ir);
+            String nameProcessor = "Processor";
+            String nameModel = "model name";
+            String line;
+            String[] pair = null;
+            while ((line = br.readLine()) != null) {
+                pair = line.split(":");
+                if (pair.length != 2)
+                    continue;
+                String key = pair[0].trim();
+                String val = pair[1].trim();
+                if (key.compareTo(nameProcessor) == 0) {
+                    cpuName = val.replaceAll("\\s","_");
+                    continue;
+                }
+
+                if (key.compareToIgnoreCase(nameModel) == 0) {
+                    cpuName = val.replaceAll("\\s","_");
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally{
+            StreamUtil.closeStream(stream);
+        }
+        return cpuName;
+
+    }
+
+    public static String getDeviceCpuABI() {
+        if (Build.VERSION.SDK_INT >= 21)
+            return Arrays.toString(Build.SUPPORTED_ABIS).replaceAll("\\s","");
+        else
+            return Build.CPU_ABI;
+    }
+
+    static class StreamUtil{
+        public static void closeStream(InputStream input){
+            if(input != null){
                 try {
-                    if (stream != null) stream.close();
+                    input.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-        return new int[]{maxFreq, maxFreqNum};
     }
 }

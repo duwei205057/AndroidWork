@@ -2,10 +2,18 @@ package com.dw.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,4 +59,5 @@ public class Helper {
         startImeSettings.setAction(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS);
         context.startActivity(startImeSettings);
     }
+
 }
