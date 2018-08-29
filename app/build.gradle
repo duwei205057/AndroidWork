@@ -151,7 +151,7 @@ dependencies {
     //    compile 'com.android.tools.build:gradle:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'org.greenrobot:eventbus:3.0.0'
-    //    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
+        compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
     compile project(':realmdb')
 }
 ext {
