@@ -37,6 +37,7 @@ import com.database.SomeFileObserver;
 import com.dw.block.BlockDetectByChoreographer;
 import com.dw.block.BlockDetectByPrinter;
 import com.dw.gif.GifActivity;
+import com.dw.js.JSActivity;
 import com.dw.recycler.RecyclerList;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
@@ -211,6 +212,10 @@ public class MainActivity extends Activity {
 
     public void startSqlite(View view){
         Intent i = new Intent(this,DBActivity.class);
+        startActivity(i);
+    }
+    public void startJS(View view){
+        Intent i = new Intent(this,JSActivity.class);
         startActivity(i);
     }
 

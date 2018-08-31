@@ -5,15 +5,15 @@
                                android:layout_height="match_parent"
                                android:orientation="vertical"
                                my:bgColor="@color/colorMotionGray"
-                               my:height="800dp"
-                               my:width="800dp"
+                               my:sheight="800dp"
+                               my:swidth="800dp"
                                my:tag="父"
 >
     <com.dw.touchable.MyScrollView android:layout_width="200dp"
                                    android:layout_height="200dp"
                                    my:bgColor="@color/colorMotionRed"
-                                   my:height="400dp"
-                                   my:width="400dp"
+                                   my:sheight="400dp"
+                                   my:swidth="400dp"
                                    my:tag="子"/>
 
 </com.dw.touchable.MyScrollView>

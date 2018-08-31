@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Layout>
+    <LuaScript>
+        <![CDATA[
+        <set_width>
+            local height = invoke.dp2px(this, 96)
+            local scale = invoke.readSimpleRes(this, "sogou_flx@scale")
+            local rh = invoke.readSimpleRes(this, "realHeight")
+            local rw = invoke.readSimpleRes(this, "realWidth")
+            local realheight = rh + 0
+            local realwidth = rw + 0
+            local width = height
+            if(realheight > 0) then
+                width = realwidth / realheight * height
+            end
+            width = width * scale
+            height = height * scale
+            invoke.setAttrs(this, "fanlingxi_picture_image", "android:layout_width", width)
+            invoke.setAttrs(this, "fanlingxi_picture_image", "android:layout_height", height)
+        </set_width>
+        <click_card>
+            local imageUrl = invoke.readSimpleRes(this, "indexUrl")
+            local actionParam = invoke.newActionParam("commit")
+            local imageSource = invoke.readSimpleRes(this, "imageSource")
+            actionParam.putParam("type", "image")
+            actionParam.putParam("image_url", imageUrl)
+            actionParam.putParam("pingback", "imageSource:" .. imageSource)
+            invoke.handleAction(this, actionParam)
+        </click_card>
+        ]]>
+    </LuaScript>
+
+    <Selector>
+        <![CDATA[
+        <card_bg>
+            <selector xmlns:android="http://schemas.android.com/apk/res/android">
+                <item android:drawable="res:common@flx_card_bg_p.9.png" android:state_pressed="true"/>
+                <item android:drawable="res:common@flx_card_bg_n.9.png"/>
+            </selector>
+        </card_bg>
+        ]]>
+    </Selector>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:sogou="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/fanlingxi_picture_info_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            sogou:background="final|selector:card_bg"
+            sogou:click="lua:click_card">
+
+            <GifImageView
+                android:id="@+id/fanlingxi_picture_image"
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:scaleType="fitXY"
+                sogou:roundCorner="2dp"
+                sogou:is_gif="true"
+                sogou:gif="later|res:url@indexUrl"
+                sogou:background="lua:set_width"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</Layout>

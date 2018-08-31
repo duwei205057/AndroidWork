@@ -49,8 +49,8 @@ public class MyScrollView extends ViewGroup {
         super(context, attrs);
         mContext = context;
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.scrollerStyle);
-        measureWidth = typedArray.getDimensionPixelSize(R.styleable.scrollerStyle_width, 0);
-        measureHeight = typedArray.getDimensionPixelSize(R.styleable.scrollerStyle_height, 0);
+        measureWidth = typedArray.getDimensionPixelSize(R.styleable.scrollerStyle_swidth, 0);
+        measureHeight = typedArray.getDimensionPixelSize(R.styleable.scrollerStyle_sheight, 0);
         mBgColor = typedArray.getColor(R.styleable.scrollerStyle_bgColor, 0xFFFFFFFF);
         mTag = typedArray.getString(R.styleable.scrollerStyle_tag);
         typedArray.recycle();

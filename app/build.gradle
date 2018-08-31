@@ -55,8 +55,8 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String","ABC","\"aa\"")
-            resValue("string","sogou_ime_name1","AA")
+            buildConfigField("String", "ABC", "\"aa\"")
+            resValue("string", "sogou_ime_name1", "AA")
             applicationIdSuffix = ".debug"
             versionNameSuffix "-dw"
 //            minifyEnabled true
@@ -67,7 +67,7 @@ android {
             signingConfig signingConfigs.release
         }
         oppo.initWith(buildTypes.release)
-        oppo{
+        oppo {
             applicationIdSuffix = "oem"
             versionNameSuffix "-oppo"
         }
@@ -79,27 +79,27 @@ android {
         abortOnError false
     }
 
-    applicationVariants.all { variant->
-        if(variant.buildType.name == "release"){
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
             def dexTask = project.tasks.findByName("transformClassesWithDexForRelease")
             def preDexTask = project.tasks.findByName("transformClassesWithPreDexForRelease")
-            if(preDexTask) {
+            if (preDexTask) {
                 project.logger.error "======preDexTask======"
-                preDexTask.inputs.files.files.each {file ->
+                preDexTask.inputs.files.files.each { file ->
                     project.logger.error "inputs =$file.absolutePath"
                 }
 
-                preDexTask.outputs.files.files.each {file ->
+                preDexTask.outputs.files.files.each { file ->
                     project.logger.error "outputs =$file.absolutePath"
                 }
             }
-            if(dexTask) {
+            if (dexTask) {
                 project.logger.error "======dexTask======"
-                dexTask.inputs.files.files.each {file ->
+                dexTask.inputs.files.files.each { file ->
                     project.logger.error "inputs =$file.absolutePath"
                 }
 
-                dexTask.outputs.files.files.each {file ->
+                dexTask.outputs.files.files.each { file ->
                     project.logger.error "outputs =$file.absolutePath"
                 }
             }
@@ -151,8 +151,10 @@ dependencies {
     //    compile 'com.android.tools.build:gradle:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'org.greenrobot:eventbus:3.0.0'
-        compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
+    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
     compile project(':realmdb')
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support.constraint:constraint-layout:1.1.2'
 }
 ext {
     local = 'Hello from build.gradle'
@@ -164,8 +166,8 @@ task printProperties << {
         println cmd        // Command line property
     }
     println System.properties['cmd']  //gradle printProperties -Dcmd='Hello from System.properties'
-    Enumeration e =  System.properties.propertyNames();
-    while(e.hasMoreElements()){
+    Enumeration e = System.properties.propertyNames();
+    while (e.hasMoreElements()) {
         String el = e.nextElement()
         println el + "=" + System.properties[el]
     }
