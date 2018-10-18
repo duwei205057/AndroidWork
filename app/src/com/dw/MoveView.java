@@ -1,5 +1,6 @@
 package com.dw;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -32,6 +34,7 @@ public class MoveView extends View {
     Bitmap flx;
     int curMode = -1;
     Path mPath;
+    //// 使用PorterDuff.Mode,最好禁止硬件加速，硬件加速会有一些问题，这里禁用掉
     PorterDuff.Mode[] modes = {PorterDuff.Mode.CLEAR,/** [0, 0] */
             /** [Sa, Sc] */
             PorterDuff.Mode.SRC,
@@ -73,6 +76,7 @@ public class MoveView extends View {
         super(context);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MoveView(Context context, AttributeSet attrs) {
         super(context, attrs);
         Interpolator itp = new Interpolator() {
@@ -98,6 +102,7 @@ public class MoveView extends View {
         mPath.addArc(200,50,300,150,0,90);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onDraw(Canvas canvas){
         Log.d("xx", "MoveView  onDraw: ");
 //        canvas.drawColor(0xFFFF0000);
@@ -111,8 +116,7 @@ public class MoveView extends View {
 //        canvas.drawBitmap(dark,null,dst,mPaint);
 //        mPaint.setColor(0xFF0000FF);
 //        curMode = (curMode + 1) % modes.length;
-        curMode = 7;
-        mPaint.setXfermode(new PorterDuffXfermode(modes[curMode]));
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
 //        Log.d("xx","modes[curMode]=="+modes[curMode].ordinal()+" layerId="+layerId);
         mPaint.setColor(0xFF0000FF);
         canvas.drawRect(50,50,100,100,mPaint);

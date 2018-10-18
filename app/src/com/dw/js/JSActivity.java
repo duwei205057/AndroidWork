@@ -10,6 +10,7 @@ import android.webkit.WebViewClient;
 
 import com.dw.R;
 
+
 public class JSActivity extends Activity {
 
     @Override
@@ -36,6 +37,7 @@ public class JSActivity extends Activity {
 //		web.loadUrl("https://www.baidu.com/");
 //		web.loadUrl("file:///android_asset/QuestionAnswer.html");
         web.getSettings().setJavaScriptEnabled(true);
+
     }
 
     class MyAndroidWebViewClient extends WebViewClient {

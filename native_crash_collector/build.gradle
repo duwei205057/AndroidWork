@@ -1,0 +1,76 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '25.0.0'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['resources']
+            aidl.srcDirs = ['aidl']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['jniLibs']
+        }
+        instrumentTest.setRoot('tests')
+    }
+
+    defaultConfig {
+        publishNonDefault true
+        minSdkVersion rootProject.extensions.getByName("ext").properties.get("minSdkVersion")
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        //uncomment this to enable native debug
+//        externalNativeBuild {
+//            ndkBuild {
+//                abiFilters "armeabi" //"armeabi"
+//            }
+//        }
+    }
+
+//    packagingOptions {
+//        doNotStrip "*/armeabi/*.so" // 配置库文件不去除符号信息
+//    }
+
+    //uncomment this to enable native debug
+//    externalNativeBuild {
+//        ndkBuild {
+//            path "src/jni/Android.mk"
+//        }
+//    }
+
+    buildTypes {
+        debug {
+            //uncomment this to enable native debug
+//            jniDebuggable true
+//            externalNativeBuild {
+//                cmake {
+//                    arguments "-DWITH_SYMBOL_TABLE=true -DWITH_CRASH_LOG=true"
+//                }
+//                ndkBuild {
+//                    arguments "WITH_SYMBOL_TABLE=true WITH_CRASH_LOG=true"
+//                }
+//            }
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+	
+	lintOptions {
+	 checkReleaseBuilds false
+        abortOnError false
+        lintConfig file("../backup/lint_report_mail/sogou_lint.xml")
+        xmlOutput file("build/outputs/SogouInput_Lint_Report.xml")
+        htmlOutput file("build/outputs/SogouInput_Lint_Report.html")
+    }
+}
+
+dependencies {
+}

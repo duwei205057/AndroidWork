@@ -55,6 +55,8 @@
                     android:onClick="startSqlite" android:text="startSqlite"/>
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:onClick="startJS" android:text="startJS"/>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:onClick="startNative" android:text="startNative"/>
             <EditText
                 android:id="@+id/et_user_name"
                 android:layout_width="wrap_content"

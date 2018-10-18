@@ -1,6 +1,7 @@
 package com.dw;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -9,52 +10,59 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.support.annotation.Keep;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.aop.AspectBean;
-import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
-import com.dw.block.BlockDetectByChoreographer;
-import com.dw.block.BlockDetectByPrinter;
+import com.dw.capture.ScreenCaptureHelper;
+import com.dw.crash.NativeInterface;
 import com.dw.gif.GifActivity;
 import com.dw.js.JSActivity;
 import com.dw.recycler.RecyclerList;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
-import com.dw.utils.Helper;
 import com.dw.utils.RedoWorker;
-import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
 
 public class MainActivity extends Activity {
 
@@ -83,6 +91,9 @@ public class MainActivity extends Activity {
         AspectBean bean = new AspectBean(5);
         bean.setAge(10);
         EventBus.getDefault().register(this);
+        //启动截图功能
+//        startActivity(new Intent(this, ScreenCaptureActivity.class));
+
 //        BlockDetectByChoreographer.start();
 //        BlockDetectByPrinter.start();
 
@@ -201,8 +212,111 @@ public class MainActivity extends Activity {
     }
 
     public void showVoiceView(View view){
-        Intent i = new Intent(this,VoiceContainerActivity.class);
-        startActivity(i);
+//        test();
+//        Intent i = new Intent(this,VoiceContainerActivity.class);
+//        startActivity(i);
+        ScreenCaptureHelper.getInstance(this).startCapture(new Rect(0, 0, 2, 4), new ScreenCaptureHelper.Callback() {
+            @Override
+            public void getBitmap(Bitmap bitmap) {
+                test1(bitmap);
+            }
+        });
+    }
+
+    private void test(){
+        Log.d("xx","mInterface.getStringFromNative()===================="+ NativeInterface.getInstance().getStringFromNative());
+        BitmapFactory.Options op = new BitmapFactory.Options();
+//        int drawableId = R.drawable.books;
+        int drawableId = R.drawable.imageb1537339657774;
+        Bitmap b1 = BitmapFactory.decodeResource(getResources(), drawableId);
+        op.inPreferredConfig = Bitmap.Config.RGB_565;
+//        op.inSampleSize = 2;
+        Bitmap b2 = BitmapFactory.decodeResource(getResources(), drawableId, op);
+        Log.d("xx","原大小:"+b1.getByteCount()+" 改变后:"+b2.getByteCount());
+        try {
+            FileOutputStream fo = openFileOutput("a.png", Context.MODE_PRIVATE);
+            b2.compress(Bitmap.CompressFormat.PNG, 50, fo);
+            fo.close();
+            @SuppressLint("ResourceType") InputStream is = getResources().openRawResource(drawableId);
+            Log.d("xx","resource inputstream size=="+is.available());
+            is.close();
+            is = openFileInput("a.png");
+            Log.d("xx","a file inputstream size=="+is.available());
+            fo = openFileOutput("b.png", Context.MODE_PRIVATE);
+            GZIPOutputStream go = new GZIPOutputStream(fo);
+            int a = -1;
+            while ((a = is.read()) != -1)
+                go.write(a);
+            go.close();
+            fo.close();
+            GZIPInputStream gi = new GZIPInputStream(openFileInput("b.png"));
+            fo = openFileOutput("c.png", Context.MODE_PRIVATE);
+            while ((a = gi.read()) != -1)
+                fo.write(a);
+            gi.close();
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("xx","原大小:"+b1.getByteCount()+" 改变后:"+b2.getByteCount());
+        if (b1 != null && !b1.isRecycled()) b1.recycle();
+        if (b2 != null && !b2.isRecycled()) b2.recycle();
+    }
+
+    private void test1(Bitmap bitmap){
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        int[] pixels = new int[w * h];
+        bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+        Bitmap b2 = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.RGB_565);
+        b2.getPixels(pixels, 0, w, 0, 0, w, h);
+        Bitmap b3 = Bitmap.createBitmap(pixels, 0, w, w, h, Bitmap.Config.ALPHA_8);
+        b3.getPixels(pixels, 0, w, 0, 0, w, h);
+
+
+        Bitmap b4 = Bitmap.createBitmap(5, 5, Bitmap.Config.ALPHA_8);
+        Canvas canvas = new Canvas();
+        canvas.setBitmap(b4);
+        Paint p = new Paint();
+        p.setColor(0x66000000);
+        canvas.drawRect(new Rect(1,1,4,4), p);
+        int[] pixels1 = new int[5 * 5];
+        b4.getPixels(pixels1, 0, 5, 0, 0, 5, 5);
+
+        outputBitmap(bitmap,Bitmap.CompressFormat.PNG,30);
+        outputBitmap(b2,Bitmap.CompressFormat.PNG,30);
+        outputBitmap(b3,Bitmap.CompressFormat.PNG,30);
+        outputBitmap(bitmap,Bitmap.CompressFormat.JPEG,100);
+        outputBitmap(bitmap,Bitmap.CompressFormat.JPEG,50);
+        outputBitmap(b2,Bitmap.CompressFormat.JPEG,100);
+        outputBitmap(b2,Bitmap.CompressFormat.JPEG,30);
+        outputBitmap(b3,Bitmap.CompressFormat.JPEG,30);
+        outputBitmap(b4,Bitmap.CompressFormat.PNG,100);
+
+        btn.setBackground(new BitmapDrawable(getResources(), b4));
+
+    }
+
+    private void outputBitmap(Bitmap bitmap, Bitmap.CompressFormat format, int quality) {
+        try {
+            Log.d("xx",format + "------------------------------Bitmap大小:"+bitmap.getByteCount());
+            FileOutputStream fo = openFileOutput("sample", Context.MODE_PRIVATE);
+            bitmap.compress(format, quality, fo);
+            fo.close();
+            InputStream is = openFileInput("sample");
+            Log.d("xx",format + "------------------------------File大小:"+is.available());
+            is.close();
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            bitmap.compress(format, quality, bao);
+            Log.d("xx",format + "------------------------------bytearray大小:"+bao.size());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void startGif(View view){
@@ -230,10 +344,24 @@ public class MainActivity extends Activity {
         }*/
     }
 
+    public void startNative(View view){
+        /*AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                String s = mInterface.getStringFromNative();
+                Log.d("xx","mInterface.getStringFromNative()===================="+s);
+            }
+        });*/
+        String s = NativeInterface.getInstance().getStringFromNative();
+        Log.d("xx","mInterface.getStringFromNative()===================="+s);
+        Button b = (Button)view;
+//        b.setText(b.getText()+"_"+s);
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     public void resizeIcon(View view){
         try {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                 return;
             }

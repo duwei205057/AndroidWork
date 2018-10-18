@@ -15,9 +15,13 @@ import android.view.View;
 
 import com.database.SomeFileObserver;
 import com.dw.R;
+import com.dw.crash.NativeInterface;
+import com.sogou.nativecrashcollector.NativeCrashManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+
 
 /**
  * Created by dw on 18-3-6.
@@ -96,16 +100,25 @@ public class GifActivity extends Activity {
         sfo.stopWatching();
     }
 
-    public void decodeFile(View view){
-        int i = 0;
-        while (i ++ < 100){
-            long startTime = SystemClock.currentThreadTimeMillis();
-            Bitmap tmp = BitmapFactory.decodeResource(getResources(), R.drawable.books);
-            LOGD("decode consume time = "+(SystemClock.currentThreadTimeMillis() - startTime)+" ms , Memory get ="+tmp.getByteCount()+" bytes. tmp="+tmp);
-            mLsa.put(startTime, tmp);
-
+    public void decodeFile(View view) {
+//        int i = 0;
+//        while (i++ < 100) {
+//            long startTime = SystemClock.currentThreadTimeMillis();
+//            Bitmap tmp = BitmapFactory.decodeResource(getResources(), R.drawable.books);
+//            LOGD("decode consume time = " + (SystemClock.currentThreadTimeMillis() - startTime) + " ms , Memory get =" + tmp.getByteCount() + " bytes. tmp=" + tmp);
+//            mLsa.put(startTime, tmp);
+//
+//        }
+//        LOGD("mLsa.size()===" + mLsa.size());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        LOGD("mLsa.size()==="+mLsa.size());
+        Log.d("xx", "decodeFile====================");
+//        String s = NativeInterface.getInstance().getStringFromNative();
+//        Log.d("xx", "mInterface.getStringFromNative()====================" + s);
+
         /*try {
             Socket socket = new Socket("localhost", 99);
         } catch (IOException e) {

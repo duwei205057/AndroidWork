@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/dw/workspace/MyApplication/native_crash_collector/src/main/shaders"/></dataSet><dataSet config="release"><source path="/home/dw/workspace/MyApplication/native_crash_collector/src/release/shaders"/></dataSet></merger>

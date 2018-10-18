@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.3.0'
         classpath "io.realm:realm-gradle-plugin:2.2.1"
 //        classpath "io.realm:realm-gradle-plugin:3.1.1"
 //        classpath "io.realm:realm-gradle-plugin:5.1.0"
@@ -31,4 +31,11 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext{
+    compileSdkVersion = 23
+    buildToolsVersion = "25.0.0"
+    minSdkVersion = 15
+    targetSdkVersion = 23
 }

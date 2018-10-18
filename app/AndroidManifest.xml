@@ -31,10 +31,13 @@
             android:process=":remote"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"/>
         <activity android:name=".voice.VoiceContainerActivity"/>
-        <activity android:name=".gif.GifActivity"/>
+        <activity android:name=".gif.GifActivity"
+                  android:process=":remote">
+        </activity>
         <activity android:name="com.database.IntroExampleActivity"/>
         <activity android:name="com.database.DBActivity"/>
         <activity android:name="com.dw.js.JSActivity"/>
+        <activity android:name="com.dw.capture.ScreenCaptureActivity"/>
 
         <receiver android:name=".PhoneReceiver">
             <intent-filter android:priority="1000">
@@ -46,8 +49,6 @@
             android:name="versiondate"
             android:value="${CUR_DATE}"/>
 
-        <activity android:name=".js.JSActivity">
-        </activity>
     </application>
 
 </manifest>

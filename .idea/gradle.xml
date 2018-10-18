@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/hack" />
+            <option value="$PROJECT_DIR$/native_crash_collector" />
             <option value="$PROJECT_DIR$/realm" />
           </set>
         </option>

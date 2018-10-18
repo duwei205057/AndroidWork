@@ -11,9 +11,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import com.dw.crash.NativeInterface;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.Helper;
 import com.dw.utils.PingBackUtils;
+import com.dw.utils.StreamUtil;
+import com.sogou.nativecrashcollector.NativeCrashManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,11 +37,18 @@ public class DynamicApplication extends Application{
 
     private static final String HACK_JAR = "hackdex.jar";
     public static DynamicApplication mRealApplication;
+    public static String mProcessName;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         mRealApplication = this;
+        mProcessName = getCurrentProcessName();
         PackageManager pm = base.getPackageManager();
         try {
             ApplicationInfo appInfo = pm.getPackageInfo(base.getPackageName(), 0).applicationInfo;
@@ -51,7 +61,7 @@ public class DynamicApplication extends Application{
 
         Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+"am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
         Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
-                " ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) + " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
+                /*" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) +*/ " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
                 " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
         try {
             File optimiseFile = getDir("dex", Context.MODE_PRIVATE);
@@ -69,6 +79,15 @@ public class DynamicApplication extends Application{
         }catch (Exception e){
             e.printStackTrace();
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                NativeCrashManager.getInstance().loadLibrary();
+                NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
+                NativeCrashManager.getInstance().initANRCollect(mProcessName, new File(getFilesDir(),"anr_crash.txt").getAbsolutePath());
+            }
+        }).start();
+
     }
 
     public static String getProcessName(Context context, int pid){
@@ -77,6 +96,45 @@ public class DynamicApplication extends Application{
             if (app.pid ==  pid) return app.processName;
         }
         return null;
+    }
+
+    private String getCurrentProcessName() {
+        int pid = android.os.Process.myPid();
+        String pName = null;
+
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader cmdlineReader = null;
+        StringBuilder processName = new StringBuilder();
+        try {
+            fis = new FileInputStream("/proc/" + pid + "/cmdline");
+            isr = new InputStreamReader(fis, "iso-8859-1");
+            cmdlineReader = new BufferedReader(isr);
+            int c;
+            while ((c = cmdlineReader.read()) > 0) {
+                processName.append((char) c);
+            }
+            pName = processName.toString();
+        } catch (Throwable t) {
+            ActivityManager mActivityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            if (mActivityManager != null) {
+                List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
+                if (runningAppProcessInfoList != null && !runningAppProcessInfoList.isEmpty()) {
+                    for (ActivityManager.RunningAppProcessInfo appProcess : runningAppProcessInfoList) {
+                        if (appProcess.pid == pid) {
+                            pName = appProcess.processName;
+                            break;
+                        }
+                    }
+                }
+            }
+        } finally {
+            StreamUtil.closeStream(cmdlineReader);
+            StreamUtil.closeStream(isr);
+            StreamUtil.closeStream(fis);
+        }
+
+        return pName;
     }
 
 }

@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dw/java/android-ndk-r14b/sources/android/support/include/stdint.h
+limits.h
+-
+
+/home/dw/workspace/MyApplication/jni/main_jni.cpp
+jni.h
+-
+assert.h
+-
+stdint.h
+-
+unistd.h
+-
+

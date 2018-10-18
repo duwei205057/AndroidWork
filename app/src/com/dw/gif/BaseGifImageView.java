@@ -384,6 +384,7 @@ public class BaseGifImageView extends ImageView {
         mGifRect.top = (heightWithoutPadding - realHeight) / 2;
         mGifRect.right = mGifRect.left + realWidth;
         mGifRect.bottom = mGifRect.top + realHeight;
+//        Log.d("xx","drawGifImage  --------------------");
         if (!mIsRoundImage) {
             if (mCurrentDrawable == null || mUpdateDrawable)
                 mCurrentDrawable = new BitmapDrawable(getContext().getResources(), mCurrentImage);
