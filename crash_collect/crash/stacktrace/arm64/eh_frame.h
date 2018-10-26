@@ -19,10 +19,12 @@ typedef struct eh_frame_hdr {
     uint8_t eh_frame_ptr_enc;
     uint8_t fde_count_enc;
     uint8_t table_enc;
+//    uint64_t eh_frame_ptr;
+//    uint64_t fde_count;
     uint32_t eh_frame_ptr;
     uint32_t fde_count;
     void *binary_search_table;
-    addr_s eh_frame_addr;
+//    addr_s eh_frame_addr;
 } HDR;
 
 typedef struct eh_frame_cie {

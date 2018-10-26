@@ -21,7 +21,7 @@ ANDROID_ABI:UNINITIALIZED=armeabi-v7a
 ANDROID_NDK:UNINITIALIZED=/home/dw/java/android-ndk-r14b
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-19
+ANDROID_PLATFORM:UNINITIALIZED=android-21
 
 //No help, variable specified on the command line.
 ANDROID_STL:UNINITIALIZED=c++_static
@@ -201,11 +201,20 @@ Project_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/jni
 //No help, variable specified on the command line.
 WITH_CRASH_LOG:UNINITIALIZED=true
 
+//Dependencies for the target
+crash_collect_LIB_DEPENDS:STATIC=general;/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm/usr/lib/liblog.so;
+
+//Value Computed by CMake
+crash_collector_BINARY_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
+
+//Value Computed by CMake
+crash_collector_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
+
 //Path to a library.
-log-lib:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-19/arch-arm/usr/lib/liblog.so
+log-lib:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm/usr/lib/liblog.so
 
 //Dependencies for target
-nativehelper_LIB_DEPENDS:STATIC=
+myso_LIB_DEPENDS:STATIC=
 
 
 ########################
@@ -292,7 +301,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=1
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

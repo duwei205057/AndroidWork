@@ -18,13 +18,10 @@
 ANDROID_ABI:UNINITIALIZED=armeabi-v7a
 
 //No help, variable specified on the command line.
-ANDROID_ARM_NEON:UNINITIALIZED=true
+ANDROID_NDK:UNINITIALIZED=/home/dw/java/android-ndk-r14b
 
 //No help, variable specified on the command line.
-ANDROID_NDK:UNINITIALIZED=~/java/android-ndk-r14b
-
-//No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-19
+ANDROID_PLATFORM:UNINITIALIZED=android-21
 
 //No help, variable specified on the command line.
 ANDROID_STL:UNINITIALIZED=c++_static
@@ -32,8 +29,11 @@ ANDROID_STL:UNINITIALIZED=c++_static
 //No help, variable specified on the command line.
 ANDROID_TOOLCHAIN:UNINITIALIZED=clang
 
+//No help, variable specified on the command line.
+CMAKE_ANDROID_ARCH_ABI:UNINITIALIZED=arm64-v8a
+
 //Archiver
-CMAKE_AR:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
+CMAKE_AR:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-ar
 
 //No help, variable specified on the command line.
 CMAKE_ARCHIVE_OUTPUT_DIRECTORY:UNINITIALIZED=./
@@ -55,7 +55,7 @@ CMAKE_BUILD_TYPE:STRING=Release
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //Flags used by the compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=
+CMAKE_CXX_FLAGS:STRING=-frtti -fexceptions --sysroot=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -71,7 +71,7 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //Libraries linked by default with all C++ applications.
-CMAKE_CXX_STANDARD_LIBRARIES:STRING=-lm "/home/dw/java/android-ndk-r14b/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++.a"
+CMAKE_CXX_STANDARD_LIBRARIES:STRING=-lm "/home/dw/java/android-ndk-r14b/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++.a"
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -114,7 +114,7 @@ CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=OFF
 CMAKE_INSTALL_PREFIX:PATH=/usr/local
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ld
+CMAKE_LINKER:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-ld
 
 //Path to a program.
 CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/make
@@ -135,19 +135,19 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_NM:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
+CMAKE_NM:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-nm
 
 //Path to a program.
-CMAKE_OBJCOPY:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-objcopy
+CMAKE_OBJCOPY:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objcopy
 
 //Path to a program.
-CMAKE_OBJDUMP:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-objdump
+CMAKE_OBJDUMP:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objdump
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=Project
 
 //Ranlib
-CMAKE_RANLIB:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
+CMAKE_RANLIB:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-ranlib
 
 //Flags used by the linker during the creation of dll's.
 CMAKE_SHARED_LINKER_FLAGS:STRING=
@@ -187,10 +187,16 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_STRIP:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+CMAKE_STRIP:FILEPATH=/home/dw/java/android-ndk-r14b/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-strip
 
 //No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=~/java/android-ndk-r14b/build/cmake/android.toolchain.cmake
+CMAKE_SYSROOT:UNINITIALIZED=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64/
+
+//No help, variable specified on the command line.
+CMAKE_SYSTEM_VERSION:UNINITIALIZED=21
+
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/home/dw/java/android-ndk-r14b/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -207,26 +213,32 @@ Project_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/jni
 //No help, variable specified on the command line.
 SGIME_PLATFORM:UNINITIALIZED=ANDROID
 
-//No help, variable specified on the command line.
-WITH_CRASH_LOG:UNINITIALIZED=true
+//Path to a library.
+abc:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64/usr/lib/liblog.so
 
 //Dependencies for the target
-crash_collect_LIB_DEPENDS:STATIC=general;/home/dw/java/android-ndk-r14b/platforms/android-19/arch-arm/usr/lib/liblog.so;
+crash_collect_LIB_DEPENDS:STATIC=general;/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64/usr/lib/liblog.so;
 
 //Value Computed by CMake
-crash_collector_BINARY_DIR:STATIC=/home/dw/workspace/MyApplication/native_crash_collector/src/jni
-
-//Dependencies for the target
-crash_collector_LIB_DEPENDS:STATIC=general;log;
+crash_collector_BINARY_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
 
 //Value Computed by CMake
-crash_collector_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/native_crash_collector/src/jni
+crash_collector_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
 
 //Path to a library.
-log-lib:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-19/arch-arm/usr/lib/liblog.so
+def:FILEPATH=def-NOTFOUND
 
-//Dependencies for the target
-nativehelper_LIB_DEPENDS:STATIC=general;/home/dw/java/android-ndk-r14b/platforms/android-19/arch-arm/usr/lib/liblog.so;
+//Path to a library.
+fe:FILEPATH=fe-NOTFOUND
+
+//Path to a library.
+ff:FILEPATH=ff-NOTFOUND
+
+//Path to a library.
+log-lib:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64/usr/lib/liblog.so
+
+//Dependencies for target
+myso_LIB_DEPENDS:STATIC=
 
 
 ########################

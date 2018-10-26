@@ -8,8 +8,10 @@
 
 #include <jni.h>
 #include <unistd.h>
-#include <asm/uaccess.h>
-#include "../exception_handler.h"
+#include <dlfcn.h>
+#include "exception_handler.h"
+
+using namespace native_crash_collector;
 
 extern JavaVM *g_vm;
 
@@ -157,6 +159,8 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
         CRASH_LOGE("\nreport writer open fail:%s\n", filepath);
         return;
     }
+
+    if(head_info != NULL) rw->Write(head_info);
     Dl_info *dlip = new Dl_info;
 
     if(dump_java_info != NULL) {
@@ -176,8 +180,7 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     memset(dlip, 0, sizeof(dlip));
     dladdr((void *)pc, dlip);
     rw->Write("\n[Error Code] %s_%llx  \n", dlip->dli_fname, pc-(addr_s )dlip->dli_fbase);
-    CRASH_LOGE("\n[Error Code] %s_%llx  \n", dlip->dli_fname, pc-(addr_s )dlip->dli_fbase);
-    if(head_info != NULL) rw->Write(head_info);
+    CRASH_LOGE("\n[Error Code] %s_%llx  %llx  \n", dlip->dli_fname, pc-(addr_s )dlip->dli_fbase, dlip->dli_saddr);
 
     /*2 crash time*/
     rw->Write("\n[Time] %s  ", get_current_data());
@@ -201,6 +204,8 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     rw->Write("  x27 %016llx  x28 %016llx  x29 %016llx  \n", (addr_s) sig_ctx->regs[27], (addr_s) sig_ctx->regs[28], (addr_s) sig_ctx->regs[29]);
     rw->Write("  x30 %016llx  sp %016llx  pc %016llx  \n", (addr_s) sig_ctx->regs[30], (addr_s) sig_ctx->sp, (addr_s) sig_ctx->pc);
     /*6 invoke link*/
+
+    CRASH_LOGE("\n\n[Backtrace]  \n");
 
     /*7 backtrace*/
     rw->Write("\n\n[Backtrace]  \n");
@@ -229,7 +234,6 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     dladdr((void *)pc, dlip);
     rw->Write("\n[Error Code] %s_%x  \n", dlip->dli_fname, pc-(addr_s )dlip->dli_fbase);
     CRASH_LOGE("\n[Error Code] %s_%lx  \n", dlip->dli_fname, pc-(addr_s )dlip->dli_fbase);
-    if(head_info != NULL) rw->Write(head_info);
 
     /*2 crash time*/
     rw->Write("\n[Time] %s  ", get_current_data());
@@ -237,7 +241,10 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     /*3 sign info*/
     rw->Write("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr_s] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
     CRASH_LOGE("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr_s] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
+
     /*4 keyboard state*/
+    int state = ExceptionHandler::keyboard_state;
+    if (state >= 0 ) rw->Write("\n\n[Keyboard Show State] %d  ", state);
 
     /*5 registers*/
     rw->Write("\n\n[Registers]  \n");
@@ -394,9 +401,10 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
 
 #endif
     CRASH_LOGD("\n******Native Crash Report End******\n");
+    rw->Write("\n******Native Crash Report End******\n");
     delete dlip;
     delete rw;
-    rw->Write("\n******Native Crash Report End******\n");
+
 }
 
 void* read_memory(uint8_t *local, addr_s *src, int size_in_int8) {

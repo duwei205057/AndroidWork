@@ -17,10 +17,10 @@ public class NativeCrashManager {
 
     private static String sUsingSoName = "";
     private static boolean sLoaded = false;
-    private final int ERROR = -1;
-    private final int OK = 0;
+    public static final int ERROR = -1;
+    public static final int OK = 0;
 
-    public static boolean sCollectLogcat = false;
+    public static boolean sCollectLogcat = true;
 
     private static volatile NativeCrashManager mInstance;
     private NativeCrashManager() {
@@ -95,6 +95,7 @@ public class NativeCrashManager {
     }
 
     /** 初始化崩溃收集模块
+     * @param processName 需要监听的进程名称,主进程与子进程不同
      * @param anrLogPath 崩溃日志文件路径
      * */
     public int initANRCollect(String processName, String anrLogPath) {
@@ -117,7 +118,7 @@ public class NativeCrashManager {
      * @return
      */
     public int setVersionInfo(String info) {
-        if (TextUtils.isEmpty(info)) return ERROR;
+        if (!sLoaded || TextUtils.isEmpty(info)) return ERROR;
         return NativeInterface.getInstance().setVersionInfoNative(info.toCharArray(), info.length());
     }
 

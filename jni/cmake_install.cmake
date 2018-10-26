@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/dw/workspace/MyApplication/native_crash_collector/src/jni/cmake_install.cmake")
+  include("/home/dw/workspace/MyApplication/crash_collect/cmake_install.cmake")
 
 endif()
 

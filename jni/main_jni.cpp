@@ -3,6 +3,10 @@
 #include <stdint.h>
 //#include <unistd.h>
 #include <android/log.h>
+#include <string.h>
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
 
 #define LOG_FATAL_IF(...)
 #ifndef NELEM
@@ -17,18 +21,13 @@ static jstring get_StringFromNative(JNIEnv *env, jobject jobj) {
     //int i = gettid();
     char *text = "I am from C";
     int x = 0;
-    int y = x / 0;
-    return env->NewStringUTF(text);
+    int y = 5 / x;
+    x =+ y;
+    char * exception = NULL;
+    strcmp(exception, "anr");
+    sprintf(exception, "anr");
+    return env->NewStringUTF((const char *) x);
 }
-
-static jstring Java_com_dw_crash_NativeInterface_getStringFromNative(JNIEnv *env, jobject jobj) {
-    //int i = gettid();
-    char *text = "I am from C";
-    int x = 0;
-    int y = x / 0;
-    return env->NewStringUTF(text);
-}
-
 
 
 /*

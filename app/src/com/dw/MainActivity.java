@@ -39,6 +39,7 @@ import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
 import com.dw.capture.ScreenCaptureHelper;
 import com.dw.crash.NativeInterface;
+import com.dw.filemap.FileMapUtils;
 import com.dw.gif.GifActivity;
 import com.dw.js.JSActivity;
 import com.dw.recycler.RecyclerList;
@@ -199,6 +200,7 @@ public class MainActivity extends Activity {
                 Log.d("xx", "Run~~~~~"+System.currentTimeMillis());
             }
         },50, 200, 500);
+        FileMapUtils.load();
     }
 
     public void showRecyclerView(View view){

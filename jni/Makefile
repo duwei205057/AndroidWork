@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named nativehelper
+# Target rules for targets named myso
 
 # Build rule for target.
-nativehelper: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 nativehelper
-.PHONY : nativehelper
+myso: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 myso
+.PHONY : myso
 
 # fast build rule for target.
-nativehelper/fast:
-	$(MAKE) -f CMakeFiles/nativehelper.dir/build.make CMakeFiles/nativehelper.dir/build
-.PHONY : nativehelper/fast
+myso/fast:
+	$(MAKE) -f CMakeFiles/myso.dir/build.make CMakeFiles/myso.dir/build
+.PHONY : myso/fast
 
 #=============================================================================
 # Target rules for targets named crash_collect
@@ -133,7 +133,7 @@ crash_collect: cmake_check_build_system
 
 # fast build rule for target.
 crash_collect/fast:
-	$(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build
+	$(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build
 .PHONY : crash_collect/fast
 
 main_jni.o: main_jni.cpp.o
@@ -142,7 +142,7 @@ main_jni.o: main_jni.cpp.o
 
 # target to build an object file
 main_jni.cpp.o:
-	$(MAKE) -f CMakeFiles/nativehelper.dir/build.make CMakeFiles/nativehelper.dir/main_jni.cpp.o
+	$(MAKE) -f CMakeFiles/myso.dir/build.make CMakeFiles/myso.dir/main_jni.cpp.o
 .PHONY : main_jni.cpp.o
 
 main_jni.i: main_jni.cpp.i
@@ -151,7 +151,7 @@ main_jni.i: main_jni.cpp.i
 
 # target to preprocess a source file
 main_jni.cpp.i:
-	$(MAKE) -f CMakeFiles/nativehelper.dir/build.make CMakeFiles/nativehelper.dir/main_jni.cpp.i
+	$(MAKE) -f CMakeFiles/myso.dir/build.make CMakeFiles/myso.dir/main_jni.cpp.i
 .PHONY : main_jni.cpp.i
 
 main_jni.s: main_jni.cpp.s
@@ -160,7 +160,7 @@ main_jni.s: main_jni.cpp.s
 
 # target to generate assembly for a file
 main_jni.cpp.s:
-	$(MAKE) -f CMakeFiles/nativehelper.dir/build.make CMakeFiles/nativehelper.dir/main_jni.cpp.s
+	$(MAKE) -f CMakeFiles/myso.dir/build.make CMakeFiles/myso.dir/main_jni.cpp.s
 .PHONY : main_jni.cpp.s
 
 # Help Target
@@ -171,7 +171,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... nativehelper"
+	@echo "... myso"
 	@echo "... crash_collect"
 	@echo "... main_jni.o"
 	@echo "... main_jni.i"

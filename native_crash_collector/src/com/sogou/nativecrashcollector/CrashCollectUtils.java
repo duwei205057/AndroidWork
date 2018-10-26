@@ -12,6 +12,7 @@ import java.util.Set;
  * Created by dw on 18-10-16.
  */
 
+//@Keep
 public class CrashCollectUtils {
 
     private static final boolean DEBUG = true;
@@ -36,7 +37,7 @@ public class CrashCollectUtils {
     private static String getMessageFromShell() {
         if (NativeCrashManager.sCollectLogcat) {
             StringBuilder sb = new StringBuilder();
-            ShellUtils.CommandResult result = CrashLogcat.collectLogcat(null, 100);
+            ShellUtils.CommandResult result = CrashLogcat.collectLogcat(null, 500);
             LOGD("getThreadStackTrace result=="+ result.result+" errorMsg=="+result.errorMsg+" successMsg=="+result.successMsg);
             if (result != null) {
                 sb.append("[Backtrace logcat]\n");

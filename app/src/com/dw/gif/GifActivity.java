@@ -110,14 +110,14 @@ public class GifActivity extends Activity {
 //
 //        }
 //        LOGD("mLsa.size()===" + mLsa.size());
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         Log.d("xx", "decodeFile====================");
-//        String s = NativeInterface.getInstance().getStringFromNative();
-//        Log.d("xx", "mInterface.getStringFromNative()====================" + s);
+        String s = NativeInterface.getInstance().getStringFromNative();
+        Log.d("xx", "mInterface.getStringFromNative()====================" + s);
 
         /*try {
             Socket socket = new Socket("localhost", 99);

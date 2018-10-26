@@ -14,6 +14,8 @@ set(LOCAL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_SYSTEM_VERSION,21)
+
 macro(debug msg)
     message(STATUS "DEBUG ${msg}")
 endmacro()
@@ -86,10 +88,22 @@ find_library( # Sets the name of the path variable.日志支持库并将其路�
 
               # Specifies the name of the NDK library that
               # you want CMake to locate.
-              log )
+              log
+              )
+
+find_library(
+         fe NAMES sogouime PATHS  "/home/dw/workspace/MyApplication/crash_collect/"
+                        )
+#PATHS "/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm64/usr/lib/"
+#              NO_DEFAULT_PATH
 
 debugValue(log-lib)
+debugValue(ANDROID_ABI)
+debugValue(LOCAL_PATH)
+debugValue(ANDROID_NDK)
+debugValue(fe)
 target_link_libraries( # Specifies the target library.
 		      ${LOCAL_MODULE}
 		       ${log-lib} )
+
 

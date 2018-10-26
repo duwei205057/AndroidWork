@@ -14,6 +14,7 @@ int step(sigcontext *sig_ctx) {
     /*elf头地址*/
     Elf64_Ehdr * pELFHdr = (Elf64_Ehdr *) dlip->dli_fbase;
     /*程序头头地址*/
+    CRASH_LOGE("程序头起点 = %016llx", pELFHdr->e_phoff);
     Elf64_Phdr * pPHdr = (Elf64_Phdr *)((char*) dlip->dli_fbase + pELFHdr->e_phoff);
     for(int i = pELFHdr->e_phnum-1; i >= 0; i--) {
         if((pPHdr + i)->p_type == PT_GNU_EH_FRAME) {
@@ -24,9 +25,11 @@ int step(sigcontext *sig_ctx) {
     if(pPHdr->p_type != PT_GNU_EH_FRAME) return -1;
     /*计算eh_frame段在物理内存中的地址*/
     addr_s eh_frame_hdr_start = (addr_s )(pPHdr->p_paddr + (char*) dlip->dli_fbase);
+    CRASH_LOGE("%s起始位置 = %016llx ", dlip->dli_fname, dlip->dli_fbase);
+    CRASH_LOGE("GNU_EH_FRAME section 物理地址 = %016llx 偏移= %016llx", (addr_s) eh_frame_hdr_start, pPHdr->p_paddr);
     HDR *hdr = decode_hdr((uint8_t *) eh_frame_hdr_start);
-    addr_s eh_frame_start = hdr->eh_frame_addr;
-    CRASH_LOGE("eh_frame_offest = %016llx", eh_frame_start - (uint64_t) dlip->dli_fbase);
+    addr_s eh_frame_start = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
+//    addr_s eh_frame_start = hdr->eh_frame_addr;
     CIE *cie = decode_cie((uint8_t *) eh_frame_start);
     frame->cie = cie;
     uint64_t offest = cie->total_length;

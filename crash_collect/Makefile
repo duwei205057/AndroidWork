@@ -80,14 +80,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/dw/workspace/MyApplication/jni && $(CMAKE_COMMAND) -E cmake_progress_start /home/dw/workspace/MyApplication/jni/CMakeFiles /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/progress.marks
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/native_crash_collector/src/jni/all
+	cd /home/dw/workspace/MyApplication/jni && $(CMAKE_COMMAND) -E cmake_progress_start /home/dw/workspace/MyApplication/jni/CMakeFiles /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/progress.marks
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/crash_collect/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/dw/workspace/MyApplication/jni/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/native_crash_collector/src/jni/clean
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/crash_collect/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,12 +97,12 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/native_crash_collector/src/jni/preinstall
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/crash_collect/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/native_crash_collector/src/jni/preinstall
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/crash_collect/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
@@ -111,18 +111,18 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-/home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/rule:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/rule
-.PHONY : /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/rule
+/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/rule:
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f CMakeFiles/Makefile2 /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/rule
+.PHONY : /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/rule
 
 # Convenience name for target.
-crash_collect: /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/rule
+crash_collect: /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/rule
 
 .PHONY : crash_collect
 
 # fast build rule for target.
 crash_collect/fast:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build
 .PHONY : crash_collect/fast
 
 anr/event_queue.o: anr/event_queue.cpp.o
@@ -131,7 +131,7 @@ anr/event_queue.o: anr/event_queue.cpp.o
 
 # target to build an object file
 anr/event_queue.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.o
 .PHONY : anr/event_queue.cpp.o
 
 anr/event_queue.i: anr/event_queue.cpp.i
@@ -140,7 +140,7 @@ anr/event_queue.i: anr/event_queue.cpp.i
 
 # target to preprocess a source file
 anr/event_queue.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.i
 .PHONY : anr/event_queue.cpp.i
 
 anr/event_queue.s: anr/event_queue.cpp.s
@@ -149,7 +149,7 @@ anr/event_queue.s: anr/event_queue.cpp.s
 
 # target to generate assembly for a file
 anr/event_queue.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/event_queue.cpp.s
 .PHONY : anr/event_queue.cpp.s
 
 anr/inotify_utils.o: anr/inotify_utils.cpp.o
@@ -158,7 +158,7 @@ anr/inotify_utils.o: anr/inotify_utils.cpp.o
 
 # target to build an object file
 anr/inotify_utils.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.o
 .PHONY : anr/inotify_utils.cpp.o
 
 anr/inotify_utils.i: anr/inotify_utils.cpp.i
@@ -167,7 +167,7 @@ anr/inotify_utils.i: anr/inotify_utils.cpp.i
 
 # target to preprocess a source file
 anr/inotify_utils.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.i
 .PHONY : anr/inotify_utils.cpp.i
 
 anr/inotify_utils.s: anr/inotify_utils.cpp.s
@@ -176,7 +176,7 @@ anr/inotify_utils.s: anr/inotify_utils.cpp.s
 
 # target to generate assembly for a file
 anr/inotify_utils.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/anr/inotify_utils.cpp.s
 .PHONY : anr/inotify_utils.cpp.s
 
 crash/crash_handler.o: crash/crash_handler.cpp.o
@@ -185,7 +185,7 @@ crash/crash_handler.o: crash/crash_handler.cpp.o
 
 # target to build an object file
 crash/crash_handler.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.o
 .PHONY : crash/crash_handler.cpp.o
 
 crash/crash_handler.i: crash/crash_handler.cpp.i
@@ -194,7 +194,7 @@ crash/crash_handler.i: crash/crash_handler.cpp.i
 
 # target to preprocess a source file
 crash/crash_handler.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.i
 .PHONY : crash/crash_handler.cpp.i
 
 crash/crash_handler.s: crash/crash_handler.cpp.s
@@ -203,7 +203,7 @@ crash/crash_handler.s: crash/crash_handler.cpp.s
 
 # target to generate assembly for a file
 crash/crash_handler.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/crash_handler.cpp.s
 .PHONY : crash/crash_handler.cpp.s
 
 crash/stacktrace/arm/backtrace.o: crash/stacktrace/arm/backtrace.cpp.o
@@ -212,7 +212,7 @@ crash/stacktrace/arm/backtrace.o: crash/stacktrace/arm/backtrace.cpp.o
 
 # target to build an object file
 crash/stacktrace/arm/backtrace.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.o
 .PHONY : crash/stacktrace/arm/backtrace.cpp.o
 
 crash/stacktrace/arm/backtrace.i: crash/stacktrace/arm/backtrace.cpp.i
@@ -221,7 +221,7 @@ crash/stacktrace/arm/backtrace.i: crash/stacktrace/arm/backtrace.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/arm/backtrace.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.i
 .PHONY : crash/stacktrace/arm/backtrace.cpp.i
 
 crash/stacktrace/arm/backtrace.s: crash/stacktrace/arm/backtrace.cpp.s
@@ -230,7 +230,7 @@ crash/stacktrace/arm/backtrace.s: crash/stacktrace/arm/backtrace.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/arm/backtrace.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/backtrace.cpp.s
 .PHONY : crash/stacktrace/arm/backtrace.cpp.s
 
 crash/stacktrace/arm/exidxstep.o: crash/stacktrace/arm/exidxstep.cpp.o
@@ -239,7 +239,7 @@ crash/stacktrace/arm/exidxstep.o: crash/stacktrace/arm/exidxstep.cpp.o
 
 # target to build an object file
 crash/stacktrace/arm/exidxstep.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.o
 .PHONY : crash/stacktrace/arm/exidxstep.cpp.o
 
 crash/stacktrace/arm/exidxstep.i: crash/stacktrace/arm/exidxstep.cpp.i
@@ -248,7 +248,7 @@ crash/stacktrace/arm/exidxstep.i: crash/stacktrace/arm/exidxstep.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/arm/exidxstep.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.i
 .PHONY : crash/stacktrace/arm/exidxstep.cpp.i
 
 crash/stacktrace/arm/exidxstep.s: crash/stacktrace/arm/exidxstep.cpp.s
@@ -257,7 +257,7 @@ crash/stacktrace/arm/exidxstep.s: crash/stacktrace/arm/exidxstep.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/arm/exidxstep.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm/exidxstep.cpp.s
 .PHONY : crash/stacktrace/arm/exidxstep.cpp.s
 
 crash/stacktrace/arm64/backtrace.o: crash/stacktrace/arm64/backtrace.cpp.o
@@ -266,7 +266,7 @@ crash/stacktrace/arm64/backtrace.o: crash/stacktrace/arm64/backtrace.cpp.o
 
 # target to build an object file
 crash/stacktrace/arm64/backtrace.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.o
 .PHONY : crash/stacktrace/arm64/backtrace.cpp.o
 
 crash/stacktrace/arm64/backtrace.i: crash/stacktrace/arm64/backtrace.cpp.i
@@ -275,7 +275,7 @@ crash/stacktrace/arm64/backtrace.i: crash/stacktrace/arm64/backtrace.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/arm64/backtrace.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.i
 .PHONY : crash/stacktrace/arm64/backtrace.cpp.i
 
 crash/stacktrace/arm64/backtrace.s: crash/stacktrace/arm64/backtrace.cpp.s
@@ -284,7 +284,7 @@ crash/stacktrace/arm64/backtrace.s: crash/stacktrace/arm64/backtrace.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/arm64/backtrace.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/backtrace.cpp.s
 .PHONY : crash/stacktrace/arm64/backtrace.cpp.s
 
 crash/stacktrace/arm64/eh_frame.o: crash/stacktrace/arm64/eh_frame.cpp.o
@@ -293,7 +293,7 @@ crash/stacktrace/arm64/eh_frame.o: crash/stacktrace/arm64/eh_frame.cpp.o
 
 # target to build an object file
 crash/stacktrace/arm64/eh_frame.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.o
 .PHONY : crash/stacktrace/arm64/eh_frame.cpp.o
 
 crash/stacktrace/arm64/eh_frame.i: crash/stacktrace/arm64/eh_frame.cpp.i
@@ -302,7 +302,7 @@ crash/stacktrace/arm64/eh_frame.i: crash/stacktrace/arm64/eh_frame.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/arm64/eh_frame.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.i
 .PHONY : crash/stacktrace/arm64/eh_frame.cpp.i
 
 crash/stacktrace/arm64/eh_frame.s: crash/stacktrace/arm64/eh_frame.cpp.s
@@ -311,7 +311,7 @@ crash/stacktrace/arm64/eh_frame.s: crash/stacktrace/arm64/eh_frame.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/arm64/eh_frame.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/eh_frame.cpp.s
 .PHONY : crash/stacktrace/arm64/eh_frame.cpp.s
 
 crash/stacktrace/arm64/ehstep.o: crash/stacktrace/arm64/ehstep.cpp.o
@@ -320,7 +320,7 @@ crash/stacktrace/arm64/ehstep.o: crash/stacktrace/arm64/ehstep.cpp.o
 
 # target to build an object file
 crash/stacktrace/arm64/ehstep.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.o
 .PHONY : crash/stacktrace/arm64/ehstep.cpp.o
 
 crash/stacktrace/arm64/ehstep.i: crash/stacktrace/arm64/ehstep.cpp.i
@@ -329,7 +329,7 @@ crash/stacktrace/arm64/ehstep.i: crash/stacktrace/arm64/ehstep.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/arm64/ehstep.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.i
 .PHONY : crash/stacktrace/arm64/ehstep.cpp.i
 
 crash/stacktrace/arm64/ehstep.s: crash/stacktrace/arm64/ehstep.cpp.s
@@ -338,7 +338,7 @@ crash/stacktrace/arm64/ehstep.s: crash/stacktrace/arm64/ehstep.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/arm64/ehstep.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/arm64/ehstep.cpp.s
 .PHONY : crash/stacktrace/arm64/ehstep.cpp.s
 
 crash/stacktrace/stacktrace.o: crash/stacktrace/stacktrace.cpp.o
@@ -347,7 +347,7 @@ crash/stacktrace/stacktrace.o: crash/stacktrace/stacktrace.cpp.o
 
 # target to build an object file
 crash/stacktrace/stacktrace.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.o
 .PHONY : crash/stacktrace/stacktrace.cpp.o
 
 crash/stacktrace/stacktrace.i: crash/stacktrace/stacktrace.cpp.i
@@ -356,7 +356,7 @@ crash/stacktrace/stacktrace.i: crash/stacktrace/stacktrace.cpp.i
 
 # target to preprocess a source file
 crash/stacktrace/stacktrace.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.i
 .PHONY : crash/stacktrace/stacktrace.cpp.i
 
 crash/stacktrace/stacktrace.s: crash/stacktrace/stacktrace.cpp.s
@@ -365,7 +365,7 @@ crash/stacktrace/stacktrace.s: crash/stacktrace/stacktrace.cpp.s
 
 # target to generate assembly for a file
 crash/stacktrace/stacktrace.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/crash/stacktrace/stacktrace.cpp.s
 .PHONY : crash/stacktrace/stacktrace.cpp.s
 
 exception_handler.o: exception_handler.cpp.o
@@ -374,7 +374,7 @@ exception_handler.o: exception_handler.cpp.o
 
 # target to build an object file
 exception_handler.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/exception_handler.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/exception_handler.cpp.o
 .PHONY : exception_handler.cpp.o
 
 exception_handler.i: exception_handler.cpp.i
@@ -383,7 +383,7 @@ exception_handler.i: exception_handler.cpp.i
 
 # target to preprocess a source file
 exception_handler.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/exception_handler.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/exception_handler.cpp.i
 .PHONY : exception_handler.cpp.i
 
 exception_handler.s: exception_handler.cpp.s
@@ -392,7 +392,7 @@ exception_handler.s: exception_handler.cpp.s
 
 # target to generate assembly for a file
 exception_handler.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/exception_handler.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/exception_handler.cpp.s
 .PHONY : exception_handler.cpp.s
 
 native_crash_jni.o: native_crash_jni.cpp.o
@@ -401,7 +401,7 @@ native_crash_jni.o: native_crash_jni.cpp.o
 
 # target to build an object file
 native_crash_jni.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.o
 .PHONY : native_crash_jni.cpp.o
 
 native_crash_jni.i: native_crash_jni.cpp.i
@@ -410,7 +410,7 @@ native_crash_jni.i: native_crash_jni.cpp.i
 
 # target to preprocess a source file
 native_crash_jni.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.i
 .PHONY : native_crash_jni.cpp.i
 
 native_crash_jni.s: native_crash_jni.cpp.s
@@ -419,7 +419,7 @@ native_crash_jni.s: native_crash_jni.cpp.s
 
 # target to generate assembly for a file
 native_crash_jni.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/native_crash_jni.cpp.s
 .PHONY : native_crash_jni.cpp.s
 
 utils/leb128.o: utils/leb128.cpp.o
@@ -428,7 +428,7 @@ utils/leb128.o: utils/leb128.cpp.o
 
 # target to build an object file
 utils/leb128.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/leb128.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/leb128.cpp.o
 .PHONY : utils/leb128.cpp.o
 
 utils/leb128.i: utils/leb128.cpp.i
@@ -437,7 +437,7 @@ utils/leb128.i: utils/leb128.cpp.i
 
 # target to preprocess a source file
 utils/leb128.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/leb128.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/leb128.cpp.i
 .PHONY : utils/leb128.cpp.i
 
 utils/leb128.s: utils/leb128.cpp.s
@@ -446,7 +446,7 @@ utils/leb128.s: utils/leb128.cpp.s
 
 # target to generate assembly for a file
 utils/leb128.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/leb128.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/leb128.cpp.s
 .PHONY : utils/leb128.cpp.s
 
 utils/report_writer.o: utils/report_writer.cpp.o
@@ -455,7 +455,7 @@ utils/report_writer.o: utils/report_writer.cpp.o
 
 # target to build an object file
 utils/report_writer.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.o
 .PHONY : utils/report_writer.cpp.o
 
 utils/report_writer.i: utils/report_writer.cpp.i
@@ -464,7 +464,7 @@ utils/report_writer.i: utils/report_writer.cpp.i
 
 # target to preprocess a source file
 utils/report_writer.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.i
 .PHONY : utils/report_writer.cpp.i
 
 utils/report_writer.s: utils/report_writer.cpp.s
@@ -473,7 +473,7 @@ utils/report_writer.s: utils/report_writer.cpp.s
 
 # target to generate assembly for a file
 utils/report_writer.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/report_writer.cpp.s
 .PHONY : utils/report_writer.cpp.s
 
 utils/utf.o: utils/utf.cpp.o
@@ -482,7 +482,7 @@ utils/utf.o: utils/utf.cpp.o
 
 # target to build an object file
 utils/utf.cpp.o:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/utf.cpp.o
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/utf.cpp.o
 .PHONY : utils/utf.cpp.o
 
 utils/utf.i: utils/utf.cpp.i
@@ -491,7 +491,7 @@ utils/utf.i: utils/utf.cpp.i
 
 # target to preprocess a source file
 utils/utf.cpp.i:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/utf.cpp.i
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/utf.cpp.i
 .PHONY : utils/utf.cpp.i
 
 utils/utf.s: utils/utf.cpp.s
@@ -500,7 +500,7 @@ utils/utf.s: utils/utf.cpp.s
 
 # target to generate assembly for a file
 utils/utf.cpp.s:
-	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/utils/utf.cpp.s
+	cd /home/dw/workspace/MyApplication/jni && $(MAKE) -f /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/build.make /home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/utils/utf.cpp.s
 .PHONY : utils/utf.cpp.s
 
 # Help Target

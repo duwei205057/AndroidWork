@@ -33,6 +33,7 @@ public:
     void SetCrashLogSavePath(const uint16_t *str16, uint32_t size);
     void SetPackageName(const uint16_t *str16, uint32_t size);
     void SetHeadInfo(const uint16_t *head, uint32_t size);
+    void SetKeyboardShownState(int state);
     void SetCollectSwitch(int which, bool state);
     static void SetDumpJavaFinish();
 
@@ -44,6 +45,7 @@ public:
     static char* anr_save_path;
     static char* head_info;
     static char* package_name;
+    static int keyboard_state;
     static pthread_cond_t cond_finish;
     static pthread_mutex_t mutex_finish;
     static pthread_cond_t cond;

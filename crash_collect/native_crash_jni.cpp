@@ -60,8 +60,7 @@ static jint ime_postKeyboardShownStateToNative(JNIEnv* env, jobject thiz, jint s
     CRASH_LOGD("postKeyboardShownStateToNative");
 
     if(exception_handler != NULL) {
-        // no such method
-//        exception_handler->SetKeyboardShownState(state);
+        exception_handler->SetKeyboardShownState(state);
     }
 
     return 0;

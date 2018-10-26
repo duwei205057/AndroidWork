@@ -82,8 +82,12 @@ public class DynamicApplication extends Application{
         new Thread(new Runnable() {
             @Override
             public void run() {
+                NativeInterface.getInstance();
                 NativeCrashManager.getInstance().loadLibrary();
-                NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
+                NativeCrashManager.getInstance().setVersionInfo("+++++++++++++++++))))))))))))))))))))))))))");
+                NativeCrashManager.getInstance().setKeyboardShownState(1);
+                NativeCrashManager.getInstance().initCrashCollect("/sdcard/native_crash.txt");
+//                NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
                 NativeCrashManager.getInstance().initANRCollect(mProcessName, new File(getFilesDir(),"anr_crash.txt").getAbsolutePath());
             }
         }).start();

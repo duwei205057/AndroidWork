@@ -23,6 +23,7 @@ namespace native_crash_collector {
     bool ExceptionHandler::collect_anr_on = true;
     bool ExceptionHandler::collect_crash_on = true;
     int ExceptionHandler::ms_tidCrash = 0;
+    int ExceptionHandler::keyboard_state = -1;
     pthread_cond_t ExceptionHandler::cond_finish = PTHREAD_COND_INITIALIZER;
     pthread_mutex_t ExceptionHandler::mutex_finish = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t ExceptionHandler::cond = PTHREAD_COND_INITIALIZER;
@@ -45,6 +46,7 @@ namespace native_crash_collector {
             javaVM = NULL;
         }
         javaVM = vm;
+        keyboard_state = -1;
     }
 
     void ExceptionHandler::InitCrashCollect() {
@@ -85,6 +87,17 @@ namespace native_crash_collector {
         for (int i = 0; i < mNumHandledSignals; ++i) {
             if (sigaction(mExceptionSignals[i], NULL, &old_handlers[i]) == -1)
                 return false;
+        }
+
+        stack_t stack;
+        memset(&stack, 0, sizeof(stack));
+/* Reserver the system default stack size. We don't need that much by the way. */
+        stack.ss_size = SIGSTKSZ;
+        stack.ss_sp = malloc(stack.ss_size);
+        stack.ss_flags = 0;
+/* Install alternate stack size. Be sure the memory region is valid until you revert it. */
+        if (stack.ss_sp != NULL && sigaltstack(&stack, NULL) != 0) {
+            return false;
         }
 
         struct sigaction sa;
@@ -150,6 +163,10 @@ namespace native_crash_collector {
         package_name = new char[size + 1];
         memset(package_name, 0, size + 1);
         utf16_to_utf8(str16, size, package_name, size);
+    }
+
+    void ExceptionHandler::SetKeyboardShownState(int state) {
+        keyboard_state = state;
     }
 
     void ExceptionHandler::SetHeadInfo(const uint16_t *head, uint32_t size) {

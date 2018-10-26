@@ -3,14 +3,17 @@
 //
 #if defined(__aarch64__)
 #include <memory.h>
+#include <utils/clog.h>
 #include "eh_frame.h"
 
 HDR *decode_hdr(uint8_t *eh_frame_hdr_start) {
     HDR *hdr = new HDR();
+    CRASH_LOGE("sizeof(HDR) = %d sizeof(hdr->binary_search_table)== %d ", sizeof(HDR), sizeof(hdr->binary_search_table)/*, sizeof(hdr->eh_frame_addr)*/);
     int size = sizeof(HDR)- sizeof(hdr->binary_search_table);
     memcpy(hdr, eh_frame_hdr_start, size);
+    CRASH_LOGE("HDR version = %d eh_frame_ptr_enc = %d fde_count_enc==%d table_enc==%d frame_ptr = %08x  fde_count==%08x", hdr->version,hdr->eh_frame_ptr_enc,hdr->fde_count_enc,hdr->table_enc,hdr->eh_frame_ptr,hdr->fde_count);
     hdr->binary_search_table = eh_frame_hdr_start + size;
-    hdr->eh_frame_addr = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
+//    hdr->eh_frame_addr = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
     return hdr;
 }
 

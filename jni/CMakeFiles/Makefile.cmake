@@ -22,11 +22,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/dw/java/adt-bundle-linux-x86_64-20140321/sdk/cmake/3.6.4111459/share/cmake-3.6/Modules/Platform/Linux.cmake"
   "/home/dw/java/adt-bundle-linux-x86_64-20140321/sdk/cmake/3.6.4111459/share/cmake-3.6/Modules/Platform/UnixPaths.cmake"
   "/home/dw/java/android-ndk-r14b/build/cmake/android.toolchain.cmake"
+  "/home/dw/workspace/MyApplication/crash_collect/CMakeLists.txt"
   "CMakeFiles/3.6.0-rc2/CMakeCCompiler.cmake"
   "CMakeFiles/3.6.0-rc2/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.6.0-rc2/CMakeSystem.cmake"
   "CMakeLists.txt"
-  "/home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeLists.txt"
   )
 
 # The corresponding makefile is:
@@ -38,11 +38,11 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "/home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/nativehelper.dir/DependInfo.cmake"
-  "/home/dw/workspace/MyApplication/native_crash_collector/src/jni/CMakeFiles/crash_collect.dir/DependInfo.cmake"
+  "CMakeFiles/myso.dir/DependInfo.cmake"
+  "/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir/DependInfo.cmake"
   )
