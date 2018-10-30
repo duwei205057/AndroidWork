@@ -11,15 +11,16 @@ HDR *decode_hdr(uint8_t *eh_frame_hdr_start) {
     CRASH_LOGE("sizeof(HDR) = %d sizeof(hdr->binary_search_table)== %d ", sizeof(HDR), sizeof(hdr->binary_search_table)/*, sizeof(hdr->eh_frame_addr)*/);
     int size = sizeof(HDR)- sizeof(hdr->binary_search_table);
     memcpy(hdr, eh_frame_hdr_start, size);
-    CRASH_LOGE("HDR version = %d eh_frame_ptr_enc = %d fde_count_enc==%d table_enc==%d frame_ptr = %08x  fde_count==%08x", hdr->version,hdr->eh_frame_ptr_enc,hdr->fde_count_enc,hdr->table_enc,hdr->eh_frame_ptr,hdr->fde_count);
+    CRASH_LOGE("HDR version = %d eh_frame_ptr_enc = %d fde_count_enc==%d table_enc==%d frame_ptr = %d %08x fde_count==%08x", hdr->version,hdr->eh_frame_ptr_enc,hdr->fde_count_enc,hdr->table_enc,hdr->eh_frame_ptr,hdr->eh_frame_ptr,hdr->fde_count);
     hdr->binary_search_table = eh_frame_hdr_start + size;
-//    hdr->eh_frame_addr = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
+    hdr->eh_frame_addr = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
     return hdr;
 }
 
 CIE* decode_cie(uint8_t *eh_frame_start) {
     uint8_t *current_pointer = eh_frame_start;
     CIE *cie = new CIE();
+    CRASH_LOGE("cie 首地址 = %016llx", current_pointer);
     cie->length = *((uint32_t *) current_pointer);
     if(cie->length == USE_EXTENDED_LENGTH) {
         MOVE_4(current_pointer);

@@ -1,4 +1,5 @@
 #if defined(__arm__)
+
 #include "backtrace.h"
 
 addr_s move_to_valid_addr(addr_s exidx_start) {
@@ -33,10 +34,12 @@ int step(sigcontext *sig_ctx) {
     if(pPHdr->p_type != ARM_EXIDX) return -1;
     /*计算exidx段在物理内存中的地址*/
     addr_s exidx_start = (addr_s )(pPHdr->p_paddr + (char*) dlip.dli_fbase);
+    CRASH_LOGE("  phdr offset=%08lx  \n",  pPHdr->p_paddr);
     cursor.exidx_start_addr = move_to_valid_addr(exidx_start);
     cursor.exidx_end_addr = (addr_s )(exidx_start + pPHdr->p_memsz - 8);
     cursor.base_addr = (addr_s ) dlip.dli_fbase;
     cursor.pc_offest = (addr_s )(pc - (addr_s ) dlip.dli_fbase);
+    CRASH_LOGE("  cursor start=%08lx end=%08lx load addr=%08lx lib name=%s ps offset=%08lx \n",  cursor.exidx_start_addr,cursor.exidx_end_addr,cursor.base_addr,dlip.dli_fname,cursor.pc_offest);
     int ret = arm_exidx_step(&cursor);
     if(ret < 0) return ret;
     copyregs_to_sigctx(&cursor, sig_ctx);

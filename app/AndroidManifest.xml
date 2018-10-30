@@ -30,7 +30,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:process=":remote"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"/>
-        <activity android:name=".voice.VoiceContainerActivity"/>
+        <activity android:name=".voice.VoiceContainerActivity"
+                  android:launchMode="singleInstance"/>
         <activity android:name=".gif.GifActivity"
                   android:process=":remote">
         </activity>

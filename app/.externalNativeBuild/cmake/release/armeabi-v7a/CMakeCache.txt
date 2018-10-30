@@ -211,6 +211,9 @@ crash_collector_BINARY_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
 crash_collector_SOURCE_DIR:STATIC=/home/dw/workspace/MyApplication/crash_collect
 
 //Path to a library.
+fe:FILEPATH=fe-NOTFOUND
+
+//Path to a library.
 log-lib:FILEPATH=/home/dw/java/android-ndk-r14b/platforms/android-21/arch-arm/usr/lib/liblog.so
 
 //Dependencies for target

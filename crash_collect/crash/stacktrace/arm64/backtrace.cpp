@@ -1,6 +1,5 @@
 #if defined(__aarch64__)
 
-#include <dlfcn.h>
 #include "backtrace.h"
 
 int step(sigcontext *sig_ctx) {
@@ -26,10 +25,10 @@ int step(sigcontext *sig_ctx) {
     /*计算eh_frame段在物理内存中的地址*/
     addr_s eh_frame_hdr_start = (addr_s )(pPHdr->p_paddr + (char*) dlip->dli_fbase);
     CRASH_LOGE("%s起始位置 = %016llx ", dlip->dli_fname, dlip->dli_fbase);
-    CRASH_LOGE("GNU_EH_FRAME section 物理地址 = %016llx 偏移= %016llx", (addr_s) eh_frame_hdr_start, pPHdr->p_paddr);
+    CRASH_LOGE("GNU_EH_FRAME section 物理地址 = %016llx 偏移p_paddr= %016llx 偏移p_vaddr= %016llx", (addr_s) eh_frame_hdr_start, pPHdr->p_paddr,pPHdr->p_vaddr);
     HDR *hdr = decode_hdr((uint8_t *) eh_frame_hdr_start);
-    addr_s eh_frame_start = hdr->eh_frame_ptr + (addr_s) eh_frame_hdr_start + 4;
-//    addr_s eh_frame_start = hdr->eh_frame_addr;
+    addr_s eh_frame_start = hdr->eh_frame_addr;
+    CRASH_LOGE("eh_frame_offest = %016llx", eh_frame_start - (uint64_t) dlip->dli_fbase);
     CIE *cie = decode_cie((uint8_t *) eh_frame_start);
     frame->cie = cie;
     uint64_t offest = cie->total_length;

@@ -89,16 +89,6 @@ namespace native_crash_collector {
                 return false;
         }
 
-        stack_t stack;
-        memset(&stack, 0, sizeof(stack));
-/* Reserver the system default stack size. We don't need that much by the way. */
-        stack.ss_size = SIGSTKSZ;
-        stack.ss_sp = malloc(stack.ss_size);
-        stack.ss_flags = 0;
-/* Install alternate stack size. Be sure the memory region is valid until you revert it. */
-        if (stack.ss_sp != NULL && sigaltstack(&stack, NULL) != 0) {
-            return false;
-        }
 
         struct sigaction sa;
         memset(&sa, 0, sizeof(sa));

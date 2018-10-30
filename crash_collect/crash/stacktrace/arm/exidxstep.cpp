@@ -285,12 +285,15 @@ int arm_exidx_apply_cmd (arm_exbuf_data *edata, t_cursor *c) {
 
   int ret = 0;
   unsigned i;
+//    try {
+//
+//    }catch (exception& e){}
 
-  switch (edata->cmd) {
+    switch (edata->cmd) {
 
     case ARM_EXIDX_CMD_FINISH:
       /* Set LR to PC if not set already.  */
-      CRASH_LOGD("pc = %08x\n", c->regs[ARM_LR]);
+      CRASH_LOGD("ARM_EXIDX_CMD_FINISH  pc = %08x\n", c->regs[ARM_LR]);
       CRASH_LOGD("finish");
       if(c->regs[ARM_PC] == c->regs[ARM_LR]) {
         c->step_status = STEP_PC_LR;
@@ -302,21 +305,22 @@ int arm_exidx_apply_cmd (arm_exbuf_data *edata, t_cursor *c) {
 
     case ARM_EXIDX_CMD_DATA_PUSH:
       /* vsp = vsp - data */
-      CRASH_LOGD("sp = sp - %08x\n", edata->data);
+      CRASH_LOGD("ARM_EXIDX_CMD_DATA_PUSH  sp = sp - %08x\n", edata->data);
       c->regs[ARM_SP] -= edata->data;
       break;
 
     case ARM_EXIDX_CMD_DATA_POP:
       /* vsp = vsp + data */
-      CRASH_LOGD("sp = sp + %08x\n", edata->data);
+      CRASH_LOGD("ARM_EXIDX_CMD_DATA_POP  sp = sp + %08x\n", edata->data);
       c->regs[ARM_SP] += edata->data;
       break;
 
     case ARM_EXIDX_CMD_REG_POP:
+      CRASH_LOGD("case ARM_EXIDX_CMD_REG_POP");
       for (i = 0; i < 16; i++)
         if (edata->data & (1 << i)) {
           /* pop r[i] */
-          CRASH_LOGD("pop r[%d]\n", i);
+          CRASH_LOGD("pop r[%d] c->regs[ARM_SP]==%08lx\n", i, *(uint32_t *)c->regs[ARM_SP]);
           c->regs[i] = *(uint32_t *)c->regs[ARM_SP];
           c->regs[ARM_SP] += 4;
         }
@@ -324,8 +328,8 @@ int arm_exidx_apply_cmd (arm_exbuf_data *edata, t_cursor *c) {
       break;
 
     case ARM_EXIDX_CMD_REG_TO_SP:
-      CRASH_LOGD("sp = %08x\n", edata->data);
-      c->regs[ARM_SP] = c->regs[edata->data];
+      CRASH_LOGD("ARM_EXIDX_CMD_REG_TO_SP  sp = %08x\n", edata->data);
+      c->regs[ARM_SP] = (unsigned long) &c->regs[edata->data];
       break;
 
     case ARM_EXIDX_CMD_VFP_POP:

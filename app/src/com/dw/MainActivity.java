@@ -46,6 +46,7 @@ import com.dw.recycler.RecyclerList;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;
+import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
 
 import org.greenrobot.eventbus.EventBus;
@@ -215,14 +216,14 @@ public class MainActivity extends Activity {
 
     public void showVoiceView(View view){
 //        test();
-//        Intent i = new Intent(this,VoiceContainerActivity.class);
-//        startActivity(i);
-        ScreenCaptureHelper.getInstance(this).startCapture(new Rect(0, 0, 2, 4), new ScreenCaptureHelper.Callback() {
+        Intent i = new Intent(this,VoiceContainerActivity.class);
+        startActivity(i);
+        /*ScreenCaptureHelper.getInstance(this).startCapture(new Rect(0, 0, 2, 4), new ScreenCaptureHelper.Callback() {
             @Override
             public void getBitmap(Bitmap bitmap) {
                 test1(bitmap);
             }
-        });
+        });*/
     }
 
     private void test(){

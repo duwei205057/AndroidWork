@@ -20,7 +20,7 @@ public class NativeCrashManager {
     public static final int ERROR = -1;
     public static final int OK = 0;
 
-    public static boolean sCollectLogcat = true;
+    public static boolean sCollectLogcat = false;
 
     private static volatile NativeCrashManager mInstance;
     private NativeCrashManager() {

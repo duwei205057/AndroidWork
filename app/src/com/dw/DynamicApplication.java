@@ -63,6 +63,7 @@ public class DynamicApplication extends Application{
         Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
                 /*" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) +*/ " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
                 " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
+        Log.d("xx","max mem ="+Runtime.getRuntime().maxMemory()+" total mem ="+Runtime.getRuntime().totalMemory()+" free mem ="+Runtime.getRuntime().freeMemory());
         try {
             File optimiseFile = getDir("dex", Context.MODE_PRIVATE);
             File dexFilePath = new File("/sdcard/app_dex");
@@ -86,8 +87,8 @@ public class DynamicApplication extends Application{
                 NativeCrashManager.getInstance().loadLibrary();
                 NativeCrashManager.getInstance().setVersionInfo("+++++++++++++++++))))))))))))))))))))))))))");
                 NativeCrashManager.getInstance().setKeyboardShownState(1);
-                NativeCrashManager.getInstance().initCrashCollect("/sdcard/native_crash.txt");
-//                NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
+//                NativeCrashManager.getInstance().initCrashCollect("/sdcard/native_crash.txt");
+                NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
                 NativeCrashManager.getInstance().initANRCollect(mProcessName, new File(getFilesDir(),"anr_crash.txt").getAbsolutePath());
             }
         }).start();

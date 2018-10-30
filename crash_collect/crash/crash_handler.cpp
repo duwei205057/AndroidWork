@@ -325,6 +325,7 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     while(ret > 0 &&  step < MAX_STEP) {
         memset(dlip, 0, sizeof(dlip));
         dladdr((void *)sig_ctx->arm_pc, dlip);
+        CRASH_LOGE("  #%02d pc=%08lx %s \n", step, sig_ctx->arm_pc, dlip->dli_fname);
         CRASH_LOGE("  #%02d %08lx %s \n", step, sig_ctx->arm_pc-(addr_s )dlip->dli_fbase, dlip->dli_fname);
         rw->Write("  #%02d %08x %s \n", step++, sig_ctx->arm_pc-(addr_s )dlip->dli_fbase, dlip->dli_fname);
         if(step <= 2 && dlip->dli_fname == NULL) {
