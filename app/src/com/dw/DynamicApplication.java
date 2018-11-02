@@ -16,6 +16,7 @@ import com.dw.touchable.MotionActivity;
 import com.dw.utils.Helper;
 import com.dw.utils.PingBackUtils;
 import com.dw.utils.StreamUtil;
+import com.sogou.nativecrashcollector.CrashInfo;
 import com.sogou.nativecrashcollector.NativeCrashManager;
 
 import java.io.BufferedReader;
@@ -90,6 +91,12 @@ public class DynamicApplication extends Application{
 //                NativeCrashManager.getInstance().initCrashCollect("/sdcard/native_crash.txt");
                 NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
                 NativeCrashManager.getInstance().initANRCollect(mProcessName, new File(getFilesDir(),"anr_crash.txt").getAbsolutePath());
+                NativeCrashManager.getInstance().registerCrashInfo(new CrashInfo() {
+                    @Override
+                    public String getCrashMessage() {
+                        return NativeInterface.getInstance().getCrashStringFromNative();
+                    }
+                });
             }
         }).start();
 

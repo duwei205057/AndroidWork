@@ -15,14 +15,16 @@ public class NativeCrashManager {
 //    private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "xx";
 
-    private static String sUsingSoName = "";
-    private static boolean sLoaded = false;
+    private boolean sLoaded = false;
     public static final int ERROR = -1;
     public static final int OK = 0;
 
     public static boolean sCollectLogcat = false;
 
     private static volatile NativeCrashManager mInstance;
+
+    private CrashInfo mCrashInfo;
+
     private NativeCrashManager() {
     }
 
@@ -40,8 +42,6 @@ public class NativeCrashManager {
     public void loadLibrary(String soPath) throws UnsatisfiedLinkError {
         try{
             System.load(soPath);
-            String[] pathSeg = soPath.split("/");
-            sUsingSoName = pathSeg[pathSeg.length > 0 ? pathSeg.length - 1 : 0];
             sLoaded = true;
         } catch (UnsatisfiedLinkError ule) {
             ule.printStackTrace();
@@ -129,6 +129,14 @@ public class NativeCrashManager {
     public int setKeyboardShownState(int state){
         if (!sLoaded) return ERROR;
         return NativeInterface.getInstance().setKeyboardShownStateNative(state);
+    }
+
+    public CrashInfo getmCrashInfo() {
+        return mCrashInfo;
+    }
+
+    public void registerCrashInfo(CrashInfo mCrashInfo) {
+        this.mCrashInfo = mCrashInfo;
     }
 
     private void LOGD(String message) {

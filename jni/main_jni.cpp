@@ -29,6 +29,12 @@ static jstring get_StringFromNative(JNIEnv *env, jobject jobj) {
     return env->NewStringUTF((const char *) x);
 }
 
+static jstring get_CrashStringFromNative(JNIEnv *env, jobject jobj) {
+    //int i = gettid();
+    char *text = "String in crash case";
+    return env->NewStringUTF(text);
+}
+
 
 /*
  * Table of methods associated with a single class.
@@ -36,6 +42,7 @@ static jstring get_StringFromNative(JNIEnv *env, jobject jobj) {
 static JNINativeMethod gMethods[] = {
         /* Name,                Signature,                                          Function Pointer */
         {"getStringFromNative", "()Ljava/lang/String;", (void *) get_StringFromNative},
+        {"getCrashStringFromNative", "()Ljava/lang/String;", (void *) get_CrashStringFromNative},
 
 };
 

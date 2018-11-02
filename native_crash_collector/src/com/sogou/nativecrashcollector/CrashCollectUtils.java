@@ -28,10 +28,27 @@ public class CrashCollectUtils {
 //            e.printStackTrace();
 //        }
         StringBuilder stackTrace = new StringBuilder();
+        stackTrace.append(getMessageFromCallback());
         stackTrace.append(getMessageFromShell());
         stackTrace.append(getMessageFromThread(tid));
 
         return stackTrace.toString();
+    }
+
+    private static String getMessageFromCallback() {
+        CrashInfo crashInfo = NativeCrashManager.getInstance().getmCrashInfo();
+        if (crashInfo != null) {
+            try {
+                StringBuilder sb = new StringBuilder();
+                sb.append("[App CrashInfo]\n");
+                sb.append(crashInfo.getCrashMessage());
+                sb.append("\n\n");
+                return sb.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
     }
 
     private static String getMessageFromShell() {

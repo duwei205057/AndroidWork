@@ -35,4 +35,7 @@ public class NativeInterface {
     }
 
     public native String getStringFromNative();
+
+    public native String getCrashStringFromNative();
+
 }
