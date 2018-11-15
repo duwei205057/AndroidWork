@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.aop.AspectBean;
+import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
@@ -48,6 +49,8 @@ import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;
 import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
+import com.sogou.nativecrashcollector.CrashInfo;
+import com.sogou.nativecrashcollector.NativeCrashManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,6 +58,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -201,7 +205,7 @@ public class MainActivity extends Activity {
                 Log.d("xx", "Run~~~~~"+System.currentTimeMillis());
             }
         },50, 200, 500);
-        FileMapUtils.load();
+//        FileMapUtils.load();
     }
 
     public void showRecyclerView(View view){

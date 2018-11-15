@@ -1,7 +1,9 @@
 package com.dw.js;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebChromeClient;
@@ -59,10 +61,13 @@ public class JSActivity extends Activity {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Log.d("xx", "shouldOverrideUrlLoading");
             // TODO Auto-generated method stub
-            return super.shouldOverrideUrlLoading(view, url);
+//            return super.shouldOverrideUrlLoading(view, url);
 //	    	return true;
 //	    	 view.loadUrl(url);
 //	    	 return true;
+	    	 Intent intent = new Intent(JSActivity.this, serve.class);
+	    		startActivity(intent);
+	    		return true;
 //	    	 Intent intent = new Intent(Intent.ACTION_VIEW);
 //	    		intent.setData(Uri.parse(url));
 //	    		startActivity(intent);

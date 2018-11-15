@@ -38,6 +38,7 @@
         <activity android:name="com.database.IntroExampleActivity"/>
         <activity android:name="com.database.DBActivity"/>
         <activity android:name="com.dw.js.JSActivity"/>
+        <activity android:name="com.dw.js.serve"/>
         <activity android:name="com.dw.capture.ScreenCaptureActivity"/>
 
         <receiver android:name=".PhoneReceiver">

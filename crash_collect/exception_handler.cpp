@@ -205,6 +205,7 @@ namespace native_crash_collector {
 
         clazz = env->FindClass(kClassPathName);
         jobj = (jclass) env->NewGlobalRef(clazz);
+
         callbackId = env->GetStaticMethodID(clazz, "getThreadStackTrace", "(I)Ljava/lang/String;");
 
 
@@ -214,6 +215,7 @@ namespace native_crash_collector {
         } else {
             CRASH_LOGD("create thread success.");
         }
+        env->DeleteLocalRef(clazz);
     }
 
     void *ExceptionHandler::DumpJavaThreadInfo(void *argv) {
@@ -234,7 +236,23 @@ namespace native_crash_collector {
 
         }
         jstring ss = (jstring) env->CallStaticObjectMethod(jobj, callbackId, ms_tidCrash);//回调java层方法
-        dump_java_info = (char *) env->GetStringUTFChars(ss, NULL);
+        jthrowable exec;
+        exec = env->ExceptionOccurred();
+        if (exec) {
+            CRASH_LOGD("clearException found exception!!");
+            //env->ExceptionDescribe();
+            env->ExceptionClear();
+        }
+        if (ss != NULL) {
+            jsize len = env->GetStringUTFLength(ss);
+            if(dump_java_info != NULL)
+                delete[] dump_java_info;
+            dump_java_info = new char[len + 1];
+            memset(dump_java_info, 0, len + 1);
+            char * content = (char *) env->GetStringUTFChars(ss, NULL);
+            memcpy(dump_java_info, content, len);
+            env->ReleaseStringUTFChars(ss, content);
+        }
         pthread_mutex_unlock(&mutex);
         SetDumpJavaFinish();
 
