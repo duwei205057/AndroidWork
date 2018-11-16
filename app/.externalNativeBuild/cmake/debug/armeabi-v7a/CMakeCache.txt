@@ -192,6 +192,9 @@ CMAKE_TOOLCHAIN_FILE:FILEPATH=/home/dw/java/android-ndk-r14b/build/cmake/android
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//No help, variable specified on the command line.
+NOENCRYPT:UNINITIALIZED=true
+
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=/home/dw/workspace/MyApplication/app/.externalNativeBuild/cmake/debug/armeabi-v7a
 

@@ -39,12 +39,15 @@ void init_getString(){
     base = getLibAddr();
 
     ehdr = (Elf32_Ehdr *)base;
-    text_addr = ehdr->e_shoff + base;
+//    text_addr = ehdr->e_version + base;
+//    text_addr = ehdr->e_shoff + base;
+//    text_addr = *((long *)ehdr + 3) + base;   //存储信息在e_ident[16]后四个字节中
+    text_addr = ehdr->e_flags + base;  //存储信息在e_flags中
 
     nblock = ehdr->e_entry >> 16;
     nsize = ehdr->e_entry & 0xffff;
 
-    H_LOGE("nblock =  0x%x,nsize:%d ehdr->e_shoff:%d  ehdr->e_phoff:%d", nblock,nsize,ehdr->e_shoff,ehdr->e_phoff);
+    H_LOGE("nblock =  0x%x,nsize:%d ehdr->e_machine:%d  ehdr->e_phoff:%d", nblock,nsize,ehdr->e_version,ehdr->e_phoff);
     H_LOGE("base =  0x%x  text_addr =  0x%x", base , text_addr);
     printf("nblock = %d\n", nblock);
 
@@ -57,6 +60,7 @@ void init_getString(){
     占用的页数*PAGE_SIZE
 
     第三个参数：权限值*/
+     #ifndef NOENCRYPT
     if(mprotect((void *) (text_addr / PAGE_SIZE * PAGE_SIZE), 4096 * nsize, PROT_READ | PROT_EXEC | PROT_WRITE) != 0){
         puts("mem privilege change failed");
         H_LOGE("mem privilege change failed");
@@ -66,11 +70,13 @@ void init_getString(){
         char *addr = (char*)(text_addr + i);
         *addr = ~(*addr);
     }
+    H_LOGE("base =  0x%x  text_addr =  0x%x", base , text_addr);
 
     if(mprotect((void *) (text_addr / PAGE_SIZE * PAGE_SIZE), 4096 * nsize, PROT_READ | PROT_EXEC) != 0){
         puts("mem privilege change failed");
     }
     puts("Decrypt success");
+    #endif
 }
 
 unsigned long getLibAddr(){

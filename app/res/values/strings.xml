@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="status_output">Status Output…</string>
+    <string name="title_book_detail">图书详情</string>
+    <string name="title_book_list">图书列表</string>
 </resources>

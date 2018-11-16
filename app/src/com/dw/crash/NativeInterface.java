@@ -27,6 +27,7 @@ public class NativeInterface {
 //    }
 
     static {
+        //使用加固的so
         String path = cpFromAssert("mmyso");
         System.load(path);
     }

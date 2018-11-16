@@ -40,6 +40,19 @@
         <activity android:name="com.dw.js.JSActivity"/>
         <activity android:name="com.dw.js.serve"/>
         <activity android:name="com.dw.capture.ScreenCaptureActivity"/>
+        <activity android:name="com.dw.glide.GlideActivity"/>
+        <activity
+            android:name="com.dw.fragments.BookListActivity"
+            android:label="@string/title_book_list">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.dw.fragments.BookDetailActivity"
+            android:label="@string/title_book_detail">
+        </activity>
 
         <receiver android:name=".PhoneReceiver">
             <intent-filter android:priority="1000">

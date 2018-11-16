@@ -38,10 +38,13 @@ import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
+import com.dw.capture.ScreenCaptureActivity;
 import com.dw.capture.ScreenCaptureHelper;
 import com.dw.crash.NativeInterface;
 import com.dw.filemap.FileMapUtils;
+import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
+import com.dw.glide.GlideActivity;
 import com.dw.js.JSActivity;
 import com.dw.recycler.RecyclerList;
 import com.dw.resizeicon.ResizeUtils;
@@ -222,12 +225,12 @@ public class MainActivity extends Activity {
 //        test();
         Intent i = new Intent(this,VoiceContainerActivity.class);
         startActivity(i);
-        /*ScreenCaptureHelper.getInstance(this).startCapture(new Rect(0, 0, 2, 4), new ScreenCaptureHelper.Callback() {
-            @Override
-            public void getBitmap(Bitmap bitmap) {
-                test1(bitmap);
-            }
-        });*/
+//        ScreenCaptureHelper.getInstance(this).startCapture(new Rect(0, 0, 2, 4), new ScreenCaptureHelper.Callback() {
+//            @Override
+//            public void getBitmap(Bitmap bitmap) {
+//                test1(bitmap);
+//            }
+//        });
     }
 
     private void test(){
@@ -359,10 +362,22 @@ public class MainActivity extends Activity {
                 Log.d("xx","mInterface.getStringFromNative()===================="+s);
             }
         });*/
-        String s = NativeInterface.getInstance().getStringFromNative();
+//        String s = NativeInterface.getInstance().getStringFromNative();
+        String s = NativeInterface.getInstance().getCrashStringFromNative();
+        s += "  " + NativeInterface.getInstance().getStringFromNative();
         Log.d("xx","mInterface.getStringFromNative()===================="+s);
         Button b = (Button)view;
 //        b.setText(b.getText()+"_"+s);
+    }
+
+    public void startGlide (View view) {
+        Intent i = new Intent(this,GlideActivity.class);
+        startActivity(i);
+    }
+
+    public void startFragment (View view) {
+        Intent i = new Intent(this,BookListActivity.class);
+        startActivity(i);
     }
 
     @TargetApi(Build.VERSION_CODES.M)

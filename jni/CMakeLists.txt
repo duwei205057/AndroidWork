@@ -4,7 +4,15 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(LOCAL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(PROJECT_PATH ${LOCAL_PATH}/..)
-set(CMAKE_SYSTEM_VERSION,21)
+#set(CMAKE_SYSTEM_VERSION,21)
+
+macro(debug msg)
+    message(STATUS "DEBUG ${msg}")
+endmacro()
+
+macro(debugValue var)
+    debug("${var}=\${${var}}")
+endmacro()
 
 add_library(myso
 
@@ -14,7 +22,15 @@ add_library(myso
              # Provides a relative path to your source file(s).要编译的源代码文件的路径，如果你的不是cpp下的，这里记得同步改下
              ${LOCAL_PATH}/main_jni.cpp )
 
-#ADD_DEFINITIONS( "-funwind-tables" ) coffeecatch need
+debugValue(WITH_CRASH_LOG)
+debugValue(NOENCRYPT)
+if (NOENCRYPT STREQUAL "true")
+    set(LOCAL_FLAGS "-DNOENCRYPT")
+else()
+    set(LOCAL_FLAGS "")
+endif()
+
+ADD_DEFINITIONS( ${LOCAL_FLAGS})
 
 set_target_properties(myso PROPERTIES LINK_FLAGS "-llog")
 
