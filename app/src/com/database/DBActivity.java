@@ -22,6 +22,8 @@ import android.widget.SimpleAdapter;
 import com.aop.DebugTrace;
 import com.dw.R;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 /**
  * Created by duwei on 18-5-14.
  */
@@ -36,7 +38,7 @@ public class DBActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.db_activity);
-
+        SQLiteDatabase.loadLibs(this);
         listView = (ListView) findViewById(R.id.listView);
         // 初始化DBManager
         dbManager = new DBManager(this);
@@ -125,7 +127,7 @@ public class DBActivity extends Activity {
                 if (getColumnName(columnIndex).equals("info"))
                 {
                     int age = getInt(getColumnIndex("age"));
-                    return age + " years old, " + super.getString(columnIndex);
+                    return age + " years old, " + new String(super.getBlob(columnIndex));
                 }
                 return super.getString(columnIndex);
             }
@@ -135,7 +137,6 @@ public class DBActivity extends Activity {
                 android.R.layout.simple_list_item_2, cursorWrapper,
                 new String[] { "name", "info" }, new int[] {
                 android.R.id.text1, android.R.id.text2 });
-        ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
     }
 

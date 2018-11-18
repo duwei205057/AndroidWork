@@ -79,7 +79,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     if(!isRunning) animation.cancel();
                     int x = (int)animation.getAnimatedValue("x");
                     int y = (int)animation.getAnimatedValue("y");
-                    Log.d("xx","x="+x+" y="+y);
+//                    Log.d("xx","x="+x+" y="+y);
                     Canvas canvas = sh.lockCanvas(/*new Rect(x + offSetX - BALLWIDTH,y + offSetY - BALLWIDTH,x + offSetX + BALLWIDTH,y + offSetY + BALLWIDTH)*/);
                     if(canvas != null){
                         canvas.drawColor(Color.GRAY);

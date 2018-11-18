@@ -36,7 +36,7 @@ android {
             cmake {
 //                abiFilters "arm64-v8a"
                 abiFilters "armeabi-v7a"
-                arguments "-DANDROID_TOOLCHAIN=clang", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_static" ,"-DWITH_CRASH_LOG=true"// why rtti causes compiling error?
+                arguments "-DANDROID_TOOLCHAIN=clang", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_static" ,"-DWITH_CRASH_LOG=true" , "-DNOENCRYPT=true"// why rtti causes compiling error?
             }
         }
     }
@@ -63,7 +63,7 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('a.keystore')
+            storeFile file('my.keystore')
             storePassword 'android'
             keyAlias 'android'
             keyPassword 'android'
@@ -76,6 +76,7 @@ android {
             resValue("string", "sogou_ime_name1", "AA")
             applicationIdSuffix = ".debug"
             versionNameSuffix "-dw"
+            signingConfig signingConfigs.release
             jniDebuggable true
 //            minifyEnabled true
         }
@@ -158,6 +159,7 @@ dependencies {
     compile files('libs/dex2jar.jar')
     compile files('libs/dictutils.jar')
     compile files('libs/dom4j-1.6.1.jar')
+    compile files('libs/sqlcipher.jar')
     compile files('libs/jclasslib.jar')
     compile project(':hack')
     //    compile project(':realm')
@@ -169,10 +171,11 @@ dependencies {
     //    compile 'com.android.tools.build:gradle:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
+//    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
     compile project(':realmdb')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.1.2'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile project(':native_crash_collector')
 }
 ext {

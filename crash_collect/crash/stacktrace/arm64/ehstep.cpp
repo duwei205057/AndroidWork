@@ -115,7 +115,7 @@ int execute_insns(uint8_t *insn_start, uint8_t *insn_end, dwarf_frame *frame) {
                 MOVE_n(current_insn, leb128_len);
                 CRASH_LOGE("DW_CFA_def_cfa_register r%d", operand_uint32_1);
                 frame->cfa_register = operand_uint32_1;
-                frame->cfa = frame->regs[frame->cfa_register] + frame->cfa_offset;
+//                frame->cfa = frame->regs[frame->cfa_register] + frame->cfa_offset;
                 break;
             case DW_CFA_def_cfa_offset:
                 leb128_len = read_uleb128(current_insn, &operand_uint32_1);

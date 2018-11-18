@@ -6,10 +6,11 @@ package com.database;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
+import net.sqlcipher.DatabaseErrorHandler;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
+import net.sqlcipher.database.SQLiteDatabaseHook;
+import net.sqlcipher.database.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.aop.DebugTrace;
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String TABLE_NAME = "PersonTable";
     public static final String TABLE_NUMBER = "numbers";
-    private static final String DATABASE_NAME = "test";
+    private static final String DATABASE_NAME = "myDatabase";
     public static final int DATABASE_VERSION = 9;
     private static final String TAG = "xx";
     private Context mContext;
@@ -32,9 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     // 构造函数，调用父类SQLiteOpenHelper的构造函数
     @SuppressLint("NewApi")
     public DatabaseHelper(Context context, String name, CursorFactory factory,
-                          int version, DatabaseErrorHandler errorHandler)
+                          int version, SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler)
     {
-        super(context, name, factory, version, errorHandler);
+        super(context, name, factory, version, hook, errorHandler);
         mContext = context;
         mDbName = name;
     }

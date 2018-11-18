@@ -60,7 +60,7 @@ public class DynamicApplication extends Application{
             e.printStackTrace();
         }
 
-        Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+"am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
+        Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+" am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
         Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
                 /*" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) +*/ " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
                 " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
