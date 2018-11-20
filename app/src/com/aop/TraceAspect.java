@@ -10,6 +10,8 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.util.HashMap;
+
 /**
  * Created by duwei on 18-3-8.
  */
@@ -22,6 +24,8 @@ public class TraceAspect {
 
     private static final String POINTCUT_CONSTRUCTOR =
             "execution(@com.aop.DebugTrace * *.*(..))";
+
+    public HashMap<String, Long> map = new HashMap<>();
 
     @Pointcut(POINTCUT_METHOD)
     public void methodAnnotatedWithDebugTrace() {}
@@ -40,7 +44,10 @@ public class TraceAspect {
         Object result = joinPoint.proceed();
         stopWatch.stop();
 
-        DebugLog.log("xx", buildLogMessage(methodName, stopWatch.getTotalTimeMillis())+" this="+joinPoint.getThis()+" target="+joinPoint.getTarget());
+        long methodDuration = stopWatch.getTotalTimeMillis();
+
+        putInMap(methodName, methodDuration);
+        DebugLog.log("xx", buildLogMessage(methodName, methodDuration)+" this="+joinPoint.getThis()+" target="+joinPoint.getTarget() +" this= "+this +" max = " + map.get(methodName));
 
         return result;
     }
@@ -69,4 +76,12 @@ public class TraceAspect {
     public void anyCall(JoinPoint joinPoint){
         Log.d("xx", "anyCall: ");
     }*/
+    private void putInMap(String methodName, long methodDuration) {
+        if (map.containsKey(methodName)) {
+            long cur = map.get(methodName);
+            if (methodDuration > cur )
+                map.put(methodName, methodDuration);
+        } else
+            map.put(methodName, methodDuration);
+    }
 }

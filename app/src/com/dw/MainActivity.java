@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -38,10 +39,7 @@ import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
-import com.dw.capture.ScreenCaptureActivity;
-import com.dw.capture.ScreenCaptureHelper;
 import com.dw.crash.NativeInterface;
-import com.dw.filemap.FileMapUtils;
 import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
 import com.dw.glide.GlideActivity;
@@ -52,8 +50,8 @@ import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;
 import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
-import com.sogou.nativecrashcollector.CrashInfo;
-import com.sogou.nativecrashcollector.NativeCrashManager;
+import com.sogou.nativecrashcollector.BacKTraceFactory;
+import com.sogou.nativecrashcollector.BackTrace;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,12 +59,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
     MyView b;
     MyView c;
     SomeFileObserver sfo;
+    AtomicInteger mAI = new AtomicInteger();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,20 +195,25 @@ public class MainActivity extends Activity {
         }
     }
 
+//    @BackTrace
     public void testDy(View view){
         dyHelper.handleButtonClicked(view);
-        try {
+        /*try {
             execShellCmd("input swipe 200 1400 500 1400");
         } finally {
-        }
+        }*/
         setListData();
-        RedoWorker rw = new RedoWorker(Looper.myLooper());
-        rw.start(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("xx", "Run~~~~~"+System.currentTimeMillis());
-            }
-        },50, 200, 500);
+        RedoWorker rw = new RedoWorker(Looper.getMainLooper());
+        if (rw.ismIsWorking()) rw.done();
+        else {
+            rw.start(new Runnable() {
+                @Override
+                @DebugTrace
+                public void run() {
+                    Log.d("xx", "---------------testDy--------------------");
+                }
+            },50,100,300);
+        }
 //        FileMapUtils.load();
     }
 
@@ -354,6 +360,7 @@ public class MainActivity extends Activity {
         }*/
     }
 
+//    @BackTrace
     public void startNative(View view){
         /*AsyncTask.execute(new Runnable() {
             @Override
@@ -363,11 +370,36 @@ public class MainActivity extends Activity {
             }
         });*/
 //        String s = NativeInterface.getInstance().getStringFromNative();
-        String s = NativeInterface.getInstance().getCrashStringFromNative();
-        s += "  " + NativeInterface.getInstance().getStringFromNative();
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        new Thread(new Runnable() {
+            @Override
+
+            public void run() {
+                Log.d("xx","mInterface.getStringFromNative()====================pid=="+ Process.myPid()+" thread name="+Thread.currentThread().getName());
+                getStringFromNative();
+            }
+        }).start();
+        String s = getStringFromNative();
         Log.d("xx","mInterface.getStringFromNative()===================="+s);
         Button b = (Button)view;
 //        b.setText(b.getText()+"_"+s);
+    }
+
+    @BackTrace
+    private String getStringFromNative() {
+        String s = NativeInterface.getInstance().getCrashStringFromNative();
+        s += "  " + NativeInterface.getInstance().getStringFromNative();
+        Log.d("xx","mInterface.getStringFromNative()===================="+s);
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        return s;
     }
 
     public void startGlide (View view) {
@@ -407,7 +439,7 @@ public class MainActivity extends Activity {
 
         try {
             // 申请获取root权限，这一步很重要，不然会没有作用
-            Process process = Runtime.getRuntime().exec("su");
+            java.lang.Process process = Runtime.getRuntime().exec("su");
             // 获取输出流
             OutputStream outputStream = process.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(

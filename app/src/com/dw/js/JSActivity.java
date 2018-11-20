@@ -46,20 +46,20 @@ public class JSActivity extends Activity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            Log.d("xx", "onPageStarted");
+            Log.d("xx", "WebViewClient onPageStarted");
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            Log.d("xx", "onPageFinished");
+            Log.d("xx", "WebViewClient onPageFinished");
             view.loadUrl("javascript:window.Hehe.getSource('<html>'+"
                     + "document.getElementsByTagName('html')[0].innerHTML+'</html>');");
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d("xx", "shouldOverrideUrlLoading");
+            Log.d("xx", "WebViewClient shouldOverrideUrlLoading");
             // TODO Auto-generated method stub
 //            return super.shouldOverrideUrlLoading(view, url);
 //	    	return true;

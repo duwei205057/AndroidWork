@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.os.Process;
 import android.util.Log;
 
+import com.aop.DebugTrace;
 import com.dw.DynamicApplication;
 
 import java.io.File;
@@ -21,16 +22,16 @@ public class NativeInterface {
 
     private static NativeInterface mInstance = new NativeInterface();
 
-//    static {
-//        System.loadLibrary("myso");
-//        Log.d("xx","NativeInterface  loadlibrary pid=="+ Process.myPid());
-//    }
-
     static {
-        //使用加固的so
-        String path = cpFromAssert("mmyso");
-        System.load(path);
+        System.loadLibrary("myso");
+        Log.d("xx","NativeInterface  loadlibrary pid=="+ Process.myPid());
     }
+
+//    static {
+//        //使用加固的so
+//        String path = cpFromAssert("mmyso");
+//        System.load(path);
+//    }
 
     private NativeInterface(){
 
@@ -67,6 +68,7 @@ public class NativeInterface {
         return mInstance;
     }
 
+    @DebugTrace
     public native String getStringFromNative();
 
     public native String getCrashStringFromNative();

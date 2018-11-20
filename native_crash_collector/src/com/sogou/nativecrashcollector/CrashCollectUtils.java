@@ -1,7 +1,9 @@
 package com.sogou.nativecrashcollector;
 
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
+
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,6 +20,7 @@ public class CrashCollectUtils {
     private static final boolean DEBUG = true;
     //    private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "xx";
+    private static final String DEFAULT = "";
 
     //    @Keep
     public static String getThreadStackTrace(int tid){
@@ -30,7 +33,16 @@ public class CrashCollectUtils {
         StringBuilder stackTrace = new StringBuilder();
         stackTrace.append(getMessageFromCallback());
         stackTrace.append(getMessageFromShell());
-        stackTrace.append(getMessageFromThread(tid));
+        //associate with tid
+        Thread thread = getThreadByTid(tid);
+        if (thread != null) {
+            String message = getMessageFromAspect(thread);
+            if (TextUtils.isEmpty(message)) {
+                stackTrace.append(getMessageFromThread(thread));
+            } else {
+                stackTrace.append(message);
+            }
+        }
 
         return stackTrace.toString();
     }
@@ -39,16 +51,31 @@ public class CrashCollectUtils {
         CrashInfo crashInfo = NativeCrashManager.getInstance().getmCrashInfo();
         if (crashInfo != null) {
             try {
+                String message = crashInfo.getCrashMessage();
+                if (TextUtils.isEmpty(message)) return DEFAULT;
                 StringBuilder sb = new StringBuilder();
                 sb.append("[App CrashInfo]\n");
-                sb.append(crashInfo.getCrashMessage());
+                sb.append(message);
                 sb.append("\n\n");
+                LOGD("getMessageFromCallback="+sb.toString());
                 return sb.toString();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return "";
+        return DEFAULT;
+    }
+
+    private static String getMessageFromAspect(Thread thread) {
+        String message = BacKTraceFactory.getService().getBackTrace(thread);
+        if (TextUtils.isEmpty(message)) return DEFAULT;
+        StringBuilder sb = new StringBuilder();
+        sb.append("[Backtrace java]\n");
+        sb.append("[App CrashInfo With Thread]\n");
+        sb.append(message);
+        sb.append("\n\n");
+        LOGD("getMessageFromCallback="+sb.toString());
+        return sb.toString();
     }
 
     private static String getMessageFromShell() {
@@ -62,21 +89,26 @@ public class CrashCollectUtils {
             }
             return sb.toString();
         }
-        return "";
+        return DEFAULT;
     }
 
-    private static String getMessageFromThread(int tid) {
-        if (tid <= 0) return "";
+    private static String getMessageFromThread(Thread thread) {
+        StringBuilder sb = new StringBuilder();
+        if (thread == null) return DEFAULT;
+        sb.append("[Backtrace java]\n");
+        for (StackTraceElement ste : thread.getStackTrace()) {
+            sb.append("\t at  "+ste.getClassName() + "." + ste.getMethodName() + "(" +ste.getClassName()+ ".java:" + ste.getLineNumber() + ")" + "\n");
+        }
+        return sb.toString();
+    }
+
+    private static Thread getThreadByTid(int tid) {
+        if (tid <= 0) return null;
         StringBuilder sb = new StringBuilder();
         String threadName = getThreadNameById(tid);
         Thread theThread = getThreadByName(threadName);
         LOGD("getThreadStackTrace  tid="+tid+" threadName="+threadName+" theThread="+theThread);
-        sb.append("[Backtrace java]\n");
-        if (theThread == null) return "";
-        for (StackTraceElement ste : theThread.getStackTrace()) {
-            sb.append("\t at  "+ste.getClassName() + "." + ste.getMethodName() + "(" +ste.getClassName()+ ".java:" + ste.getLineNumber() + ")" + "\n");
-        }
-        return sb.toString();
+        return theThread;
     }
 
     private static Thread getThreadByName(String threadName)
@@ -98,7 +130,7 @@ public class CrashCollectUtils {
 
     private static String getThreadNameById(int tid)
     {
-        String strName = "";
+        String strName = DEFAULT;
         int pid = android.os.Process.myPid();
         if ( pid == tid ) {
             return "main";

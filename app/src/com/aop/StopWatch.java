@@ -11,6 +11,7 @@ public class StopWatch {
     private long endTime;
     private long elapsedTime;
 
+
     public StopWatch() {
         //empty
     }
@@ -38,4 +39,5 @@ public class StopWatch {
     public long getTotalTimeMillis() {
         return (elapsedTime != 0) ? TimeUnit.NANOSECONDS.toMillis(endTime - startTime) : 0;
     }
+
 }

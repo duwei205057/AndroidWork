@@ -1,6 +1,5 @@
 package com.dw;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.ComponentName;
@@ -8,27 +7,21 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 
 import com.dw.crash.NativeInterface;
 import com.dw.touchable.MotionActivity;
-import com.dw.utils.Helper;
 import com.dw.utils.PingBackUtils;
 import com.dw.utils.StreamUtil;
-import com.sogou.nativecrashcollector.CrashInfo;
 import com.sogou.nativecrashcollector.NativeCrashManager;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import io.realm.Realm;
 
 
 /**
@@ -91,12 +84,6 @@ public class DynamicApplication extends Application{
 //                NativeCrashManager.getInstance().initCrashCollect("/sdcard/native_crash.txt");
                 NativeCrashManager.getInstance().initCrashCollect(new File(getFilesDir(),"native_crash.txt").getAbsolutePath());
                 NativeCrashManager.getInstance().initANRCollect(mProcessName, new File(getFilesDir(),"anr_crash.txt").getAbsolutePath());
-                NativeCrashManager.getInstance().registerCrashInfo(new CrashInfo() {
-                    @Override
-                    public String getCrashMessage() {
-                        return NativeInterface.getInstance().getCrashStringFromNative();
-                    }
-                });
             }
         }).start();
 

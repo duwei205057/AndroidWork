@@ -10,10 +10,15 @@ import android.os.Looper;
 public class RedoWorker {
 
     private Handler mHandler;
+
     private volatile boolean mIsWorking;
 
     public RedoWorker(Looper looper) {
         mHandler = new Handler(looper);
+    }
+
+    public boolean ismIsWorking() {
+        return mIsWorking;
     }
 
     public void start(final Runnable job, final int... millisecondsGap){
@@ -31,6 +36,19 @@ public class RedoWorker {
                     mHandler.postDelayed(this, delay);
                 }
 
+            }
+        });
+    }
+
+    public void startLooper(final Runnable job, final int millisecondsGap){
+        if (job == null) return;
+        mIsWorking = true;
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!mIsWorking) return;
+                job.run();
+                mHandler.postDelayed(this, millisecondsGap);
             }
         });
     }
