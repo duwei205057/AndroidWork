@@ -7,4 +7,6 @@ package com.sogou.nativecrashcollector;
 public interface CrashInfo {
 
     String getCrashMessage();
+
+    String getCrashMessage(Thread crashThread);
 }
