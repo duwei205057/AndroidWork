@@ -1,6 +1,0 @@
-#include <jni.h>
-
-jstring Java_com_example_administrator_kotlinapp_ui_JniActivity_sayHello(JNIEnv* env,jobject jobj){
-          char* text="I am from C";
-          return (*env)->NewStringUTF(env,text);
- }

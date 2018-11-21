@@ -25,7 +25,7 @@ android {
         minSdkVersion rootProject.extensions.getByName("ext").properties.get("minSdkVersion")
         targetSdkVersion rootProject.extensions.getByName("ext").properties.get("targetSdkVersion")
         versionCode 1
-        versionName "8.8." + getDateVersionName()
+        versionName "hi." + getDateVersionName()
         manifestPlaceholders = [CUR_DATE: getDateVersionName()]
         multiDexEnabled true
         ndk {
@@ -78,13 +78,14 @@ android {
             versionNameSuffix "-dw"
             signingConfig signingConfigs.release
             jniDebuggable true
-            buildConfigField "boolean", "LOG1", "false"
+            buildConfigField "boolean", "LOG", "true"
 //            minifyEnabled true
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField "boolean", "LOG", "true"
         }
         oppo.initWith(buildTypes.release)
         oppo {
@@ -171,7 +172,7 @@ dependencies {
     //    compile 'com.android.tools.build:gradle:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'org.greenrobot:eventbus:3.0.0'
-//    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
+    //    compile 'net.zetetic:android-database-sqlcipher:3.4.0@aar'
     compile project(':realmdb')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.1.2'
@@ -202,10 +203,10 @@ final def log = project.logger
 final def variants = project.android.applicationVariants
 
 variants.all { variant ->
-    if (!variant.buildType.isDebuggable()) {
+    /*if (!variant.buildType.isDebuggable()) {
         log.debug("Skipping non-debuggable build type '${variant.buildType.name}'.")
         return;
-    }
+    }*/
 
     JavaCompile javaCompile = variant.javaCompile
     javaCompile.doLast {

@@ -34,15 +34,7 @@ public class CrashCollectUtils {
         stackTrace.append(getMessageFromCallback());
         stackTrace.append(getMessageFromShell());
         //associate with tid
-        Thread thread = getThreadByTid(tid);
-        if (thread != null) {
-            String message = getMessageFromAspect(thread);
-            if (TextUtils.isEmpty(message)) {
-                stackTrace.append(getMessageFromThread(thread));
-            } else {
-                stackTrace.append(message);
-            }
-        }
+        stackTrace.append(getMessageFromThread(tid));
 
         return stackTrace.toString();
     }
@@ -66,12 +58,11 @@ public class CrashCollectUtils {
         return DEFAULT;
     }
 
-    private static String getMessageFromAspect(Thread thread) {
+    private static String getBackTraceFromAspect(Thread thread) {
         String message = BacKTraceFactory.getService().getBackTrace(thread);
         if (TextUtils.isEmpty(message)) return DEFAULT;
         StringBuilder sb = new StringBuilder();
-        sb.append("[Backtrace java]\n");
-        sb.append("[App CrashInfo With Thread]\n");
+        sb.append("[Backtrace java - 1]\n");
         sb.append(message);
         sb.append("\n\n");
         LOGD("getMessageFromCallback="+sb.toString());
@@ -92,10 +83,24 @@ public class CrashCollectUtils {
         return DEFAULT;
     }
 
-    private static String getMessageFromThread(Thread thread) {
+    private static String getMessageFromThread(int tid) {
+        Thread thread = getThreadByTid(tid);
+        StringBuilder sb = new StringBuilder();
+        if (thread != null) {
+            String message = getBackTraceFromAspect(thread);
+            if (TextUtils.isEmpty(message)) {
+                sb.append(getBackTraceNow(thread));
+            } else {
+                sb.append(message);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String getBackTraceNow(Thread thread) {
         StringBuilder sb = new StringBuilder();
         if (thread == null) return DEFAULT;
-        sb.append("[Backtrace java]\n");
+        sb.append("[Backtrace java - 2]\n");
         for (StackTraceElement ste : thread.getStackTrace()) {
             sb.append("\t at  "+ste.getClassName() + "." + ste.getMethodName() + "(" +ste.getClassName()+ ".java:" + ste.getLineNumber() + ")" + "\n");
         }

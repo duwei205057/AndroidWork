@@ -160,11 +160,15 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
         return;
     }
 
+    rw->Write("\n\n[crashcollect version] %.1f  \n", 1.0);
     if(head_info != NULL) rw->Write(head_info);
+    int state = ExceptionHandler::keyboard_state;
+    if (state >= 0 ) rw->Write("\n[Keyboard Show State] %d  \n", state);
+
     Dl_info *dlip = new Dl_info;
 
     if(dump_java_info != NULL) {
-        rw->Write("\n******Java Crash Report******\n");
+        rw->Write("\n******Java backtrace Report******\n");
         CRASH_LOGE("\ndump_java_info content==:%s length==:%d\n", dump_java_info, strlen(dump_java_info));
         rw->WriteString(dump_java_info);
     }
@@ -242,11 +246,7 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     rw->Write("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr_s] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
     CRASH_LOGE("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr_s] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
 
-    /*4 keyboard state*/
-    int state = ExceptionHandler::keyboard_state;
-    if (state >= 0 ) rw->Write("\n\n[Keyboard Show State] %d  ", state);
-
-    /*5 registers*/
+    /*4 registers*/
     rw->Write("\n\n[Registers]  \n");
     rw->Write("  r0 %08x  ",(addr_s) sig_ctx->arm_r0);
     rw->Write("r1 %08x  ",(addr_s) sig_ctx->arm_r1);

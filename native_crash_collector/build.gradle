@@ -9,8 +9,8 @@ buildscript {
     }
 }
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion rootProject.extensions.getByName("ext").properties.get("compileSdkVersion")
+    buildToolsVersion rootProject.extensions.getByName("ext").properties.get("buildToolsVersion")
 
     sourceSets {
         main {
@@ -63,11 +63,13 @@ android {
 //                    arguments "WITH_SYMBOL_TABLE=true WITH_CRASH_LOG=true"
 //                }
 //            }
+            buildConfigField "boolean", "LOG", "true"
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LOG", "true"
         }
     }
 	

@@ -1,6 +1,0 @@
-/home/dw/workspace/MyApplication/jni/CMakeFiles/edit_cache.dir
-/home/dw/workspace/MyApplication/jni/CMakeFiles/rebuild_cache.dir
-/home/dw/workspace/MyApplication/jni/CMakeFiles/myso.dir
-/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/edit_cache.dir
-/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/rebuild_cache.dir
-/home/dw/workspace/MyApplication/crash_collect/CMakeFiles/crash_collect.dir

@@ -30,7 +30,9 @@ public class BackTraceUtils implements BackTraceService {
 
     private ConcurrentHashMap<Long,Future<String>> mBackTraceInfo;
     private ExecutorService  mExeService;
-    private ThreadLocal<FutureTask> mThreadLocal;
+    private ThreadLocal<Callable> mThreadLocal;
+
+    private boolean mEnabled;
 
     public static BackTraceUtils getInstance () {
         if (mInstance == null)
@@ -45,15 +47,20 @@ public class BackTraceUtils implements BackTraceService {
     private BackTraceUtils() {
         mBackTraceInfo = new ConcurrentHashMap<>();
         mThreadLocal = new InnerThreadLocal();
+        initExeService();
+    }
+
+    private void initExeService() {
         mExeService = new InnerThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new InnerThreadFactory());
     }
 
+    @Override
     public void register() {
+        if (!isEnabled()) return;
         try {
             final Thread current = Thread.currentThread();
             LOGD("register() mExeService.isShutdown()="+mExeService.isShutdown()+" mExeService.isTerminated()="+mExeService.isTerminated());
-            FutureTask future = mThreadLocal.get();
-            mExeService.execute(future);
+            Future future = mExeService.submit(mThreadLocal.get());
             mBackTraceInfo.put(current.getId(), future);
         } catch (RejectedExecutionException e) {
             e.printStackTrace();
@@ -63,17 +70,19 @@ public class BackTraceUtils implements BackTraceService {
 
     }
 
-
+    @Override
     public void withdraw() {
+        if (!isEnabled()) return;
         Thread current = Thread.currentThread();
         LOGD(" withdraw----------------------");
-        Future<String> future = mBackTraceInfo.get(current);
+        Future<String> future = mBackTraceInfo.get(current.getId());
         if (future != null) future.cancel(true);
         mBackTraceInfo.remove(current.getId());
     }
 
+    @Override
     public String getBackTrace(Thread thread) {
-        if (thread == null) return "";
+        if (!isEnabled() || thread == null) return "";
         Future<String> future = mBackTraceInfo.get(thread.getId());
         LOGD( "BackTraceUtils  getBackTrace() future:"+future);
         if (future != null)
@@ -91,14 +100,24 @@ public class BackTraceUtils implements BackTraceService {
         return "";
     }
 
-    class InnerThreadLocal extends ThreadLocal<FutureTask> {
+    @Override
+    public void enable(boolean enable) {
+        mEnabled = enable;
+        LOGD( "enable====================enable :"+enable);
+    }
+
+    public boolean isEnabled() {
+        return mEnabled;
+    }
+
+    class InnerThreadLocal extends ThreadLocal<Callable> {
         @Override
-        protected FutureTask initialValue() {
+        protected Callable initialValue() {
             final Thread current = Thread.currentThread();
-            FutureTask<String> future = new FutureTask<String>(new Callable<String>() {
+            Callable<String> callable = new Callable<String>() {
                 @Override
                 public String call() throws Exception {
-                    LOGD("start====================pid=="+ Process.myPid()+" thread name="+current.getName()+" current.isAlive()="+current.isAlive());
+                    LOGD("start====================pid=="+ Process.myPid()+" thread name="+current.getName()+" current.isAlive()="+current.isAlive()+" execute thread="+Thread.currentThread().getName());
                     if (!current.isAlive()) return "";
                     StackTraceElement[] ste = current.getStackTrace();
                     StringBuilder sb = new StringBuilder();
@@ -108,8 +127,8 @@ public class BackTraceUtils implements BackTraceService {
                     LOGD( "end====================current.getName() :"+current.getName()+" "+sb.toString());
                     return sb.toString();
                 }
-            });
-            return future;
+            };
+            return callable;
         }
     }
 
@@ -142,7 +161,8 @@ public class BackTraceUtils implements BackTraceService {
             super.afterExecute(r, t);
             LOGD( "afterExecute Throwable=" + t + "----------------------r=" + r);
             if (t == null && r instanceof Future<?>) {
-                LOGD( "cannel:"+((Future<?>) r).isCancelled());
+                Future f = ((Future<?>) r);
+                LOGD( "cannel:"+f.isCancelled()+" done:"+f.isDone());
             }
         }
     }

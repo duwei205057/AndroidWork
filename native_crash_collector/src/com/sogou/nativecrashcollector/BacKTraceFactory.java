@@ -20,4 +20,6 @@ interface BackTraceService {
     public void withdraw();
 
     public String getBackTrace(Thread thread);
+
+    public void enable(boolean enable);
 }

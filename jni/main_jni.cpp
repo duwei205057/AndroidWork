@@ -27,6 +27,7 @@ void init_getString() __attribute__((constructor));
 unsigned long getLibAddr();
 
 void init_getString(){
+    #ifndef NOENCRYPT
     char name[15];
     unsigned int nblock;
     unsigned int nsize;
@@ -60,7 +61,7 @@ void init_getString(){
     占用的页数*PAGE_SIZE
 
     第三个参数：权限值*/
-     #ifndef NOENCRYPT
+
     if(mprotect((void *) (text_addr / PAGE_SIZE * PAGE_SIZE), 4096 * nsize, PROT_READ | PROT_EXEC | PROT_WRITE) != 0){
         puts("mem privilege change failed");
         H_LOGE("mem privilege change failed");
@@ -112,9 +113,9 @@ jstring get_StringFromNative(JNIEnv *env, jobject jobj) {
 //    int x = 0;
 //    int y = 5 / x;
 //    x =+ y;
-//    char * exception = NULL;
-//    strcmp(exception, "anr");
-//    sprintf(exception, "anr");
+    char * exception = NULL;
+    strcmp(exception, "anr");
+    sprintf(exception, "anr");
     return env->NewStringUTF("string from native");
 }
 

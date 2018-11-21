@@ -77,6 +77,10 @@ public class NativeCrashManager {
         NativeInterface.getInstance().setNativeCollectSwitchNative(NativeInterface.ANR_SWITCH, enable);
     }
 
+    public void enableBackTraceAspect(boolean enable) {
+        BacKTraceFactory.getService().enable(enable);
+    }
+
     /** 初始化崩溃收集模块
      * @param crashLogPath 崩溃日志文件路径
      * */

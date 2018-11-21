@@ -52,6 +52,7 @@ import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
 import com.sogou.nativecrashcollector.BacKTraceFactory;
 import com.sogou.nativecrashcollector.BackTrace;
+import com.sogou.nativecrashcollector.NativeCrashManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -64,6 +65,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -195,7 +197,7 @@ public class MainActivity extends Activity {
         }
     }
 
-//    @BackTrace
+    @BackTrace
     public void testDy(View view){
         dyHelper.handleButtonClicked(view);
         /*try {
@@ -215,6 +217,11 @@ public class MainActivity extends Activity {
             },50,100,300);
         }
 //        FileMapUtils.load();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showRecyclerView(View view){
@@ -375,16 +382,15 @@ public class MainActivity extends Activity {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        new Thread(new Runnable() {
-            @Override
+//        new Thread(new Runnable() {
+//            @Override
 
-            public void run() {
-                Log.d("xx","mInterface.getStringFromNative()====================pid=="+ Process.myPid()+" thread name="+Thread.currentThread().getName());
-                getStringFromNative();
-            }
-        }).start();
+//            public void run() {
+//                Log.d("xx","mInterface.getStringFromNative()====================pid=="+ Process.myPid()+" thread name="+Thread.currentThread().getName());
+//                getStringFromNative();
+//            }
+//        }).start();
         String s = getStringFromNative();
-        Log.d("xx","mInterface.getStringFromNative()===================="+s);
         Button b = (Button)view;
 //        b.setText(b.getText()+"_"+s);
     }
@@ -394,11 +400,6 @@ public class MainActivity extends Activity {
         String s = NativeInterface.getInstance().getCrashStringFromNative();
         s += "  " + NativeInterface.getInstance().getStringFromNative();
         Log.d("xx","mInterface.getStringFromNative()===================="+s);
-//        try {
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         return s;
     }
 
@@ -414,6 +415,7 @@ public class MainActivity extends Activity {
 
     @TargetApi(Build.VERSION_CODES.M)
     public void resizeIcon(View view){
+        NativeCrashManager.getInstance().enableBackTraceAspect(Math.random() > 0.5 ? true : false);
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
