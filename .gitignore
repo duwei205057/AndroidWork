@@ -1,0 +1,11 @@
+.*
+*~
+*.iml
+*/build/
+build/
+*/CMakeFiles/
+*.cmake
+*/CMakeCache.txt
+*/android_gradle_build.json
+local.properties
+*/Makefile
