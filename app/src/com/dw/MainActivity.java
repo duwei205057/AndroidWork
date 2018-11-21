@@ -44,7 +44,6 @@ import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
 import com.dw.glide.GlideActivity;
 import com.dw.js.JSActivity;
-import com.dw.recycler.RecyclerList;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;
@@ -93,6 +92,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         root = (ViewGroup)LayoutInflater.from(this).inflate(R.layout.activity_main,null);
+        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
         setContentView(root);
         log = Logger.getLogger("lavasoft");
         log.setLevel(Level.ALL);
@@ -224,14 +224,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void showRecyclerView(View view){
-        Intent i = new Intent(this,RecyclerList.class);
-        startActivity(i);
-    }
-
     public void showMotionView(View view){
         Intent i = new Intent(this,MotionActivity.class);
         startActivity(i);
+    }
+
+    public void normalButton(View view){
     }
 
     public void showVoiceView(View view){

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="Hello World!"/>
-        <Button android:id="@+id/button" android:layout_width="wrap_content"
+        <Button android:id="@+id/button" android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="testDy"
                 android:text="Click Me"/><!--android:layout_below="@id/text"-->
@@ -40,7 +40,7 @@
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:onClick="resizeIcon" android:text="resizeIcon"/>
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="showRecyclerView" android:text="showRecyclerView"/>
+                    android:onClick="normalButton" android:text="normalButton"/>
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:onClick="showMotionView" android:text="showMotionView"/>
             <Button android:layout_width="match_parent" android:layout_height="wrap_content"

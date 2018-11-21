@@ -53,11 +53,18 @@ public class DynamicApplication extends Application{
             e.printStackTrace();
         }
 
+
         Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+" am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
         Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
                 /*" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) +*/ " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
                 " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
         Log.d("xx","max mem ="+Runtime.getRuntime().maxMemory()+" total mem ="+Runtime.getRuntime().totalMemory()+" free mem ="+Runtime.getRuntime().freeMemory());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            ActivityManager activityService = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
+            activityService.getMemoryInfo(info);
+            Log.d("xx","ActivityManager.getMemoryClass=="+activityService.getMemoryClass()+" MemoryInfo  avail="+info.availMem+" threshold="+info.threshold+" totalmem="+info.totalMem);
+        }
         try {
             File optimiseFile = getDir("dex", Context.MODE_PRIVATE);
             File dexFilePath = new File("/sdcard/app_dex");
