@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="getImage"
+            android:background="@drawable/last_wp"
             android:text="Button" />
 
         <TextView

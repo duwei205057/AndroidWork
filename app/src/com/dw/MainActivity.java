@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,6 +25,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Process;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
 import com.dw.crash.NativeInterface;
+import com.dw.databinding.ActivityMainBinding;
 import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
 import com.dw.glide.GlideActivity;
@@ -59,11 +62,19 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -81,28 +92,31 @@ public class MainActivity extends Activity {
     Button btn;
     ListView mList;
     View mMove;
-    ViewGroup root;
     MyView a;
     MyView b;
     MyView c;
     SomeFileObserver sfo;
     AtomicInteger mAI = new AtomicInteger();
+    ActivityMainBinding mActivityMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        root = (ViewGroup)LayoutInflater.from(this).inflate(R.layout.activity_main,null);
         setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
-        setContentView(root);
+        mActivityMain = DataBindingUtil.setContentView(this, R.layout.activity_main);
         log = Logger.getLogger("lavasoft");
         log.setLevel(Level.ALL);
         getMetaData();
-        btn = (Button)findViewById(R.id.button);
-        mList = (ListView)findViewById(R.id.mList);
-        mMove = findViewById(R.id.move_view);
+        btn = mActivityMain.button;
+        mList = mActivityMain.mList;
+        mMove = mActivityMain.moveView;
         AspectBean bean = new AspectBean(5);
         bean.setAge(10);
         EventBus.getDefault().register(this);
+        LayoutBean lbean = new LayoutBean();
+        lbean.firstText = "Click Me";
+        mActivityMain.setBean(lbean);
+        btn.setText("");
         //启动截图功能
 //        startActivity(new Intent(this, ScreenCaptureActivity.class));
 
@@ -161,6 +175,8 @@ public class MainActivity extends Activity {
         mHandlerThread.start();
         Handler h = new Handler(mHandlerThread.getLooper());
         registerReceiver(mReceiver, mIntentFilter, null, h);
+        getApplicationContext().registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        copyFile();
     }
 
     @Override
@@ -168,6 +184,20 @@ public class MainActivity extends Activity {
         super.onPause();
         unregisterReceiver(mReceiver);
         mHandlerThread.quit();
+    }
+
+    private void copyFile() {
+        try {
+            FileChannel fi = new RandomAccessFile("/system/lib/libhwui.so","r").getChannel();
+            FileChannel fo = new RandomAccessFile(new File(getFilesDir(),"myhwui.so"),"rw").getChannel();
+            fo.transferFrom(fi,0,fi.size());
+            fi.close();
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void registAsyncReceiver(View view){
@@ -195,6 +225,37 @@ public class MainActivity extends Activity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            testRunnableOnScreenOff();
+        }
+    };
+
+    Thread testScreenOff;
+    private void testRunnableOnScreenOff() {
+        if (testScreenOff != null) return;
+        testScreenOff = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                while(true) {
+                    if (Thread.interrupted()) {
+                        Log.d("xx", "---------------quit when interrupted--------------------");
+                        return;
+                    }
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+                    Log.d("xx","last time = "+(System.currentTimeMillis() - start));
+                }
+            }
+        });
+        testScreenOff.start();
     }
 
     @BackTrace
@@ -393,7 +454,7 @@ public class MainActivity extends Activity {
 //        b.setText(b.getText()+"_"+s);
     }
 
-    @BackTrace
+//    @BackTrace
     private String getStringFromNative() {
         String s = NativeInterface.getInstance().getCrashStringFromNative();
         s += "  " + NativeInterface.getInstance().getStringFromNative();
@@ -461,6 +522,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("xx","-----MainActivity onDestroy-------");
         if (sfo != null) sfo.stopWatching();
+        try {
+            unregisterReceiver(mScreenOffReceiver);
+        } catch (Exception e) {}
+        if (testScreenOff != null) {
+            testScreenOff.interrupt();
+            Log.d("xx","-----onDestroy interrupt  testScreenOff-------");
+        }
     }
 }

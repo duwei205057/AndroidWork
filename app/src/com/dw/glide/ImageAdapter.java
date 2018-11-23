@@ -1,6 +1,8 @@
 package com.dw.glide;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -47,6 +49,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         holder.imageView.setTag(R.id.webp_image,url);
         holder.textView.setText(url);
         loadImage(holder.target, url);
+//        loadImage(holder.imageView, url);
     }
 
     @Override
@@ -61,6 +64,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 .placeholder(R.drawable.image_loading)
                 .error(R.drawable.image_error)
                 .into(target);
+    }
+
+    private void loadImage(ImageView imageView, String url) {
+        Glide.with(mContext).load(url)
+                .asBitmap()
+                .placeholder(R.drawable.image_loading)
+                .error(R.drawable.image_error)
+                .into(imageView);
     }
 
     @Override
@@ -147,7 +158,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         @Override
         public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
             LOGD("----------onResourceReady---------resource="+resource+"  glideAnimation="+glideAnimation);
-            imageView.setImageDrawable((Drawable) resource);
+            if (resource instanceof Bitmap)
+                imageView.setImageDrawable(new BitmapDrawable((Bitmap)resource));
+            else if (resource instanceof Drawable)
+                imageView.setImageDrawable((Drawable) resource);
         }
     }
 

@@ -29,6 +29,7 @@ public class GlideActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
         setContentView(R.layout.activity_glide);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +86,7 @@ public class GlideActivity extends Activity {
             "http://www.gstatic.com/webp/gallery/3.webp",
             "http://www.gstatic.com/webp/gallery/4.webp",
             "http://www.gstatic.com/webp/gallery/5.webp",
+            "http://osscdn.ixingtu.com/musi_file/20181108/a20540641eb7de9a8bf186261a8ccf57.webp",
     };
     private static final String[] ALPHA_WEBP = {
             "https://www.gstatic.com/webp/gallery3/1_webp_ll.webp",
@@ -116,7 +118,8 @@ public class GlideActivity extends Activity {
 
     private List<String> getAnimatedWebpUrls() {
         List<String> webpUrls = new ArrayList<>(Arrays.asList(SIMPLE_WEBP));
-        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
+        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.last_wp;
+//        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
         webpUrls.add(resUrl);
         return webpUrls;
     }

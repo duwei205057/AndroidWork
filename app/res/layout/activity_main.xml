@@ -1,90 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin"
-                    tools:context="com.dw.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data class="ActivityMainBinding">
+        <variable
+            name="bean"
+            type="com.dw.LayoutBean"></variable>
+    </data>
 
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="Hello World!"/>
-        <Button android:id="@+id/button" android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="testDy"
-                android:text="Click Me"/><!--android:layout_below="@id/text"-->
-        <LinearLayout
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/button"
-            android:orientation="vertical">
-            <!--<TextView
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context="com.dw.MainActivity">
+
+            <TextView
+                android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:text="First !"/>
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:inputType="none"
-            />-->
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="resizeIcon" android:text="resizeIcon"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="normalButton" android:text="normalButton"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="showMotionView" android:text="showMotionView"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="showVoiceView" android:text="showVoiceView"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="registAsyncReceiver" android:text="registAsyncReceiver"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startGif" android:text="startGif"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startRealm" android:text="startRealm"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startSqlite" android:text="startSqlite"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startJS" android:text="startJS"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startNative" android:text="startNative"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startGlide" android:text="startGlide"/>
-            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:onClick="startFragment" android:text="startFragment"/>
-            <EditText
-                android:id="@+id/et_user_name"
-                android:layout_width="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="Hello World!" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="try me"/>
-            <ListView android:id="@+id/mList"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-            />
-            <com.dw.MoveView android:id="@+id/move_view"
-                             android:layout_width="100dp"
-                             android:layout_height="250dp"
+                android:onClick="testDy"
+                android:text="@{(bean == null)? @string/app_name :bean.firstText}" /><!--android:layout_below="@id/text"-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/button"
+                android:orientation="vertical">
+                <!--<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:text="First !"/>
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:inputType="none"
+                />-->
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="resizeIcon"
+                    android:text="resizeIcon" />
 
-            /><!--android:background="@color/colorRed"-->
-            <com.dw.GestureView android:id="@+id/gesture_view"
-                             android:layout_width="250dp"
-                             android:layout_height="250dp"
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="normalButton"
+                    android:text="normalButton" />
 
-            />
-            <com.dw.MySurfaceView android:id="@+id/surface"
-                                  android:layout_width="match_parent"
-                                  android:layout_height="400dp"/>
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="showMotionView"
+                    android:text="showMotionView" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="showVoiceView"
+                    android:text="showVoiceView" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="registAsyncReceiver"
+                    android:text="registAsyncReceiver" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startGif"
+                    android:text="startGif" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startRealm"
+                    android:text="startRealm" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startSqlite"
+                    android:text="startSqlite" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startJS"
+                    android:text="startJS" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startNative"
+                    android:text="startNative" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startGlide"
+                    android:text="startGlide" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="startFragment"
+                    android:text="startFragment" />
+
+                <EditText
+                    android:id="@+id/et_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="try me" />
+
+                <ListView
+                    android:id="@+id/mList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.dw.MoveView
+                    android:id="@+id/move_view"
+                    android:layout_width="100dp"
+                    android:layout_height="250dp"
+
+                    /><!--android:background="@color/colorRed"-->
+                <com.dw.GestureView
+                    android:id="@+id/gesture_view"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+
+                    />
+
+                <com.dw.MySurfaceView
+                    android:id="@+id/surface"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
     <!--android:focusable="true"
     android:focusableInTouchMode="true"-->
+</layout>
