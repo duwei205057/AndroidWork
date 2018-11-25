@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,6 +42,7 @@ import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
+import com.dw.block.BlockDetectByPrinter;
 import com.dw.crash.NativeInterface;
 import com.dw.databinding.ActivityMainBinding;
 import com.dw.fragments.BookListActivity;
@@ -97,31 +99,30 @@ public class MainActivity extends Activity {
     MyView c;
     SomeFileObserver sfo;
     AtomicInteger mAI = new AtomicInteger();
-    ActivityMainBinding mActivityMain;
+    ActivityMainBinding mActivityMain;//DataBindingUtil.setContentView比较耗时
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
-        mActivityMain = DataBindingUtil.setContentView(this, R.layout.activity_main);
+//        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
+//        mActivityMain = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         log = Logger.getLogger("lavasoft");
         log.setLevel(Level.ALL);
         getMetaData();
-        btn = mActivityMain.button;
-        mList = mActivityMain.mList;
-        mMove = mActivityMain.moveView;
+        btn = (Button) findViewById(R.id.button);
+        mList = (ListView)findViewById(R.id.listView) ;
+        mMove = (MoveView)findViewById(R.id.move_view);
         AspectBean bean = new AspectBean(5);
         bean.setAge(10);
         EventBus.getDefault().register(this);
         LayoutBean lbean = new LayoutBean();
         lbean.firstText = "Click Me";
-        mActivityMain.setBean(lbean);
+//        mActivityMain.setBean(lbean);
         btn.setText("");
         //启动截图功能
 //        startActivity(new Intent(this, ScreenCaptureActivity.class));
 
-//        BlockDetectByChoreographer.start();
-//        BlockDetectByPrinter.start();
 
         /*a = new MyView(this,0xFF0000,"red");
         ViewGroup.MarginLayoutParams am = new ViewGroup.MarginLayoutParams(500,500);
@@ -141,6 +142,20 @@ public class MainActivity extends Activity {
         cm.leftMargin = 500;
         cm.topMargin = 500;
         root.addView(c,cm);*/
+    }
+
+    private void readWeb() {
+        try {
+            TypedValue value = new TypedValue();
+            @SuppressLint("ResourceType")
+            InputStream in = getResources().openRawResource(R.drawable.last_wp);
+            Log.d("xx","webp head = "+(char)(in.read() & 0xFF) + (char)(in.read() & 0xFF) + (char)(in.read() & 0xFF) + (char)(in.read() & 0xFF));
+            in.close();
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -176,7 +191,8 @@ public class MainActivity extends Activity {
         Handler h = new Handler(mHandlerThread.getLooper());
         registerReceiver(mReceiver, mIntentFilter, null, h);
         getApplicationContext().registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        copyFile();
+//        copyFile();
+//        readWeb();
     }
 
     @Override

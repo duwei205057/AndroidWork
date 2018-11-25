@@ -9,6 +9,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.dw.block.BlockDetectByChoreographer;
+import com.dw.block.BlockDetectByPrinter;
 import com.dw.crash.NativeInterface;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.PingBackUtils;
@@ -52,6 +54,9 @@ public class DynamicApplication extends Application{
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+//        BlockDetectByChoreographer.start();
+//        BlockDetectByPrinter.start();
 
 
         Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+" am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());

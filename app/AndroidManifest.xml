@@ -23,9 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".recycler.RecyclerList"
-            android:label="List"/>
-        <activity
             android:name=".touchable.MotionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:process=":remote"

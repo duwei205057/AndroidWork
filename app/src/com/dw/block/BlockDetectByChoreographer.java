@@ -1,5 +1,7 @@
 package com.dw.block;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Log;
 import android.view.Choreographer;
 
@@ -10,7 +12,11 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class BlockDetectByChoreographer {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void start() {
+        /*
+        Choreographer.postCallbackDelayed(int callbackType,Runnable action, Object token, long delayMillis)
+        */
         Choreographer.getInstance().postFrameCallback(new Choreographer.FrameCallback() {
             long lastFrameTimeNanos = 0;
             long currentFrameTimeNanos = 0;

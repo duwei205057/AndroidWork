@@ -1,21 +1,33 @@
 package com.dw.glide;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.rastermill.FrameSequence;
+import android.support.rastermill.FrameSequenceDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import com.aop.DebugTrace;
 import com.bumptech.glide.Glide;
 import com.dw.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * Created by dw on 18-11-16.
@@ -25,13 +37,15 @@ public class GlideActivity extends Activity {
 
     RecyclerView mRecyclerView;
     ImageAdapter mWebpAdapter;
+    Button mButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
+//        setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar);
         setContentView(R.layout.activity_glide);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        mButton = (Button)findViewById(R.id.button);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mWebpAdapter = new ImageAdapter(this, getAnimatedWebpUrls());
         mRecyclerView.setAdapter(mWebpAdapter);
@@ -52,6 +66,45 @@ public class GlideActivity extends Activity {
         Glide.with(view.getContext())
                 .load("http://img1.dzwww.com:8080/tupian_pl/20150813/16/7858995348613407436.jpg")
                 .into(imageView);
+        AsyncTask<Void,Void,byte[]> at = new AsyncTask<Void,Void,byte[]>() {
+
+            @Override
+            protected void onPostExecute(byte[] bytes) {
+                super.onPostExecute(bytes);
+                long start = System.currentTimeMillis();
+                FrameSequence fs = FrameSequence.decodeByteArray(bytes);
+                Log.d("xx","decodeByteArray cost = "+ (System.currentTimeMillis() - start));
+                FrameSequenceDrawable fsd = new FrameSequenceDrawable(fs);
+                fsd.start();
+                fsd.setCircleMaskEnabled(true);
+                mButton.setBackground(fsd);
+            }
+
+            @Override
+            protected byte[] doInBackground(Void... voids) {
+                return decorButton();
+            }
+        };
+        at.execute();
+    }
+
+    @SuppressLint("ResourceType")
+    private byte[] decorButton() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            long start = System.currentTimeMillis();
+            InputStream is = getResources().openRawResource(R.drawable.broken);
+            int len;
+            byte[] buffer = new byte[8192];
+            while((len = is.read(buffer)) != -1)
+                bos.write(buffer,0,len);
+            is.close();
+            bos.close();
+            Log.d("xx","copy into mem cost = "+ (System.currentTimeMillis() - start));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bos.toByteArray();
     }
 
     @Override
@@ -80,13 +133,13 @@ public class GlideActivity extends Activity {
     }
 
     private static final String[] SIMPLE_WEBP = {
-            "http://img1.dzwww.com:8080/tupian_pl/20150813/16/7858995348613407436.jpg",
+//            "http://img1.dzwww.com:8080/tupian_pl/20150813/16/7858995348613407436.jpg",
             "http://www.gstatic.com/webp/gallery/1.webp",
-            "http://www.gstatic.com/webp/gallery/2.webp",
-            "http://www.gstatic.com/webp/gallery/3.webp",
-            "http://www.gstatic.com/webp/gallery/4.webp",
-            "http://www.gstatic.com/webp/gallery/5.webp",
-            "http://osscdn.ixingtu.com/musi_file/20181108/a20540641eb7de9a8bf186261a8ccf57.webp",
+//            "http://www.gstatic.com/webp/gallery/2.webp",
+//            "http://www.gstatic.com/webp/gallery/3.webp",
+//            "http://www.gstatic.com/webp/gallery/4.webp",
+//            "http://www.gstatic.com/webp/gallery/5.webp",
+//            "http://osscdn.ixingtu.com/musi_file/20181108/a20540641eb7de9a8bf186261a8ccf57.webp",
     };
     private static final String[] ALPHA_WEBP = {
             "https://www.gstatic.com/webp/gallery3/1_webp_ll.webp",
@@ -118,8 +171,8 @@ public class GlideActivity extends Activity {
 
     private List<String> getAnimatedWebpUrls() {
         List<String> webpUrls = new ArrayList<>(Arrays.asList(SIMPLE_WEBP));
-        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.last_wp;
-//        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
+//        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.last_wp;
+        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
         webpUrls.add(resUrl);
         return webpUrls;
     }

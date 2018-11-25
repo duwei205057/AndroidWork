@@ -12,7 +12,7 @@ import android.util.Log;
 public class LogMonitor {
     private HandlerThread mLogThread = new HandlerThread("log");
     private Handler mIoHandler;
-    private static final long TIME_BLOCK = 1000L;
+    private static final long TIME_BLOCK = 500L;
     String mTag;
 
     public LogMonitor(String tag) {

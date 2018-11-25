@@ -36,6 +36,7 @@ public class BookListActivity extends Activity implements
 				.findFragmentById(R.id.book_list))
 				.setActivateOnItemClick(true);
 		}
+		getFragmentManager().beginTransaction().add(new MyFragment(),"Hi").commit();
 	}
 
 	@Override
