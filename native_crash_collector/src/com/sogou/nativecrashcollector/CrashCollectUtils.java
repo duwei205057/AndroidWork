@@ -87,6 +87,7 @@ public class CrashCollectUtils {
         Thread thread = getThreadByTid(tid);
         StringBuilder sb = new StringBuilder();
         if (thread != null) {
+            sb.append("Java Thread Name : "+thread.getName()+"\n");
             String message = getBackTraceFromAspect(thread);
             if (TextUtils.isEmpty(message)) {
                 sb.append(getBackTraceNow(thread));

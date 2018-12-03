@@ -10,6 +10,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.dw.MainActivity;
 import com.dw.R;
 
 
@@ -19,7 +20,8 @@ public class JSActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_js);
-
+//        setContentView(MainActivity.mMove);
+//        WebView web = MainActivity.mWebView;
         WebView web = (WebView)findViewById(R.id.web);
 //		web.loadUrl("http://www.google.com");
 
@@ -53,8 +55,8 @@ public class JSActivity extends Activity {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.d("xx", "WebViewClient onPageFinished");
-            view.loadUrl("javascript:window.Hehe.getSource('<html>'+"
-                    + "document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+//            view.loadUrl("javascript:window.Hehe.getSource('<html>'+"
+//                    + "document.getElementsByTagName('html')[0].innerHTML+'</html>');");
         }
 
         @Override
@@ -65,9 +67,9 @@ public class JSActivity extends Activity {
 //	    	return true;
 //	    	 view.loadUrl(url);
 //	    	 return true;
-	    	 Intent intent = new Intent(JSActivity.this, serve.class);
-	    		startActivity(intent);
-	    		return true;
+//	    	 Intent intent = new Intent(JSActivity.this, serve.class);
+//	    		startActivity(intent);
+	    		return false;
 //	    	 Intent intent = new Intent(Intent.ACTION_VIEW);
 //	    		intent.setData(Uri.parse(url));
 //	    		startActivity(intent);

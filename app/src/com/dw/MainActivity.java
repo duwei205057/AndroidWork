@@ -32,6 +32,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -48,6 +50,8 @@ import com.dw.databinding.ActivityMainBinding;
 import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
 import com.dw.glide.GlideActivity;
+import com.dw.http.Test;
+import com.dw.js.AndroidJavaScript;
 import com.dw.js.JSActivity;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
@@ -111,7 +115,7 @@ public class MainActivity extends Activity {
         log.setLevel(Level.ALL);
         getMetaData();
         btn = (Button) findViewById(R.id.button);
-        mList = (ListView)findViewById(R.id.listView) ;
+        mList = (ListView)findViewById(R.id.mList) ;
         mMove = (MoveView)findViewById(R.id.move_view);
         AspectBean bean = new AspectBean(5);
         bean.setAge(10);
@@ -294,11 +298,14 @@ public class MainActivity extends Activity {
             },50,100,300);
         }
 //        FileMapUtils.load();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        Test test = new Test();
+        test.httpsConnect();
+
     }
 
     public void showMotionView(View view){
