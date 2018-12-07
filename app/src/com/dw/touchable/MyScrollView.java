@@ -109,6 +109,7 @@ public class MyScrollView extends ViewGroup {
     }
 
     public void onDraw(Canvas canvas) {
+        Log.d("xx",mTag+"  canvas.getClipBounds()==="+canvas.getClipBounds());
         canvas.drawColor(mBgColor);
         int start = 0;
         int step = 100;

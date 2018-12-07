@@ -12,11 +12,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.GenericRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.transcode.UnitTranscoder;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.dw.R;
+import com.dw.glide.module.StreamFsDecoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,16 +65,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     }
 
     private void loadImage(InnerTarget target, String url) {
-        Glide.with(mContext).load(url)
-//                .asBitmap()
-                .placeholder(R.drawable.image_loading)
-                .error(R.drawable.image_error)
-                .into(target);
+        ImageLoader il = new ImageLoader();
+        il.preloadImage("/sdcard/debug/",url ,null);
     }
 
     private void loadImage(ImageView imageView, String url) {
         Glide.with(mContext).load(url)
-                .asBitmap()
+//                .asBitmap()
                 .placeholder(R.drawable.image_loading)
                 .error(R.drawable.image_error)
                 .into(imageView);
@@ -162,6 +165,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 imageView.setImageDrawable(new BitmapDrawable((Bitmap)resource));
             else if (resource instanceof Drawable)
                 imageView.setImageDrawable((Drawable) resource);
+            if (resource instanceof GlideDrawable) {
+                ((GlideDrawable) resource).start();
+            }
         }
     }
 

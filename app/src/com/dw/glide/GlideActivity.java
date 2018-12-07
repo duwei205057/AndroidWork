@@ -2,26 +2,34 @@ package com.dw.glide;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.rastermill.FrameSequence;
-import android.support.rastermill.FrameSequenceDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.aop.DebugTrace;
 import com.bumptech.glide.Glide;
 import com.dw.R;
+import com.sogou.webp.FrameSequence;
+import com.sogou.webp.FrameSequenceDrawable;
+import com.sogou.webp.Gifflen;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +46,14 @@ public class GlideActivity extends Activity {
     RecyclerView mRecyclerView;
     ImageAdapter mWebpAdapter;
     Button mButton;
+    Gifflen mGifflen;
+
+    private int mDelayTime = 500;
+
+    private int mQuality = 10;
+
+    private int mColor = 256;
+    private TypedArray mDrawableList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +65,7 @@ public class GlideActivity extends Activity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mWebpAdapter = new ImageAdapter(this, getAnimatedWebpUrls());
         mRecyclerView.setAdapter(mWebpAdapter);
+        mDrawableList = getResources().obtainTypedArray(R.array.source);
     }
 
     @Override
@@ -86,14 +103,37 @@ public class GlideActivity extends Activity {
             }
         };
         at.execute();
+        mGifflen = new Gifflen.Builder()
+                .color(mColor)
+                .delay(mDelayTime)
+                .quality(mQuality)
+                .listener(new Gifflen.OnEncodeFinishListener() {
+                    @Override
+                    public void onEncodeFinish(String path) {
+                        Log.d("xx","----------------onEncodeFinish-----------------");
+                    }
+                })
+                .build();
+        final String mStorePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
+                File.separator + "gifflen-" + mQuality + "-" + mColor + "-" + mDelayTime + "-sapmle.gif";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mGifflen.encode(GlideActivity.this, mStorePath, 320, 320, mDrawableList);
+            }
+        }).start();
+
     }
+
+
 
     @SuppressLint("ResourceType")
     private byte[] decorButton() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             long start = System.currentTimeMillis();
-            InputStream is = getResources().openRawResource(R.drawable.broken);
+            InputStream is = getResources().openRawResource(R.drawable.broken);//动态
+//            InputStream is = getResources().openRawResource(R.drawable.boat);//静态
             int len;
             byte[] buffer = new byte[8192];
             while((len = is.read(buffer)) != -1)
@@ -163,17 +203,17 @@ public class GlideActivity extends Activity {
 
     private static final String[] ANIM_GIF = {
             "https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif",
-            "https://78.media.tumblr.com/31ff4ea771940d2403323c1416b81064/tumblr_p1ymv2Xghn1qbt8b8o2_500.gif",
-            "https://78.media.tumblr.com/45c7b305f0dbdb9a3c941be1d86aceca/tumblr_p202yd8Jz11uashjdo3_500.gif",
-            "https://78.media.tumblr.com/167e9c5a0534d2718853a2e3985d64e2/tumblr_p1yth5CHXk1srs2u0o1_500.gif",
-            "https://78.media.tumblr.com/e7548bfe04a9fdadcac440a5802fb570/tumblr_p1zj4dyrxN1u4mwxfo1_500.gif",
+//            "https://78.media.tumblr.com/31ff4ea771940d2403323c1416b81064/tumblr_p1ymv2Xghn1qbt8b8o2_500.gif",
+//            "https://78.media.tumblr.com/45c7b305f0dbdb9a3c941be1d86aceca/tumblr_p202yd8Jz11uashjdo3_500.gif",
+//            "https://78.media.tumblr.com/167e9c5a0534d2718853a2e3985d64e2/tumblr_p1yth5CHXk1srs2u0o1_500.gif",
+//            "https://78.media.tumblr.com/e7548bfe04a9fdadcac440a5802fb570/tumblr_p1zj4dyrxN1u4mwxfo1_500.gif",
     };
 
     private List<String> getAnimatedWebpUrls() {
-        List<String> webpUrls = new ArrayList<>(Arrays.asList(SIMPLE_WEBP));
+        List<String> webpUrls = new ArrayList<>(Arrays.asList(ANIM_GIF));
 //        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.last_wp;
-        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
-        webpUrls.add(resUrl);
+//        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.broken;
+//        webpUrls.add(resUrl);
         return webpUrls;
     }
 }

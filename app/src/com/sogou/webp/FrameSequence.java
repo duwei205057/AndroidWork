@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package android.support.rastermill;
+package com.sogou.webp;
 
 import android.graphics.Bitmap;
 import android.support.annotation.Keep;
+import android.util.Log;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -49,6 +50,37 @@ public class FrameSequence {
     private static native void nativeDestroyState(long nativeState);
     private static native long nativeGetFrame(long nativeState, int frameNr,
                                               Bitmap output, int previousFrameNr);
+
+    /**
+     * Gifflen addFrame
+     *
+     * @param pixels pixels array from bitmap
+     * @return 是否成功.
+     */
+    public native int addFrame(int[] pixels);
+
+    /**
+     * Gifflen init
+     *
+     * @param path    Gif 图片的保存路径
+     * @param width   Gif 图片的宽度.
+     * @param height  Gif 图片的高度.
+     * @param color   Gif 图片的色域.
+     * @param quality 进行色彩量化时的quality参数.
+     * @param delay   相邻的两帧之间的时间间隔.
+     * @return 如果返回值不是0, 就代表着执行失败.
+     */
+    public native int init(String path, int width, int height, int color, int quality, int delay);
+
+    /**
+     * * native层做一些释放资源的操作.
+     */
+    public native void close();
+
+    public void onEncodeFinish() {
+        Log.d("xx","------------onEncodeFinish------------------");
+    }
+
 
     @SuppressWarnings("unused") // called by native
     private FrameSequence(long nativeFrameSequence, int width, int height,

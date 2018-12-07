@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.support.rastermill;
+package com.sogou.webp;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
