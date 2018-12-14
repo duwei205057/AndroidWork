@@ -549,6 +549,10 @@ public class FrameSequenceDrawable extends Drawable implements Animatable, Runna
         return mFrameSequence.isOpaque() ? PixelFormat.OPAQUE : PixelFormat.TRANSPARENT;
     }
 
+    public byte[] getFrameSequenceByteData() {
+        return mFrameSequence.getByteData();
+    }
+
     @Nullable
     @Override
     public ConstantState getConstantState() {

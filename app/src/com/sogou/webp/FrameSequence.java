@@ -26,7 +26,11 @@ import java.nio.ByteBuffer;
 @Keep
 public class FrameSequence {
     static {
-        System.loadLibrary("framesequence");
+        try {
+            System.loadLibrary("framesequence");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private final long mNativeFrameSequence;
@@ -50,36 +54,7 @@ public class FrameSequence {
     private static native void nativeDestroyState(long nativeState);
     private static native long nativeGetFrame(long nativeState, int frameNr,
                                               Bitmap output, int previousFrameNr);
-
-    /**
-     * Gifflen addFrame
-     *
-     * @param pixels pixels array from bitmap
-     * @return 是否成功.
-     */
-    public native int addFrame(int[] pixels);
-
-    /**
-     * Gifflen init
-     *
-     * @param path    Gif 图片的保存路径
-     * @param width   Gif 图片的宽度.
-     * @param height  Gif 图片的高度.
-     * @param color   Gif 图片的色域.
-     * @param quality 进行色彩量化时的quality参数.
-     * @param delay   相邻的两帧之间的时间间隔.
-     * @return 如果返回值不是0, 就代表着执行失败.
-     */
-    public native int init(String path, int width, int height, int color, int quality, int delay);
-
-    /**
-     * * native层做一些释放资源的操作.
-     */
-    public native void close();
-
-    public void onEncodeFinish() {
-        Log.d("xx","------------onEncodeFinish------------------");
-    }
+    private static native byte[] nativeGetByteData(long nativeFrameSequence);
 
 
     @SuppressWarnings("unused") // called by native
@@ -136,6 +111,13 @@ public class FrameSequence {
         return new State(nativeState);
     }
 
+    byte[] getByteData() {
+        if (mNativeFrameSequence == 0) {
+            throw new IllegalStateException("attempted to use incorrectly built FrameSequence");
+        }
+        return nativeGetByteData(mNativeFrameSequence);
+    }
+
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -173,6 +155,7 @@ public class FrameSequence {
 
         // TODO: consider adding alternate API for drawing into a SurfaceTexture
         public long getFrame(int frameNr, Bitmap output, int previousFrameNr) {
+            Log.d("xx","State  getFrame frameNr="+frameNr+"  previousFrameNr="+previousFrameNr);
             if (output == null || output.getConfig() != Bitmap.Config.ARGB_8888) {
                 throw new IllegalArgumentException("Bitmap passed must be non-null and ARGB_8888");
             }

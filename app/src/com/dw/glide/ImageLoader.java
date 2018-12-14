@@ -4,11 +4,10 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.dw.DynamicApplication;
 import com.dw.utils.FileOperator;
 
@@ -43,16 +42,12 @@ public class ImageLoader {
 
             return;
         }
-        ((DrawableTypeRequest)Glide.with(DynamicApplication.mRealApplication).load(url).diskCacheStrategy(DiskCacheStrategy.NONE)).downloadOnly(new SimpleTarget<File>() {
+        Glide.with(DynamicApplication.mRealApplication).downloadOnly().load(url).into(new SimpleTarget<File>() {
             @Override
-            public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+            public void onResourceReady(File resource, Transition<? super File> transition) {
                 Log.d("xx","onResourceReady");
             }
 
-            @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                super.onLoadFailed(e, errorDrawable);
-            }
         });
 
     }
