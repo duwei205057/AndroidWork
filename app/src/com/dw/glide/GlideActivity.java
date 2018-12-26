@@ -24,14 +24,19 @@ import android.widget.Toast;
 import com.aop.DebugTrace;
 import com.bumptech.glide.Glide;
 import com.dw.R;
+import com.dw.gif.BaseGifImageView;
 import com.sogou.webp.FrameSequence;
 import com.sogou.webp.FrameSequenceDrawable;
 import com.sogou.webp.Gifflen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +84,7 @@ public class GlideActivity extends Activity {
     }
 
     public void getImage(View view) {
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        final BaseGifImageView imageView = (BaseGifImageView) findViewById(R.id.imageView);
         Glide.with(view.getContext())
                 .load("http://img1.dzwww.com:8080/tupian_pl/20150813/16/7858995348613407436.jpg")
                 .into(imageView);
@@ -103,23 +108,35 @@ public class GlideActivity extends Activity {
             }
         };
         at.execute();
-        mGifflen = new Gifflen.Builder()
-                .color(mColor)
-                .delay(mDelayTime)
-                .quality(mQuality)
-                .listener(new Gifflen.OnEncodeFinishListener() {
-                    @Override
-                    public void onEncodeFinish(String path) {
-                        Log.d("xx","----------------onEncodeFinish-----------------");
-                    }
-                })
-                .build();
         final String mStorePath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                File.separator + "gifflen-" + mQuality + "-" + mColor + "-" + mDelayTime + "-sapmle.gif";
+                File.separator + "test/result.gif";
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mGifflen.encode(GlideActivity.this, mStorePath, 320, 320, mDrawableList);
+                try {
+                    RandomAccessFile ra = new RandomAccessFile("/sdcard/test/test.webp","r");
+                    FileChannel fc = ra.getChannel();
+                    ByteBuffer bb = ByteBuffer.allocate((int)ra.length());
+                    fc.read(bb);
+                    bb.flip();
+                    ra.close();
+                    new Gifflen.Builder()
+                            .path(mStorePath)
+                            .width(320)
+                            .height(320)
+                            .listener(new Gifflen.OnEncodeFinishListener() {
+                                @Override
+                                public void onEncodeFinish(String path) {
+                                    Log.d("xx","----------------onEncodeFinish-----------------");
+                                    imageView.setGifImage(path);
+                                }
+                            })
+                            .encodeFrameSequence(bb);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
 

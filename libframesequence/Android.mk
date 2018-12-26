@@ -10,6 +10,7 @@ LOCAL_SRC_FILES := \
 	JNIHelpers.cpp \
 	Registry.cpp \
 	Stream.cpp  \
+	Gifflen.cpp  \
 #	FrameSequence_gif.cpp \
 
 CXX11_FLAGS := -std=c++11

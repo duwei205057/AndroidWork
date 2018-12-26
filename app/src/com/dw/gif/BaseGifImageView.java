@@ -214,7 +214,7 @@ public class BaseGifImageView extends ImageView {
         setIsGifImage(true);
     }
 
-    public void setGifImage(String gifFilePath, boolean showNow) {
+    public void setGifImage(String gifFilePath) {
         LOGD("gifFilePath = " + gifFilePath);
         if (gifFilePath == null) return;
         try {

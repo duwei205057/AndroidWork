@@ -37,9 +37,9 @@ public class JSActivity extends Activity {
         web.setWebViewClient(new MyAndroidWebViewClient());
         web.addJavascriptInterface(new AndroidJavaScript(getApplicationContext()), "Hehe");
 
-        web.loadUrl("https://account.sogou.com/connect/login?type=wap&provider=qq&client_id=2003&thirdInfo=&third_appid=");
+//        web.loadUrl("https://account.sogou.com/connect/login?type=wap&provider=qq&client_id=2003&thirdInfo=&third_appid=");
 //		web.loadUrl("https://www.baidu.com/");
-//		web.loadUrl("file:///android_asset/QuestionAnswer.html");
+		web.loadUrl("file:///android_asset/serve.html");
         web.getSettings().setJavaScriptEnabled(true);
 
     }

@@ -21,6 +21,7 @@
 #include "FrameSequence.h"
 
 #include "FrameSequenceJNI.h"
+#include "Gifflen.h"
 
 #define JNI_PACKAGE "com/sogou/webp"
 
@@ -30,105 +31,47 @@ static struct {
     jmethodID ctor;
 } gFrameSequenceClassInfo;
 
-int imgw, imgh;
-int optCol = 256, optQuality = 100, optDelay = 4;
-unsigned char *data32bpp = NULL;
-NeuQuant *neuQuant = NULL;
-DIB inDIB, *outDIB;
-static char s[128];
-
-FILE *pGif = NULL;
+//int imgw, imgh;
+//int optCol = 256, optQuality = 100, optDelay = 4;
+//unsigned char *data32bpp = NULL;
+//NeuQuant *neuQuant = NULL;
+//DIB inDIB, *outDIB;
+//static char s[128];
+//
+//FILE *pGif = NULL;
 
 ///////////////////////////generate gif/////////////////////////////////////////
 
-int max_bits(int);
+//int max_bits(int);
 
-int GIF_LZW_compressor(DIB *, unsigned int, FILE *, int);
+//int GIF_LZW_compressor(DIB *, unsigned int, FILE *, int);
 
 static jint gifflen_init(JNIEnv *ioEnv, jobject ioThis,
                                                            jstring gifName,
                                                            jint w, jint h, jint numColors,
-                                                           jint quality, jint frameDelay) {
+                                                           jint quality) {
     const char *str;
     str = ioEnv->GetStringUTFChars(gifName, NULL);
     if (str == NULL) {
-        return -1; /* OutOfMemoryError already thrown */
+        return 0; /* OutOfMemoryError already thrown */
     }
 
-    __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen", str);
-
-    if ((pGif = fopen(str, "wb")) == NULL) {
-        ioEnv->ReleaseStringUTFChars(gifName, str);
-        __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen open file failed : ", str);
-        return -2;
-    }
-
+    Gifflen* gifflen = new Gifflen();
+    int state = gifflen->init(str, w, h, numColors, quality);
     ioEnv->ReleaseStringUTFChars(gifName, str);
+    if (state < 0) {
+        delete gifflen;
+        return 0;
+    }
 
-    optDelay = frameDelay;
-    optCol = numColors;
-    optQuality = quality;
-    imgw = w;
-    imgh = h;
-
-    __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen", "Allocating memory for input DIB");
-    data32bpp = new unsigned char[imgw * imgh * PIXEL_SIZE];
-
-    inDIB.bits = data32bpp;
-    inDIB.width = imgw;
-    inDIB.height = imgh;
-    inDIB.bitCount = 32;
-    inDIB.pitch = imgw * PIXEL_SIZE;
-    inDIB.palette = NULL;
-
-    __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen", "Allocating memory for output DIB");
-    outDIB = new DIB(imgw, imgh, 8);
-    outDIB->palette = new unsigned char[768];
-
-    neuQuant = new NeuQuant();
-
-    // Output the GIF header and Netscape extension
-    fwrite("GIF89a", 1, 6, pGif);
-    s[0] = w & 0xFF;
-    s[1] = w / 0x100;
-    s[2] = h & 0xFF;
-    s[3] = h / 0x100;
-    s[4] = 0x50 + max_bits(numColors) - 1;
-    s[5] = s[6] = 0;
-    s[7] = 0x21;
-    s[8] = 0xFF;
-    s[9] = 0x0B;
-    fwrite(s, 1, 10, pGif);
-    fwrite("NETSCAPE2.0", 1, 11, pGif);
-    s[0] = 3;
-    s[1] = 1;
-    s[2] = s[3] = s[4] = 0;
-    fwrite(s, 1, 5, pGif);
-
-    return 0;
+    return reinterpret_cast<jint>(gifflen);
 }
 
 
-static void gifflen_close(JNIEnv *ioEnv, jobject ioThis) {
-    if (data32bpp) {
-        delete[] data32bpp;
-        data32bpp = NULL;
-    }
-    if (outDIB) {
-        if (outDIB->palette) delete[] outDIB->palette;
-        delete outDIB;
-        outDIB = NULL;
-    }
-    if (pGif) {
-        fputc(';', pGif);
-        fclose(pGif);
-        pGif = NULL;
-    }
-    if (neuQuant) {
-        delete neuQuant;
-        neuQuant = NULL;
-    }
-
+static void gifflen_close(JNIEnv *ioEnv, jobject ioThis, jlong gifflenLong) {
+    Gifflen* gifflen = reinterpret_cast<Gifflen*>(gifflenLong);
+    gifflen->close();
+    delete gifflen;
     jclass clazz = ioEnv->GetObjectClass(ioThis);
     jmethodID method = ioEnv->GetMethodID(clazz, "onEncodeFinish", "()V");
     if (method != 0) {
@@ -137,37 +80,15 @@ static void gifflen_close(JNIEnv *ioEnv, jobject ioThis) {
 }
 
 
-static jint gifflen_addFrame(JNIEnv *ioEnv, jobject ioThis, jintArray inArray) {
-    //把上层的像素数组inArray,复制到inDIB.bits暂存区域内.(start=0, len=width*height)
-    ioEnv->GetIntArrayRegion(inArray, (jint) 0, (jint) (inDIB.width * inDIB.height), (jint *) (inDIB.bits));
+static jint gifflen_addFrame(JNIEnv *env, jobject ioThis, jintArray inArray, jint delay, jlong gifflenLong) {
+    Gifflen* gifflen = reinterpret_cast<Gifflen*>(gifflenLong);
 
-    s[0] = '!';
-    s[1] = 0xF9;
-    s[2] = 4;
-    s[3] = 0;
-    s[4] = optDelay & 0xFF;
-    s[5] = optDelay / 0x100;
-    s[6] = s[7] = 0;
-    s[8] = ',';
-    s[9] = s[10] = s[11] = s[12] = 0;
-    s[13] = imgw & 0xFF;
-    s[14] = imgw / 0x100;
-    s[15] = imgh & 0xFF;
-    s[16] = imgh / 0x100;
-    s[17] = 0x80 + max_bits(optCol) - 1;
+    jint *intBuf = env->GetIntArrayElements(inArray, 0);
+    jsize size = env->GetArrayLength(inArray);
+    int ret = gifflen->addFrame(intBuf, size, delay);
+    env->ReleaseIntArrayElements(inArray, intBuf, JNI_ABORT);
 
-    fwrite(s, 1, 18, pGif);
-
-    __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen", "Quantising");
-
-    neuQuant->quantise(outDIB, &inDIB, optCol, optQuality, 0, &imgw, &imgh);
-
-    fwrite(outDIB->palette, 1, optCol * 3, pGif);
-
-    __android_log_write(ANDROID_LOG_VERBOSE, "com_lchad_gifflen", "Doing GIF encoding");
-    GIF_LZW_compressor(outDIB, optCol, pGif, 0);
-
-    return 0;
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -336,16 +257,16 @@ static JNINativeMethod frameMethods[] = {
 };
 
 static JNINativeMethod gifflenMethods[] = {
-    {   "init",
-        "(Ljava/lang/String;IIIII)I",
+    {   "initNative",
+        "(Ljava/lang/String;IIII)I",
         (void*) gifflen_init
     },
-    {   "close",
-        "()V",
+    {   "closeNative",
+        "(J)V",
         (void*) gifflen_close
     },
-    {   "addFrame",
-        "([I)I",
+    {   "addFrameNative",
+        "([IIJ)I",
         (void*) gifflen_addFrame
     },
 };
@@ -385,186 +306,186 @@ jint FrameSequence_OnLoad(JNIEnv* env) {
 
 /*************************************************************************************************************/
 
-#define hash 11003
+//#define hash 11003
+//
+//unsigned int stat_bits;
+//unsigned int code_in_progress;
+//unsigned int LZWpos;
+//char LZW[256];
+//short int hashtree[hash][3];
 
-unsigned int stat_bits;
-unsigned int code_in_progress;
-unsigned int LZWpos;
-char LZW[256];
-short int hashtree[hash][3];
-
-int find_hash(int pre, int suf) {
-    int i, o;
-    i = ((pre * 256) ^ suf) % hash;
-    if (i == 0) {
-        o = 1;
-    } else {
-        o = hash - i;
-    }
-    while (1) {
-        if (hashtree[i][0] == -1) {
-            return i;
-        } else if ((hashtree[i][1] == pre) && (hashtree[i][2] == suf)) {
-            return i;
-        } else {
-            i = i - o;
-            if (i < 0) {
-                i += hash;
-            }
-        }
-    }
-
-    return 0;
-}
-
-
-int max_bits(int num) {
-    for (int b = 0; b < 14; b++) {
-        if ((1 << b) >= num) {
-            return b;
-        }
-    }
-    return 0;
-}
-
-void append_code(FILE *handle, int code) {
-    LZW[LZWpos++] = code;
-    if (LZWpos == 256) {
-        LZW[0] = 255;
-        fwrite(LZW, 1, 256, handle);
-        LZWpos = 1;
-    }
-}
+//int find_hash(int pre, int suf) {
+//    int i, o;
+//    i = ((pre * 256) ^ suf) % hash;
+//    if (i == 0) {
+//        o = 1;
+//    } else {
+//        o = hash - i;
+//    }
+//    while (1) {
+//        if (hashtree[i][0] == -1) {
+//            return i;
+//        } else if ((hashtree[i][1] == pre) && (hashtree[i][2] == suf)) {
+//            return i;
+//        } else {
+//            i = i - o;
+//            if (i < 0) {
+//                i += hash;
+//            }
+//        }
+//    }
+//
+//    return 0;
+//}
 
 
-void write_code(FILE *handle, int no_bits, int code) {
-    code_in_progress = code_in_progress + (code << stat_bits); // * powers2[stat_bits+1]
-    stat_bits = stat_bits + no_bits;
-    while (stat_bits > 7) {
-        append_code(handle, code_in_progress & 255);
-        code_in_progress >>= 8;
-        stat_bits -= 8;
-    }
-}
-
-
-int GIF_LZW_compressor(DIB *srcimg, unsigned int numColors, FILE *handle, int interlace) {
-    int xdim, ydim, clear, EOI, code, bits, pre, suf, x, y, i, max, bits_color, done, rasterlen;
-    static short int rasters[768];
-
-    stat_bits = 0;
-    code_in_progress = 0;
-    LZWpos = 1;
-
-    for (i = 0; i < hash; i++) {
-        hashtree[i][0] = hashtree[i][1] = hashtree[i][2] = -1;
-    }
-    if (handle == NULL) {
-        return 0;
-    }
-    xdim = srcimg->width;
-    ydim = srcimg->height;
-    bits_color = max_bits(numColors) - 1;
-    clear = (1 << (bits_color + 1)); //powers2[bits_color+2]
-    EOI = clear + 1;
-    code = EOI + 1;
-    bits = bits_color + 2;
-    max = (1 << bits); //powers2[bits+1]
-    if (code == max) {
-        clear = 4;
-        EOI = 5;
-        code = 6;
-        bits++;
-        max *= 2;
-    }
-    fputc(bits - 1, handle);
-    write_code(handle, bits, clear);
-    rasterlen = 0;
-    if (interlace) {
-        for (int e = 1; e <= 5; e += 4) {
-            for (int f = e; f <= ydim; f += 8) {
-                rasters[rasterlen++] = f;
-            }
-        }
-        for (int e = 3; e <= ydim; e += 4) {
-            rasters[rasterlen++] = e;
-        }
-        for (int e = 2; e <= ydim; e += 2) {
-            rasters[rasterlen++] = e;
-        }
-    } else {
-        for (int e = 1; e <= ydim; e++) {
-            rasters[rasterlen++] = e - 1;
-        }
-    }
-    pre = srcimg->bits[rasters[0] * xdim];
-    x = 1;
-    y = 0;
-    done = 0;
-    if (x >= xdim) {
-        y++;
-        x = 0;
-    }
-    while (1) {
-        while (1) {
-            if (!done) {
-                suf = srcimg->bits[rasters[y] * xdim + x];
-                x++;
-                if (x >= xdim) {
-                    y++;
-                    x = 0;
-                    if (y >= ydim) {
-                        done = 1;
-                    }
-                }
-                i = find_hash(pre, suf);
-                if (hashtree[i][0] == -1) {
-                    break;
-                } else
-                    pre = hashtree[i][0];
-            } else {
-                write_code(handle, bits, pre);
-                write_code(handle, bits, EOI);
-                if (stat_bits) {
-                    write_code(handle, bits, 0);
-                }
-                LZW[0] = LZWpos - 1;
-                fwrite(LZW, 1, LZWpos, handle);
-                fputc(0, handle);
-                return 1;
-            }
-        }
-        write_code(handle, bits, pre);
-        hashtree[i][0] = code;
-        hashtree[i][1] = pre;
-        hashtree[i][2] = suf;
-        pre = suf;
-        code++;
-        if (code == max + 1) {
-            max *= 2;
-            if (bits == 12) {
-                write_code(handle, bits, clear);
-                for (i = 0; i < hash; i++) {
-                    hashtree[i][0] = hashtree[i][1] = hashtree[i][2] = -1;
-                }
-                code = EOI + 1;
-                bits = bits_color + 2;
-                max = 1 << bits;
-                if (bits == 2) {
-                    clear = 4;
-                    EOI = 5;
-                    code = 6;
-                    bits = 3;
-                    max *= 2;
-                }
-            } else {
-                bits++;
-            }
-        }
-    }
-
-    return 0;
-}
+//int max_bits(int num) {
+//    for (int b = 0; b < 14; b++) {
+//        if ((1 << b) >= num) {
+//            return b;
+//        }
+//    }
+//    return 0;
+//}
+//
+//void append_code(FILE *handle, int code) {
+//    LZW[LZWpos++] = code;
+//    if (LZWpos == 256) {
+//        LZW[0] = 255;
+//        fwrite(LZW, 1, 256, handle);
+//        LZWpos = 1;
+//    }
+//}
+//
+//
+//void write_code(FILE *handle, int no_bits, int code) {
+//    code_in_progress = code_in_progress + (code << stat_bits); // * powers2[stat_bits+1]
+//    stat_bits = stat_bits + no_bits;
+//    while (stat_bits > 7) {
+//        append_code(handle, code_in_progress & 255);
+//        code_in_progress >>= 8;
+//        stat_bits -= 8;
+//    }
+//}
+//
+//
+//int GIF_LZW_compressor(DIB *srcimg, unsigned int numColors, FILE *handle, int interlace) {
+//    int xdim, ydim, clear, EOI, code, bits, pre, suf, x, y, i, max, bits_color, done, rasterlen;
+//    static short int rasters[768];
+//
+//    stat_bits = 0;
+//    code_in_progress = 0;
+//    LZWpos = 1;
+//
+//    for (i = 0; i < hash; i++) {
+//        hashtree[i][0] = hashtree[i][1] = hashtree[i][2] = -1;
+//    }
+//    if (handle == NULL) {
+//        return 0;
+//    }
+//    xdim = srcimg->width;
+//    ydim = srcimg->height;
+//    bits_color = max_bits(numColors) - 1;
+//    clear = (1 << (bits_color + 1)); //powers2[bits_color+2]
+//    EOI = clear + 1;
+//    code = EOI + 1;
+//    bits = bits_color + 2;
+//    max = (1 << bits); //powers2[bits+1]
+//    if (code == max) {
+//        clear = 4;
+//        EOI = 5;
+//        code = 6;
+//        bits++;
+//        max *= 2;
+//    }
+//    fputc(bits - 1, handle);
+//    write_code(handle, bits, clear);
+//    rasterlen = 0;
+//    if (interlace) {
+//        for (int e = 1; e <= 5; e += 4) {
+//            for (int f = e; f <= ydim; f += 8) {
+//                rasters[rasterlen++] = f;
+//            }
+//        }
+//        for (int e = 3; e <= ydim; e += 4) {
+//            rasters[rasterlen++] = e;
+//        }
+//        for (int e = 2; e <= ydim; e += 2) {
+//            rasters[rasterlen++] = e;
+//        }
+//    } else {
+//        for (int e = 1; e <= ydim; e++) {
+//            rasters[rasterlen++] = e - 1;
+//        }
+//    }
+//    pre = srcimg->bits[rasters[0] * xdim];
+//    x = 1;
+//    y = 0;
+//    done = 0;
+//    if (x >= xdim) {
+//        y++;
+//        x = 0;
+//    }
+//    while (1) {
+//        while (1) {
+//            if (!done) {
+//                suf = srcimg->bits[rasters[y] * xdim + x];
+//                x++;
+//                if (x >= xdim) {
+//                    y++;
+//                    x = 0;
+//                    if (y >= ydim) {
+//                        done = 1;
+//                    }
+//                }
+//                i = find_hash(pre, suf);
+//                if (hashtree[i][0] == -1) {
+//                    break;
+//                } else
+//                    pre = hashtree[i][0];
+//            } else {
+//                write_code(handle, bits, pre);
+//                write_code(handle, bits, EOI);
+//                if (stat_bits) {
+//                    write_code(handle, bits, 0);
+//                }
+//                LZW[0] = LZWpos - 1;
+//                fwrite(LZW, 1, LZWpos, handle);
+//                fputc(0, handle);
+//                return 1;
+//            }
+//        }
+//        write_code(handle, bits, pre);
+//        hashtree[i][0] = code;
+//        hashtree[i][1] = pre;
+//        hashtree[i][2] = suf;
+//        pre = suf;
+//        code++;
+//        if (code == max + 1) {
+//            max *= 2;
+//            if (bits == 12) {
+//                write_code(handle, bits, clear);
+//                for (i = 0; i < hash; i++) {
+//                    hashtree[i][0] = hashtree[i][1] = hashtree[i][2] = -1;
+//                }
+//                code = EOI + 1;
+//                bits = bits_color + 2;
+//                max = 1 << bits;
+//                if (bits == 2) {
+//                    clear = 4;
+//                    EOI = 5;
+//                    code = 6;
+//                    bits = 3;
+//                    max *= 2;
+//                }
+//            } else {
+//                bits++;
+//            }
+//        }
+//    }
+//
+//    return 0;
+//}
 
 
 

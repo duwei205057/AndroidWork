@@ -40,6 +40,8 @@ public class FsGlideLibraryModule extends LibraryGlideModule {
                 /* Bitmaps for static lossless and transparent webp or animated webp images*/
                 .append(InputStream.class, Bitmap.class, streamBitmapDecoder)
                 .append(ByteBuffer.class, Bitmap.class, byteBufferBitmapDecoder)
+                .append(InputStream.class, NinePatchBitmap.class, new NinePatchBitmapDecoder<InputStream>())
+                .append(ByteBuffer.class, NinePatchBitmap.class, new NinePatchBitmapDecoder<ByteBuffer>())
                 /* Transcodes */
                 .register(FrameSequence.class, FrameSequenceDrawable.class, new FsDrawableTranscoder(bitmapPool))
                 /*Encoder*/

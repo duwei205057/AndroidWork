@@ -2,6 +2,7 @@ package com.dw.glide;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
@@ -21,10 +21,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dw.R;
 import com.sogou.webp.GlideApp;
+import com.sogou.webp.NinePatchBitmap;
+import com.sogou.webp.NinePatchBitmapResource;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public void onViewRecycled(ImageViewHolder holder) {
         super.onViewRecycled(holder);
-//        Glide.clear(holder.imageView);
+//        GlideApp.clear(holder.imageView);
     }
 
     private void loadImage(InnerTarget target, String url) {
@@ -72,20 +73,41 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     private void loadImage(final ImageView imageView, String url) {
         RequestOptions myOptions = new RequestOptions()
                 .placeholder(R.drawable.image_loading)
-                .error(R.drawable.image_error).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).override(50,50);
-        GlideApp.with(mContext)/*.asBitmap()*/.load(new File("/sdcard/xingxing1.gif"))
+                .error(R.drawable.image_error).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)/*.override(50,50)*/;
+        Bitmap bt = BitmapFactory.decodeFile("/sdcard/flx_card_bg_n.9.png");
+//        GlideApp.with(mContext).asDrawable().load(new File("/sdcard/xingxing.gif"))
+////                .asBitmap()
+//                .apply(myOptions)
+//                .into(new SimpleTarget<Drawable>() {
+//                    @Override
+//                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+//                        if (resource instanceof Animatable)
+//                            ((Animatable)resource).start();
+//                        imageView.setImageDrawable(resource);
+//                    }
+//
+//                    @Override
+//                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+//                        super.onLoadFailed(errorDrawable);
+//                    }
+//
+//                });
+        GlideApp.with(mContext).as(NinePatchBitmap.class).load(new File("/sdcard/flx_card_bg_n.9.png"))
+//        GlideApp.with(mContext)/*.asBitmap()*/.load(new File("/sdcard/xingxing.gif"))
 //                .asBitmap()
                 .apply(myOptions)
-                .into(new SimpleTarget<Drawable>() {
+                .into(new SimpleTarget<NinePatchBitmap>() {
                     @Override
-                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
+                    public void onResourceReady(NinePatchBitmap resource, Transition<? super NinePatchBitmap> transition) {
+                        imageView.setImageDrawable(null);
+//                        imageView.setImageDrawable(new BitmapDrawable(mContext.getResources(),resource));
                     }
 
                     @Override
                     public void onLoadFailed(@Nullable Drawable errorDrawable) {
                         super.onLoadFailed(errorDrawable);
                     }
+
                 });
 //        GlideApp.with(mContext)/*.asBitmap()*/.load(url)
 ////                .asBitmap()
@@ -96,7 +118,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 //                        imageView.setImageDrawable(resource);
 //                    }
 //                });
-//        GlideApp.with(mContext).downloadOnly().load(url).into(new SimpleTarget<File>() {
+//        GlideApp.with(mContext).downloadOnly().load(url).override(50,50).into(new SimpleTarget<File>() {
 //            @Override
 //            public void onResourceReady(File resource, Transition<? super File> transition) {
 //                Log.d("xx","resource==="+resource);
@@ -109,11 +131,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 //        List<String> webpUrls = new ArrayList<>(Arrays.asList(ANIM_GIF));
 //        String resUrl = "android.resource://" + getPackageName() + "/" + R.drawable.last_wp;
 //        String resUrl = "https://www.gstatic.com/webp/animated/1.webp";
-        String resUrl = "https://www.gstatic.com/webp/gallery3/1_webp_ll.webp";
+//        String resUrl = "https://www.gstatic.com/webp/gallery3/1_webp_ll.webp";
 //        String resUrl = "android.resource://" + mContext.getPackageName() + "/" + R.drawable.broken;
-        webpUrls.add(resUrl);
+//        webpUrls.add(resUrl);
 //        webpUrls.add("https://www.gstatic.com/webp/animated/1.webp");
-//        webpUrls.add("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif");
+        webpUrls.add("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif");
 //        webpUrls.add("http://www.gstatic.com/webp/gallery/1.webp");
         return webpUrls;
     }

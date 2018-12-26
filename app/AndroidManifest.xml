@@ -57,6 +57,10 @@
             android:name="versiondate"
             android:value="${CUR_DATE}"/>
 
+        <meta-data
+            android:name="com.sogou.webp.GlideConfiguration"
+            android:value="GlideModule" />
+
     </application>
 
 </manifest>

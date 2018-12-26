@@ -31,6 +31,10 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -55,8 +59,13 @@ public class Gifflen {
     private int mColor;
     private int mQuality;
     private int mDelay;
+    private final int DEFAULTDELAY = 100;
+    private final int MINDELAY = 20;
     private int mWidth;
     private int mHeight;
+    private String mPath;
+
+    private long mNativeGifflen;
 
     private String mTargetPath;
 
@@ -64,7 +73,8 @@ public class Gifflen {
 
     private OnEncodeFinishListener mOnEncodeFinishListener;
 
-    private Gifflen(int color, int quality, int delay, int width, int height, OnEncodeFinishListener onEncodeFinishListener) {
+    private Gifflen(String path, int color, int quality, int delay, int width, int height, OnEncodeFinishListener onEncodeFinishListener) {
+        this.mPath = path;
         this.mColor = color;
         this.mQuality = quality;
         this.mDelay = delay;
@@ -72,6 +82,10 @@ public class Gifflen {
         this.mHeight = height;
         this.mOnEncodeFinishListener = onEncodeFinishListener;
         mHandler = new Handler(Looper.getMainLooper());
+    }
+
+    private int getDelay() {
+        return (mDelay >= MINDELAY) ? mDelay : DEFAULTDELAY;
     }
 
     /**
@@ -83,13 +97,11 @@ public class Gifflen {
         return new Builder();
     }
 
-    /**
-     * Gifflen addFrame
-     *
-     * @param pixels pixels array from bitmap
-     * @return 是否成功.
-     */
-    private native int addFrame(int[] pixels);
+
+    private native int addFrameNative(int[] pixels, int delay, long gifflen);
+    private native int initNative(String path, int width, int height, int color, int quality);
+    private native void closeNative(long gifflen);
+
 
     /**
      * Gifflen init
@@ -99,36 +111,104 @@ public class Gifflen {
      * @param height  Gif 图片的高度.
      * @param color   Gif 图片的色域.
      * @param quality 进行色彩量化时的quality参数.
-     * @param delay   相邻的两帧之间的时间间隔.
-     * @return 如果返回值不是0, 就代表着执行失败.
+     * @return 如果返回值是0, 就代表着执行失败.
      */
-    private native int init(String path, int width, int height, int color, int quality, int delay);
+    private void init(String path, int width, int height, int color, int quality) {
+        mNativeGifflen = initNative(path, width, height, color, quality);
+    }
+
+    /**
+     * Gifflen addFrame
+     *
+     * @param pixels pixels array from bitmap
+     * @return 是否成功.
+     */
+    private int addFrame(int[] pixels, int delay) {
+        if (mNativeGifflen == 0) {
+            throw new IllegalStateException("attempted to use incorrectly built Gifflen");
+        }
+        return addFrameNative(pixels, delay / 10, mNativeGifflen);
+    }
 
     /**
      * * native层做一些释放资源的操作.
      */
-    private native void close();
+    private void close() {
+        if (mNativeGifflen == 0) {
+            throw new IllegalStateException("attempted to use incorrectly built Gifflen");
+        }
+        closeNative(mNativeGifflen);
+    }
 
     /**
      * 开始进行Gif生成
      *
-     * @param width  宽度
-     * @param height 高度
-     * @param path   Gif保存的路径
+     */
+    private boolean encodeFrameSequence(ByteBuffer byteBuffer) {
+        check(mWidth, mHeight, mPath);
+        if(byteBuffer == null)
+            return false;
+        File file = new File(mPath);
+        FrameSequence fs = null;
+        FrameSequence.State fsState = null;
+        if(!file.exists()) {
+            try {
+//                long startTime = System.currentTimeMillis();
+                fs = FrameSequence.decodeByteBuffer(byteBuffer);
+                if (fs == null) return false;
+                int realWidth = mWidth <= 0 ? fs.getWidth() : Math.min(mWidth, fs.getWidth());
+                int realHeight = mHeight <= 0 ? fs.getHeight() : Math.min(mHeight, fs.getHeight());
+                int[] pixels = new int[realWidth * realHeight];
+                Bitmap frameBitmap = Bitmap.createBitmap(fs.getWidth(), fs.getHeight(), Bitmap.Config.ARGB_8888);
+                fsState = fs.createState();
+                init(mPath, realWidth, realHeight, mColor, mQuality);
+                int t = 0;
+                for (int i = 0; i < fs.getFrameCount(); i++) {
+                    int curDelay = (int)fsState.getFrame(i, frameBitmap, i - 2);
+                    Bitmap bitmap = frameBitmap;
+                    if (realWidth < frameBitmap.getWidth() || realHeight < frameBitmap.getHeight()) {
+                        bitmap = Bitmap.createScaledBitmap(frameBitmap, realWidth, realHeight, true);
+                    }
+                    if (i > fs.getFrameCount() / 3) {
+                        if (t <= 2) {
+                            OutputStream os = new FileOutputStream("/sdcard/frame"+t++);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                            os.close();
+                        }
+                    }
+
+                    bitmap.getPixels(pixels, 0, realWidth, 0, 0, realWidth, realHeight);
+                    int result = addFrame(pixels, curDelay);
+                    if (bitmap != frameBitmap)
+                        bitmap.recycle();
+                }
+                frameBitmap.recycle();
+                close();
+//                Log.d("xx"," turn to gif cost "+(System.currentTimeMillis() - startTime));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                if(fsState != null)
+                    fsState.destroy();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 开始进行Gif生成
+     *
      * @param files  传入的每一帧图片的File对象
      * @return 是否成功
      */
-    public boolean encode(int width, int height, String path, List<File> files) {
-        check(width, height, path);
+    public boolean encodeFiles(List<File> files) {
+        check(mWidth, mHeight, mPath);
         int state;
-        int[] pixels = new int[width * height];
+        int[] pixels = new int[mWidth * mHeight];
 
-        state = init(path, width, height, mColor, mQuality, mDelay / 10);
-        if (state != 0) {
-            // 失败
-            return false;
-        }
-
+        init(mPath, mWidth, mHeight, mColor, mQuality);
+        int delay = getDelay();
         for (File aFileList : files) {
             Bitmap bitmap;
             try {
@@ -137,11 +217,11 @@ public class Gifflen {
                 return false;
             }
 
-            if (width < bitmap.getWidth() || height < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            if (mWidth < bitmap.getWidth() || mHeight < bitmap.getHeight()) {
+                bitmap = Bitmap.createScaledBitmap(bitmap, mWidth, mHeight, true);
             }
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            addFrame(pixels);
+            bitmap.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight);
+            addFrame(pixels, delay);
             bitmap.recycle();
         }
 
@@ -150,248 +230,6 @@ public class Gifflen {
         return true;
     }
 
-    /**
-     * 开始进行Gif生成
-     *
-     * @param path  Gif保存的路径
-     * @param files 传入的每一帧图片的File对象
-     * @return 是否成功
-     */
-    public boolean encode(String path, List<File> files) {
-        return encode(mWidth, mHeight, path, files);
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context      上下文对象.
-     * @param path         Gif保存的路径.
-     * @param width        宽度.
-     * @param height       高度.
-     * @param drawableList 传入的图片资源id数组.
-     * @return 是否成功.
-     */
-    public boolean encode(final Context context, final String path, final int width, final int height, final int[] drawableList) {
-        check(width, height, path);
-        if (drawableList == null || drawableList.length == 0) {
-            return false;
-        }
-        int state;
-        int[] pixels = new int[width * height];
-
-        state = init(path, width, height, mColor, mQuality, mDelay / 10);
-        if (state != 0) {
-            // 失败
-            return false;
-        }
-
-        for (int drawable : drawableList) {
-            Bitmap bitmap;
-            bitmap = BitmapFactory.decodeResource(context.getResources(), drawable);
-            if (width < bitmap.getWidth() || height < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-            }
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            addFrame(pixels);
-            bitmap.recycle();
-        }
-        close();
-
-        return true;
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context      上下文对象.
-     * @param path         Gif保存的路径.
-     * @param drawableList 传入的图片资源id数组.
-     * @return 是否成功.
-     */
-    public boolean encode(final Context context, final String path, final int[] drawableList) {
-        return encode(context, path, mWidth, mHeight, drawableList);
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context 上下文对象.
-     * @param path    Gif保存的路径.
-     * @param width   宽度.
-     * @param height  高度.
-     * @param uriList 传入的Uri数组.
-     * @return 是否成功.
-     */
-    public boolean encode(Context context, final String path, final int width, final int height, final List<Uri> uriList) {
-        check(width, height, path);
-        if (uriList == null || uriList.size() == 0) {
-            return false;
-        }
-        int state;
-        int[] pixels = new int[width * height];
-
-        state = init(path, width, height, mColor, mQuality, mDelay / 10);
-        if (state != 0) {
-            // Failed
-            return false;
-        }
-
-        for (Uri uri : uriList) {
-            Bitmap bitmap;
-            String sourcePath = getRealPathFromURI(context, uri);
-            if (TextUtils.isEmpty(sourcePath)) {
-                Log.e(TAG, "the file path from url is empty");
-                continue;
-            }
-            bitmap = BitmapFactory.decodeFile(sourcePath);
-            if (width < bitmap.getWidth() || height < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-            }
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            addFrame(pixels);
-            bitmap.recycle();
-        }
-        close();
-
-        return true;
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context 上下文对象.
-     * @param path    Gif保存的路径.
-     * @param uriList 传入的Uri数组.
-     * @return 是否成功.
-     */
-    public boolean encode(Context context, final String path, final List<Uri> uriList) {
-        return encode(context, path, mWidth, mHeight, uriList);
-    }
-
-    /**
-     * 从Uri获取图片的绝对路径
-     *
-     * @param context    上下文对象.
-     * @param contentUri 传入的Uri数组.
-     * @return 文件绝对路径.
-     */
-    public String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] projection = {MediaStore.Images.Media.DATA};
-            cursor = context.getContentResolver().query(contentUri, projection, null, null, null);
-            if (cursor != null) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                return cursor.getString(column_index);
-            }
-
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return "";
-    }
-
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param path       Gif保存的路径.
-     * @param width      宽度.
-     * @param height     高度.
-     * @param bitmapList 传入的Bitmap数组.
-     * @return 是否成功.
-     */
-    public boolean encode(final String path, final int width, final int height, final Bitmap[] bitmapList) {
-        check(width, height, path);
-        if (bitmapList == null || bitmapList.length == 0) {
-            return false;
-        }
-        int state;
-        int[] pixels = new int[width * height];
-
-        state = init(path, width, height, mColor, mQuality, mDelay / 10);
-        if (state != 0) {
-            // 失败
-            return false;
-        }
-
-        for (Bitmap bitmap : bitmapList) {
-            if (width < bitmap.getWidth() || height < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-            }
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            addFrame(pixels);
-            bitmap.recycle();
-        }
-        close();
-
-        return true;
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param path       Gif保存的路径.
-     * @param bitmapList 传入的Bitmap数组.
-     * @return 是否成功.
-     */
-    public boolean encode(final String path, final Bitmap[] bitmapList) {
-        return encode(path, mWidth, mHeight, bitmapList);
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context    上下文对象.
-     * @param path       Gif保存的路径.
-     * @param width      宽度.
-     * @param height     高度.
-     * @param typedArray Android资源数组对象.
-     * @return 是否成功.
-     */
-    public boolean encode(final Context context, final String path, final int width, final int height, final TypedArray typedArray) {
-        check(width, height, path);
-        if (typedArray == null || typedArray.length() == 0) {
-            return false;
-        }
-        int state;
-        int[] pixels = new int[width * height];
-
-        state = init(path, width, height, mColor, mQuality, mDelay / 10);
-        if (state != 0) {
-            // 失败
-            return false;
-        }
-
-        for (int i = 0; i < typedArray.length(); i++) {
-            Bitmap bitmap;
-            bitmap = BitmapFactory.decodeResource(context.getResources(), typedArray.getResourceId(i, -1));
-            if (width < bitmap.getWidth() || height < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-            }
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            addFrame(pixels);
-            bitmap.recycle();
-        }
-        close();
-
-        return true;
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param context    上下文对象.
-     * @param path       Gif保存的路径.
-     * @param typedArray Android资源数组对象.
-     * @return 是否成功.
-     */
-    public boolean encode(final Context context, final String path, final TypedArray typedArray) {
-        return encode(context, path, mWidth, mHeight, typedArray);
-    }
 
     public static final class Builder {
 
@@ -408,6 +246,7 @@ public class Gifflen {
         private int delay;
         private int width;
         private int height;
+        private String path;
 
         private OnEncodeFinishListener onEncodeFinishListener;
 
@@ -436,12 +275,32 @@ public class Gifflen {
             return this;
         }
 
+        public Builder path(String path) {
+            this.path = path;
+            return this;
+        }
+
         public Builder listener(OnEncodeFinishListener onEncodeFinishListener) {
             this.onEncodeFinishListener = onEncodeFinishListener;
             return this;
         }
 
-        public Gifflen build() {
+        public void encodeFrameSequence(ByteBuffer byteBuffer) {
+            build().encodeFrameSequence(byteBuffer);
+        }
+
+        public void encodeFiles(List<File> files) {
+            build().encodeFiles(files);
+        }
+
+        private Gifflen build() {
+            if (TextUtils.isEmpty(path)) {
+                throw new IllegalStateException("the path value is invalid!!");
+            }
+            File p = new File(path).getParentFile();
+            if (!p.exists()) {
+                throw new IllegalStateException("the path value does not exists");
+            }
             if (this.color < 2 || this.color > 256) {
                 this.color = DEFAULT_COLOR;
             }
@@ -449,16 +308,14 @@ public class Gifflen {
                 quality = DEFAULT_QUALITY;
             }
 
-            if (this.delay <= 0) {
-                throw new IllegalStateException("the delay time value is invalid!!");
-            }
             if (this.width <= 0) {
                 throw new IllegalStateException("the width value is invalid!!");
             }
             if (this.height <= 0) {
                 throw new IllegalStateException("the height value is invalid!!");
             }
-            return new Gifflen(this.color, this.quality, this.delay, width, height, onEncodeFinishListener);
+
+            return new Gifflen(this.path, this.color, this.quality, this.delay, width, height, onEncodeFinishListener);
         }
     }
 

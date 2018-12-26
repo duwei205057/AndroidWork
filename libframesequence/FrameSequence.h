@@ -19,7 +19,7 @@
 
 #include "Stream.h"
 #include "Color.h"
-#include "../../../../webp_decoder/src/main/jni/libwebp/src/webp/mux_types.h"
+#include "libwebp/src/webp/mux_types.h"
 
 class FrameSequenceState {
 public:
