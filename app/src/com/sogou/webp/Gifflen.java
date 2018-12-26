@@ -51,7 +51,7 @@ public class Gifflen {
     }
 
     private static final int DEFAULT_COLOR = 256;
-    private static final int DEFAULT_QUALITY = 10;
+    private static final int DEFAULT_QUALITY = 100;
     private static final int DEFAULT_WIDTH = 320;
     private static final int DEFAULT_HEIGHT = 320;
     private static final int DEFAULT_DELAY = 500;
@@ -151,47 +151,45 @@ public class Gifflen {
         File file = new File(mPath);
         FrameSequence fs = null;
         FrameSequence.State fsState = null;
-        if(!file.exists()) {
-            try {
+        try {
 //                long startTime = System.currentTimeMillis();
-                fs = FrameSequence.decodeByteBuffer(byteBuffer);
-                if (fs == null) return false;
-                int realWidth = mWidth <= 0 ? fs.getWidth() : Math.min(mWidth, fs.getWidth());
-                int realHeight = mHeight <= 0 ? fs.getHeight() : Math.min(mHeight, fs.getHeight());
-                int[] pixels = new int[realWidth * realHeight];
-                Bitmap frameBitmap = Bitmap.createBitmap(fs.getWidth(), fs.getHeight(), Bitmap.Config.ARGB_8888);
-                fsState = fs.createState();
-                init(mPath, realWidth, realHeight, mColor, mQuality);
-                int t = 0;
-                for (int i = 0; i < fs.getFrameCount(); i++) {
-                    int curDelay = (int)fsState.getFrame(i, frameBitmap, i - 2);
-                    Bitmap bitmap = frameBitmap;
-                    if (realWidth < frameBitmap.getWidth() || realHeight < frameBitmap.getHeight()) {
-                        bitmap = Bitmap.createScaledBitmap(frameBitmap, realWidth, realHeight, true);
-                    }
-                    if (i > fs.getFrameCount() / 3) {
-                        if (t <= 2) {
-                            OutputStream os = new FileOutputStream("/sdcard/frame"+t++);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-                            os.close();
-                        }
-                    }
-
-                    bitmap.getPixels(pixels, 0, realWidth, 0, 0, realWidth, realHeight);
-                    int result = addFrame(pixels, curDelay);
-                    if (bitmap != frameBitmap)
-                        bitmap.recycle();
+            fs = FrameSequence.decodeByteBuffer(byteBuffer);
+            if (fs == null) return false;
+            int realWidth = mWidth <= 0 ? fs.getWidth() : Math.min(mWidth, fs.getWidth());
+            int realHeight = mHeight <= 0 ? fs.getHeight() : Math.min(mHeight, fs.getHeight());
+            int[] pixels = new int[realWidth * realHeight];
+            Bitmap frameBitmap = Bitmap.createBitmap(fs.getWidth(), fs.getHeight(), Bitmap.Config.ARGB_8888);
+            fsState = fs.createState();
+            init(mPath, realWidth, realHeight, mColor, mQuality);
+            int t = 0;
+            for (int i = 0; i < fs.getFrameCount(); i++) {
+                int curDelay = (int)fsState.getFrame(i, frameBitmap, i - 2);
+                Bitmap bitmap = frameBitmap;
+                if (realWidth < frameBitmap.getWidth() || realHeight < frameBitmap.getHeight()) {
+                    bitmap = Bitmap.createScaledBitmap(frameBitmap, realWidth, realHeight, true);
                 }
-                frameBitmap.recycle();
-                close();
-//                Log.d("xx"," turn to gif cost "+(System.currentTimeMillis() - startTime));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            } finally {
-                if(fsState != null)
-                    fsState.destroy();
+                if (i > fs.getFrameCount() / 3) {
+                    if (t <= 2) {
+                        OutputStream os = new FileOutputStream("/sdcard/frame"+t++);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                        os.close();
+                    }
+                }
+
+                bitmap.getPixels(pixels, 0, realWidth, 0, 0, realWidth, realHeight);
+                int result = addFrame(pixels, curDelay);
+                if (bitmap != frameBitmap)
+                    bitmap.recycle();
             }
+            frameBitmap.recycle();
+            close();
+//                Log.d("xx"," turn to gif cost "+(System.currentTimeMillis() - startTime));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if(fsState != null)
+                fsState.destroy();
         }
         return true;
     }

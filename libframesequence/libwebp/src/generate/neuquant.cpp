@@ -1,4 +1,5 @@
 #include "neuquant.h"
+#include "../../../Gifflen.h"
 
 /* Network Definitions
    ------------------- */
@@ -26,7 +27,6 @@
 /* defs for decreasing alpha factor */
 #define alphabiasshift    10            /* alpha starts at 1.0 */
 #define initalpha    (((int) 1)<<alphabiasshift)
-int alphadec;                    /* biased by 10 bits */
 
 /* radbias and alpharadbias used for radpower calculation */
 #define radbiasshift    8
@@ -38,22 +38,6 @@ int alphadec;                    /* biased by 10 bits */
 /* Types and Global Variables
    -------------------------- */
 
-static unsigned char *thepicture;
-/* the input image itself */
-static int lengthcount;
-/* lengthcount = H*W*3 */
-
-static int samplefac;                /* sampling factor 1..30 */
-
-
-//pixel network[256]; //netsize];			/* the network itself */
-
-static int netindex[256];
-/* for network lookup - really 256 */
-
-static int bias[256]; //netsize];			/* bias and freq arrays for learning */
-static int freq[256]; //netsize];
-static int radpower[32]; //initrad];			/* radpower for precomputation */
 /*
   Call this function to generate a paletted bitmap with N colors from a 24-bit bitmap.
 
@@ -102,23 +86,33 @@ void NeuQuant::quantise(DIB *destimage, DIB *srcimage, int numColors, int qualit
     for (i = srcimage->height - 1; i >= 0; i--) {
         if (i & 1) {
             for (j = srcimage->width - 1; j >= 0; j--) {
-                destimage->bits[i * srcimage->width + j] = inxsearch(
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE],
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 1],
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 2],
-                        dither,
-                        j,
-                        i);
+                if (srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 3] == 0) {
+                    destimage->bits[i * srcimage->width + j] = transparentColorIndex;
+                } else {
+                    destimage->bits[i * srcimage->width + j] = inxsearch(
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE],
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 1],
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 2],
+                            dither,
+                            j,
+                            i);
+                }
+
             }
         } else {
             for (j = 0; j < srcimage->width; j++) {
-                destimage->bits[i * srcimage->width + j] = inxsearch(
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE],
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 1],
-                        srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 2],
-                        dither,
-                        j,
-                        i);
+                if (srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 3] == 0) {
+                    destimage->bits[i * srcimage->width + j] = transparentColorIndex;
+                } else {
+                    destimage->bits[i * srcimage->width + j] = inxsearch(
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE],
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 1],
+                            srcimage->bits[i * srcimage->width * PIXEL_SIZE + j * PIXEL_SIZE + 2],
+                            dither,
+                            j,
+                            i);
+                }
+
             }
         }
     }

@@ -114,6 +114,7 @@ public class GlideActivity extends Activity {
             @Override
             public void run() {
                 try {
+                    Log.d("xx"," enter  run()---------------");
                     RandomAccessFile ra = new RandomAccessFile("/sdcard/test/test.webp","r");
                     FileChannel fc = ra.getChannel();
                     ByteBuffer bb = ByteBuffer.allocate((int)ra.length());
@@ -126,7 +127,7 @@ public class GlideActivity extends Activity {
                             .height(320)
                             .listener(new Gifflen.OnEncodeFinishListener() {
                                 @Override
-                                public void onEncodeFinish(String path) {
+                                public void onEncodeFinish(final String path) {
                                     Log.d("xx","----------------onEncodeFinish-----------------");
                                     imageView.setGifImage(path);
                                 }

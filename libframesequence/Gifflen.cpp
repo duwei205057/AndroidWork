@@ -232,14 +232,15 @@ int Gifflen::addFrame(int* data, int length, int delay) {
     for (int i = 0; i < total; ++i) {
         point[i] = data[i];
     }
-    s[0] = '!';
+    s[0] = '!';//0x21
     s[1] = 0xF9;
     s[2] = 4;
-    s[3] = 0;
+    s[3] = 9;
     s[4] = delay & 0xFF;
     s[5] = delay / 0x100;
-    s[6] = s[7] = 0;
-    s[8] = ',';
+    s[6] = transparentColorIndex;
+    s[7] = 0;
+    s[8] = ',';//0x2c
     s[9] = s[10] = s[11] = s[12] = 0;
     s[13] = imgw & 0xFF;
     s[14] = imgw / 0x100;

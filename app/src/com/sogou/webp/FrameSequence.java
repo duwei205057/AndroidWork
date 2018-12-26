@@ -155,7 +155,7 @@ public class FrameSequence {
 
         // TODO: consider adding alternate API for drawing into a SurfaceTexture
         public long getFrame(int frameNr, Bitmap output, int previousFrameNr) {
-            Log.d("xx","State  getFrame frameNr="+frameNr+"  previousFrameNr="+previousFrameNr);
+//            Log.d("xx","State  getFrame frameNr="+frameNr+"  previousFrameNr="+previousFrameNr);
             if (output == null || output.getConfig() != Bitmap.Config.ARGB_8888) {
                 throw new IllegalArgumentException("Bitmap passed must be non-null and ARGB_8888");
             }

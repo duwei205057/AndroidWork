@@ -90,6 +90,29 @@ public:
     void learn();
 
     //unsigned int netsize;
+
+    int alphadec;                    /* biased by 10 bits */
+
+
+/* Types and Global Variables
+   -------------------------- */
+
+    unsigned char *thepicture;
+/* the input image itself */
+    int lengthcount;
+/* lengthcount = H*W*3 */
+
+    int samplefac;                /* sampling factor 1..30 */
+
+
+//pixel network[256]; //netsize];			/* the network itself */
+
+    int netindex[256];
+/* for network lookup - really 256 */
+
+    int bias[256]; //netsize];			/* bias and freq arrays for learning */
+    int freq[256]; //netsize];
+    int radpower[32]; //initrad];			/* radpower for precomputation */
 };
 
 #endif
