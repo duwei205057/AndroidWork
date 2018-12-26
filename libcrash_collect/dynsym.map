@@ -1,0 +1,13 @@
+{
+
+global:
+
+ extern "C" {
+
+ JNI_OnLoad;
+ 
+ };
+
+local: *;
+
+};
