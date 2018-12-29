@@ -14,7 +14,6 @@
 static native_crash_collector::ExceptionHandler* exception_handler = NULL;
 JavaVM *g_vm = NULL;
 
-
 static jint native_initCrashCollect(JNIEnv* env, jobject thiz, jcharArray outputArray, jint size) {
     CRASH_LOGD("native_initCrashCollect");
     if(outputArray == NULL || size == 0) return JNI_ERR;
@@ -24,6 +23,7 @@ static jint native_initCrashCollect(JNIEnv* env, jobject thiz, jcharArray output
         exception_handler->InitCrashCollect();
     }
     env->ReleaseCharArrayElements(outputArray, outputChars, JNI_OK);
+
     return JNI_OK;
 }
 
@@ -116,7 +116,6 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     }
     /*regeister crash collect modle*/
     exception_handler = new native_crash_collector::ExceptionHandler(g_vm);
-
     result = JNI_VERSION_1_4;
     bail:
     return result;

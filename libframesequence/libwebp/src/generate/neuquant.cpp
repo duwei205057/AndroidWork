@@ -161,6 +161,14 @@ void NeuQuant::unbiasnet() {
         }
         network[i][3] = i;            /* record colour no */
     }
+
+    __android_log_print(ANDROID_LOG_DEBUG, "gifflen", "----------------beging------------%d", netsize);
+    for (i = 0; i < netsize; i++) {
+
+        __android_log_print(ANDROID_LOG_DEBUG, "gifflen", "%d %d %d %d", network[i][0], network[i][1], network[i][2], network[i][3]);
+
+    }
+    __android_log_write(ANDROID_LOG_DEBUG, "gifflen", "----------------end------------");
 }
 
 
@@ -236,7 +244,7 @@ inline int luma_diff(int r1, int g1, int b1, int r2, int g2, int b2) {
    ---------------------------------------------------------------------------- */
 
 int NeuQuant::inxsearch(int b, int g, int r, int dither, int xpos, int ypos) {
-    int i, j, dist, a;
+    int i, j, dist, a, index;
     int *p;
     int bestd, bestd_dark, bestd_bright;
     int bestd_r, bestd_g, bestd_b, dist_r, dist_g, dist_b;
@@ -373,13 +381,16 @@ int NeuQuant::inxsearch(int b, int g, int r, int dither, int xpos, int ypos) {
 
     if (dither == 1) {
         if ((xpos ^ ypos) & 1) {
-            return darker;
+            index = darker;
         } else {
-            return brighter;
+            index = brighter;
         }
     } else {
-        return best;
+        index = best;
     }
+    if (index == transparentColorIndex)
+        index = transparentColorIndex - 1;
+    return index;
 }
 
 

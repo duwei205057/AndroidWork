@@ -26,13 +26,23 @@ endmacro()
 
 debugValue(LOCAL_PATH)
 
+if (WITH_BREAKPAD STREQUAL "true")
+    add_subdirectory(external/libbreakpad)
+    set(BREAKPADLIB "breakpad")
+    list(APPEND BREAKPADHEAD external/libbreakpad/src external/libbreakpad/src/common/android/include)
+    set(STACK_FLAGS "-DBREAKPAD_ENABLE")
+else()
+    list(APPEND STACKSOURCE ${LOCAL_PATH}/crash
+                    ${LOCAL_PATH}/crash/stacktrace
+                    ${LOCAL_PATH}/crash/stacktrace/arm
+                    ${LOCAL_PATH}/crash/stacktrace/arm64)
+endif()
+
 set(SOURCE_CORE    ${LOCAL_PATH}
                    ${LOCAL_PATH}/utils
                    ${LOCAL_PATH}/anr
-                   ${LOCAL_PATH}/crash
-                   ${LOCAL_PATH}/crash/stacktrace
-                   ${LOCAL_PATH}/crash/stacktrace/arm
-                   ${LOCAL_PATH}/crash/stacktrace/arm64 )
+                   ${STACKSOURCE}
+                   )
 
 debugValue(SOURCE_CORE)
 
@@ -65,7 +75,7 @@ debugValue(SOURCE_FILES)
 add_library(${LOCAL_MODULE} SHARED
            ${SOURCE_FILES} )
 
-include_directories(${HEADERS_FILES})
+include_directories(${HEADERS_FILES} ${BREAKPADHEAD})
 ##### 设置link language
 set_target_properties(${LOCAL_MODULE} PROPERTIES LINKER_LANGUAGE CXX)
 
@@ -76,10 +86,14 @@ else()
     set(LOCAL_FLAGS "")
 endif()
 
+
 ADD_DEFINITIONS(
 	"-Wall -Wextra -Wno-non-virtual-dtor -DNDEBUG -DOS_LINUX"
 	"-O2"
-   ${LOCAL_FLAGS})
+   ${LOCAL_FLAGS}
+   ${STACK_FLAGS})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
 
 set_target_properties(${LOCAL_MODULE} PROPERTIES LINK_FLAGS "-llog -shared -Wl,--version-script=${LOCAL_PATH}/dynsym.map")
 
@@ -91,12 +105,13 @@ find_library( # Sets the name of the path variable.日志支持库并将其路�
               log
               )
 
+
 debugValue(log-lib)
 debugValue(ANDROID_ABI)
 debugValue(LOCAL_PATH)
 debugValue(ANDROID_NDK)
-target_link_libraries( # Specifies the target library.
-		      ${LOCAL_MODULE}
-		       ${log-lib} )
-
-
+debugValue(breakpad_client)
+target_link_libraries( ${LOCAL_MODULE}
+		       ${log-lib}
+		       ${BREAKPADLIB}
+		       )

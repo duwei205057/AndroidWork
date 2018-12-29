@@ -272,7 +272,7 @@ void Gifflen::close() {
         outDIB = NULL;
     }
     if (pGif) {
-        fputc(';', pGif);
+        fputc(';', pGif);//0x3B
         fclose(pGif);
         pGif = NULL;
     }

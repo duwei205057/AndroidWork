@@ -1,7 +1,7 @@
 /home/dw/java/adt-bundle-linux-x86_64-20140321/sdk/cmake/3.6.4111459/bin/cmake \
--DANDROID_ABI="arm64-v8a" \
+-DANDROID_ABI="armeabi-v7a" \
 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="./" \
--DANDROID_PLATFORM="android-21" \
+-DANDROID_PLATFORM="android-19" \
 -DCMAKE_BUILD_TYPE=Release \
 -DANDROID_NDK="/home/dw/java/android-ndk-r14b" \
 -DCMAKE_TOOLCHAIN_FILE="/home/dw/java/android-ndk-r14b/build/cmake/android.toolchain.cmake" \

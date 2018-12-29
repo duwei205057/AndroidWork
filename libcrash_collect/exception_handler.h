@@ -15,9 +15,15 @@
 #include "utils/utf.h"
 #include "event_queue.h"
 #include "inotify_utils.h"
+#ifndef BREAKPAD_ENABLE
 #include "crash_handler.h"
+#else
+#include <client/linux/handler/minidump_descriptor.h>
+#include "client/linux/handler/exception_handler.h"
+#endif
 #include <pthread.h>
 #include <jni.h>
+
 
 namespace native_crash_collector {
 
@@ -77,6 +83,9 @@ private:
 
     static void RegisterJavaDumpThread();
 
+#ifdef BREAKPAD_ENABLE
+    static bool dumpCallback(const google_breakpad::MinidumpDescriptor &descriptor, void *context, bool succeeded);
+#endif
 };
 
 }

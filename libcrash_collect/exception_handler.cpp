@@ -58,7 +58,9 @@ namespace native_crash_collector {
         RegisterANRHandler();
     }
 
+
     void ExceptionHandler::HandleSignal(int sig, siginfo_t* info, void* uc) {
+        #ifndef BREAKPAD_ENABLE
         CrashContext *context = new CrashContext();
         memset(context, 0, sizeof(*context));
         memcpy(&context->siginfo, info, sizeof(siginfo_t));
@@ -80,10 +82,13 @@ namespace native_crash_collector {
 
         old_handlers[sig].sa_handler(sig);
         exit(0);
+        #endif
     }
+
 
     bool ExceptionHandler::InstallHandlersLocked() {
 
+    #ifndef BREAKPAD_ENABLE
         for (int i = 0; i < mNumHandledSignals; ++i) {
             if (sigaction(mExceptionSignals[i], NULL, &old_handlers[i]) == -1)
                 return false;
@@ -104,7 +109,16 @@ namespace native_crash_collector {
             if (sigaction(mExceptionSignals[i], &sa, NULL) == -1) {
             }
         }
-
+    #else
+        int fd = open("/sdcard/test/log", O_RDWR|O_CREAT|O_APPEND);
+        if (-1 == fd) return false;
+        CRASH_LOGD("google_breakpad   create  fd=%d", fd);
+        google_breakpad::MinidumpDescriptor descriptor(fd); // 这里指定生成dump文件的路径
+//        google_breakpad::MinidumpDescriptor descriptor("/sdcard/test"); // 这里指定生成dump文件的路径
+//        google_breakpad::MinidumpDescriptor::MicrodumpOnConsole console;
+//        google_breakpad::MinidumpDescriptor descriptor(console); // 这里指定生成dump文件的路径
+        static google_breakpad::ExceptionHandler eh(descriptor, NULL, dumpCallback, NULL, true, -1); //初始化breakpad异常处理
+    #endif
         return true;
     }
 
@@ -260,4 +274,30 @@ namespace native_crash_collector {
         return NULL;
     }
 
+#ifdef BREAKPAD_ENABLE
+    bool ExceptionHandler::dumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,
+                             void* context, bool succeeded) {
+        CRASH_LOGD("google_breakpad    dumpCallback fd=%d  path=%s  succeeded=%d", descriptor.fd(), descriptor.path(), succeeded);
+        if(collect_crash_on) {
+            CRASH_LOGD("crash_on");
+            ms_tidCrash = gettid();
+            if (ntid != NULL){
+                pthread_mutex_lock(&mutex);
+                pthread_cond_signal(&cond);
+                pthread_mutex_unlock(&mutex);
+//                pthread_join(ntid, NULL);
+                WaitDumpJava();
+            }
+            CRASH_LOGD("google_breakpad    dumpCallback=%s",dump_java_info);
+        }
+        int fd = descriptor.fd();
+        if (-1 == fd) return false;
+        int num = write(fd, "aaaaaaaaaa", 15);
+        CRASH_LOGD("google_breakpad    dumpCallback write=%d  fd=%d", num, fd);
+        return succeeded;
+    }
+
+#endif
+
 }
+

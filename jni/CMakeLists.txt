@@ -36,6 +36,6 @@ set_target_properties(myso PROPERTIES LINK_FLAGS "-llog")
 
 
 if (NOT TARGET crash_collector)
-    add_subdirectory("${PROJECT_PATH}/crash_collect" "${PROJECT_PATH}/crash_collect")
+    add_subdirectory("${PROJECT_PATH}/libcrash_collect" "${PROJECT_PATH}/libcrash_collect")
 endif()
 

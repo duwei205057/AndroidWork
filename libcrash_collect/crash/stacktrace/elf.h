@@ -22,7 +22,6 @@
 #define	_ELF_H 1
 
 /* Standard ELF types.  */
-
 #include <inttypes.h>
 
 /* Type for a 16-bit quantity.  */

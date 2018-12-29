@@ -7,7 +7,7 @@
 #include "utils/log.h"
 
 #define hash 11003
-#define transparentColorIndex 0
+#define transparentColorIndex 255
 
 class Gifflen {
 private:
