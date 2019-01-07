@@ -68,7 +68,8 @@ public:
         delete anr_save_path;
         delete head_info;
         delete package_name;
-        head_info = 0;
+        delete dump_java_info;
+        delete head_info;
     };
 
 private:

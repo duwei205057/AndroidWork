@@ -292,8 +292,9 @@ namespace native_crash_collector {
         }
         int fd = descriptor.fd();
         if (-1 == fd) return false;
-        int num = write(fd, "aaaaaaaaaa", 15);
-        CRASH_LOGD("google_breakpad    dumpCallback write=%d  fd=%d", num, fd);
+        int length = strlen(dump_java_info);
+        int num = write(fd, dump_java_info, length);
+        CRASH_LOGD("google_breakpad    dumpCallback write=%d  fd=%d  length=%d", num, fd, length);
         return succeeded;
     }
 

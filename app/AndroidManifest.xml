@@ -15,13 +15,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.Light">
-        <activity android:name=".MainActivity"> <!-- android:hardwareAccelerated="false" -->
+        <activity android:name="com.dw.media.FlashActivity"> <!-- android:hardwareAccelerated="false" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".touchable.MotionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -58,7 +60,7 @@
             android:value="${CUR_DATE}"/>
 
         <meta-data
-            android:name="com.sogou.webp.GlideConfiguration"
+            android:name="com.dw.webp.GlideConfiguration"
             android:value="GlideModule" />
 
     </application>

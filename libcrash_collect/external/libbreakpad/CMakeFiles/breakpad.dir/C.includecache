@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dw/workspace/MyApplication/libcrash_collect/external/libbreakpad/src/common/android/breakpad_getcontext.S
+common/android/ucontext_constants.h
+/home/dw/workspace/MyApplication/libcrash_collect/external/libbreakpad/src/common/android/common/android/ucontext_constants.h
+asm-mips/asm.h
+-
+asm-mips/regdef.h
+-
+asm-mips/fpregdef.h
+-
+asm/unistd.h
+-
+
+/home/dw/workspace/MyApplication/libcrash_collect/external/libbreakpad/src/common/convert_UTF.c
+convert_UTF.h
+/home/dw/workspace/MyApplication/libcrash_collect/external/libbreakpad/src/common/convert_UTF.h
+stdio.h
+-
+
+/home/dw/workspace/MyApplication/libcrash_collect/external/libbreakpad/src/common/convert_UTF.h
+
+external/libbreakpad/src/common/android/include/asm-mips/asm.h
+asm/sgidefs.h
+-
+
+external/libbreakpad/src/common/android/include/asm-mips/fpregdef.h
+asm/sgidefs.h
+-
+
+external/libbreakpad/src/common/android/include/asm-mips/regdef.h
+asm/sgidefs.h
+-
+
+external/libbreakpad/src/common/android/ucontext_constants.h
+

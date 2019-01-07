@@ -66,6 +66,10 @@ public class GestureView extends View {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
                 Log.d("xx","onDoubleTap  e="+e);
+                for(Path p : mPathList) {
+                    p.reset();
+                }
+                mPathList.clear();
                 return super.onDoubleTap(e);
             }
 

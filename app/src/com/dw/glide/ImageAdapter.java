@@ -20,9 +20,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dw.R;
-import com.sogou.webp.GlideApp;
-import com.sogou.webp.NinePatchBitmap;
-import com.sogou.webp.NinePatchBitmapResource;
+import com.dw.webp.GlideApp;
+import com.dw.webp.NinePatchBitmap;
+import com.dw.webp.NinePatchBitmapResource;
 
 import java.io.File;
 import java.util.ArrayList;

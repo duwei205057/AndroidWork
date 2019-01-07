@@ -25,9 +25,9 @@ import com.aop.DebugTrace;
 import com.bumptech.glide.Glide;
 import com.dw.R;
 import com.dw.gif.BaseGifImageView;
-import com.sogou.webp.FrameSequence;
-import com.sogou.webp.FrameSequenceDrawable;
-import com.sogou.webp.Gifflen;
+import com.dw.webp.FrameSequence;
+import com.dw.webp.FrameSequenceDrawable;
+import com.dw.webp.Gifflen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
