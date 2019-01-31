@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="testDy"
-                android:text="@{(bean == null)? @string/app_name :bean.firstText}" /><!--android:layout_below="@id/text"-->
+                android:text="Click me"/><!--android:layout_below="@id/text"    android:text="@{(bean == null)? @string/app_name :bean.firstText}"-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

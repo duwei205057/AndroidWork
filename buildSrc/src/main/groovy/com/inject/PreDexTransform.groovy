@@ -59,7 +59,8 @@ public class PreDexTransform extends Transform {
             input.directoryInputs.each { DirectoryInput directoryInput ->
 
                 //TODO 这里可以对input的文件做处理，比如代码注入！
-                project.logger.error("name =" + directoryInput.name + " directoryInput.contentTypes=" + directoryInput.contentTypes +  " directoryInput.scopes ="+ directoryInput.scopes+" filePath=" + directoryInput.file.absolutePath)
+                project.logger.error("name =" + directoryInput.name + " directoryInput.contentTypes=" + directoryInput.contentTypes
+                        +  " directoryInput.scopes ="+ directoryInput.scopes+" filePath=" + directoryInput.file.absolutePath)
                 Inject.injectDir(directoryInput.file.absolutePath)
 
                 // 获取output目录
@@ -70,6 +71,7 @@ public class PreDexTransform extends Transform {
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
 
+            //依赖module/libs都是以jar的形式接入,module都以classes.jar结尾,libs有可能以classes.jar结尾,部分lib存放在.android/build-cache/目录
             input.jarInputs.each { JarInput jarInput ->
 
                 //TODO 这里可以对input的文件做处理，比如代码注入！
@@ -78,7 +80,7 @@ public class PreDexTransform extends Transform {
                 String projectName = project.rootProject.name;
 
                 if (jarPath.endsWith("classes.jar")
-                        && jarPath.contains("exploded-aar\\" + projectName)
+//                        && jarPath.contains("exploded-aar\\" + projectName)
                         // hotpatch module是用来加载dex，无需注入代码
                         && !jarPath.contains("exploded-aar\\" + projectName + "\\hotpatch")) {
                     Inject.injectJar(jarPath)

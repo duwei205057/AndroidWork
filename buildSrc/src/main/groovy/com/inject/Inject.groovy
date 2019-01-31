@@ -1,5 +1,6 @@
 package com.inject
 
+import com.android.build.gradle.AppPlugin
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtConstructor
@@ -36,16 +37,18 @@ public class Inject {
         if (dir.isDirectory()) {
             dir.eachFileRecurse { File file ->
                 String filePath = file.absolutePath
-                println("injectDir  filePath="+filePath)
+//                println("injectDir  filePath="+filePath)
                 if (filePath.endsWith(".class")
                         && !filePath.contains('R$')
                         && !filePath.contains('R.class')
                         && !filePath.contains("BuildConfig.class")
                         // 这里是application的名字，可以通过解析清单文件获得，先写死了
                         && !filePath.contains("DynamicApplication.class")) {
+                    println("injectDir   path" + filePath)
                     // 这里是应用包名，也能从清单文件中获取，先写死
-                    int index = filePath.indexOf("com\\example\\dw\\myapplication")
+                    int index = filePath.indexOf("MoveView.class")
                     if (index != -1) {
+                        println("========================find MoveView.class========================")
                         int end = filePath.length() - 6 // .class = 6
                         String className = filePath.substring(index, end).replace('\\', '.').replace('/', '.')
                         injectClass(className, path)
@@ -65,33 +68,36 @@ public class Inject {
 
             // jar包解压后的保存路径
             String jarZipDir = jarFile.getParent() + "/" + jarFile.getName().replace('.jar', '')
+            println("================injectJar！jarZipDir=========="+jarFile.getParent() + "/" +jarFile.getName())
             // 解压jar包, 返回jar包中所有class的完整类名的集合（带.class后缀）
-            List classNameList = JarZipUtil.unzipJar(path, jarZipDir)
-
-            // 删除原来的jar包
-            jarFile.delete()
-
-            // 注入代码
-            pool.appendClassPath(jarZipDir)
-            for (String className : classNameList) {
-                if (className.endsWith(".class")
-                        && !className.contains('R$')
-                        && !className.contains('R.class')
-                        && !className.contains("BuildConfig.class")) {
-                    className = className.substring(0, className.length() - 6)
-                    injectClass(className, jarZipDir)
-                }
-            }
-
-            // 从新打包jar
-            JarZipUtil.zipJar(jarZipDir, path)
-
-            // 删除目录
-            FileUtils.deleteDirectory(new File(jarZipDir))
+//            List classNameList = JarZipUtil.unzipJar(path, jarZipDir)
+//
+//            // 删除原来的jar包
+//            jarFile.delete()
+//
+//            // 注入代码
+//            pool.appendClassPath(jarZipDir)
+//            for (String className : classNameList) {
+//                if (className.endsWith(".class")
+//                        && !className.contains('R$')
+//                        && !className.contains('R.class')
+//                        && !className.contains("BuildConfig.class")) {
+//                    className = className.substring(0, className.length() - 6)
+//                    injectClass(className, jarZipDir)
+//                }
+//            }
+//
+//            // 从新打包jar
+//            JarZipUtil.zipJar(jarZipDir, path)
+//
+//            // 删除目录
+//            FileUtils.deleteDirectory(new File(jarZipDir))
         }
     }
 
     private static void injectClass(String className, String path) {
+        println("className=="+className+" path== "+path);
+        className = "com.dw.MoveView";
         CtClass c = pool.getCtClass(className)
         if (c.isFrozen()) {
             c.defrost()
@@ -100,9 +106,9 @@ public class Inject {
         CtConstructor[] cts = c.getDeclaredConstructors()
         println(className+" injectClass "+" cts.length="+cts.length);
         if (cts == null || cts.length == 0) {
-            insertNewConstructor(c)
+//            insertNewConstructor(c)
         } else {
-            cts[0].insertBeforeBody("System.out.println(1111111111111111111111111111111111);")
+            cts[0].insertAfter("if(lastX > 1) System.out.println(1);")
 //            cts[0].insertBeforeBody("System.out.println(com.inject.hack.HackLoad.class);")
         }
         c.writeFile(path)

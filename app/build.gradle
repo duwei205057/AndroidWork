@@ -6,7 +6,7 @@ import org.aspectj.tools.ajc.Main
 
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
-//apply plugin: com.inject.PluginImpl
+apply plugin: com.inject.PluginImpl
 buildscript {
     repositories {
         mavenCentral()
@@ -28,6 +28,7 @@ android {
         versionName "hi." + getDateVersionName()
         manifestPlaceholders = [CUR_DATE: getDateVersionName()]
         multiDexEnabled true
+        multiDexKeepProguard file('maindex-keep.pro')
         ndk {
 //            abiFilters "arm64-v8a" // 保留这种架构的CPU
             abiFilters "armeabi-v7a" // 保留这种架构的CPU
@@ -178,7 +179,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.okio:okio:1.13.0'
     /*compile 'com.sky.slog:slog:0.4.0'*/
-    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
     //    compile 'com.android.tools.build:gradle:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'org.greenrobot:eventbus:3.0.0'
