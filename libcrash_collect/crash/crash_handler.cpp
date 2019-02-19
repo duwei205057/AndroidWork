@@ -176,6 +176,28 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
 
     rw->Write("\n******Native Crash Report******\n");
 
+    /*siginfo_t {
+            int      si_signo;    *//* Signal number *//*
+            int      si_errno;    *//* An errno value *//*
+            int      si_code;     *//* Signal code *//*
+            int      si_trapno;   *//* Trap number that caused
+                                        hardware-generated signal
+                                        (unused on most architectures) *//*
+            pid_t    si_pid;      *//* Sending process ID *//*
+            uid_t    si_uid;      *//* Real user ID of sending process *//*
+            int      si_status;   *//* Exit value or signal *//*
+            clock_t  si_utime;    *//* User time consumed *//*
+            clock_t  si_stime;    *//* System time consumed *//*
+            sigval_t si_value;    *//* Signal value *//*
+            int      si_int;      *//* POSIX.1b signal *//*
+            void    *si_ptr;      *//* POSIX.1b signal *//*
+            int      si_overrun;  *//* Timer overrun count; POSIX.1b timers *//*
+            int      si_timerid;  *//* Timer ID; POSIX.1b timers *//*
+            void    *si_addr;     *//* Memory location which caused fault *//*
+            int      si_band;     *//* Band event *//*
+            int      si_fd;       *//* File descriptor *//*
+    }*/
+
 #if defined(__aarch64__)
     const addr_s pc = (addr_s) sig_ctx->pc;
     const addr_s sp = (addr_s) sig_ctx->sp;
@@ -243,6 +265,7 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     /*2 sign info*/
     rw->Write("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
     CRASH_LOGE("\n[Signal number] %d  [Signal code] %d  [Signal errno] %d  [Fault addr] %08x", info->si_signo, info->si_code, info->si_errno, info->si_addr);
+
 
     /*3 registers*/
     rw->Write("\n\n[Registers]  \n");
