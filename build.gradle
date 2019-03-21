@@ -11,6 +11,14 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath "io.realm:realm-gradle-plugin:2.2.1"
+
+        //若是单独创建插件工程，则不需要添加注释1下面的代码
+        // 1、添加RePlugin Host Gradle依赖(主工程用)
+        /*classpath 'com.qihoo360.replugin:replugin-host-gradle:2.2.1'
+        // 2、添加RePlugin Plugin Gradle依赖(插件工程用)
+        classpath 'com.qihoo360.replugin:replugin-plugin-gradle:2.2.1'*/
+
+
 //        classpath "io.realm:realm-gradle-plugin:3.1.1"
 //        classpath "io.realm:realm-gradle-plugin:5.1.0"
 

@@ -89,6 +89,26 @@ namespace native_crash_collector {
     bool ExceptionHandler::InstallHandlersLocked() {
 
     #ifndef BREAKPAD_ENABLE
+
+        stack_t stack;
+        memset(&stack, 0, sizeof(stack));
+        /* Reserver the system default stack size. We don't need that much by the way. */
+        stack.ss_size = SIGSTKSZ;
+        stack.ss_sp = malloc(stack.ss_size);
+        stack.ss_flags = 0;
+        /* Install alternate stack size. Be sure the memory region is valid until you revert it.
+         *  <1>alloca是向栈申请内存,因此无需释放.
+         *  <2>malloc分配的内存是位于堆中的,并且没有初始化内存的内容,因此基本上malloc之后,调用函数memset来初始化这部分的内存空间.
+         *  <3>calloc则将初始化这部分的内存,设置为0.
+         *  <4>realloc则对malloc申请的内存进行大小的调整.
+         *  <5>申请的内存最终需要通过函数free来释放.
+         * */
+        if (stack.ss_sp != NULL) {
+            if(sigaltstack(&stack, NULL) == -1) {
+                free(stack.ss_sp);
+            }
+        }
+
         for (int i = 0; i < mNumHandledSignals; ++i) {
             if (sigaction(mExceptionSignals[i], NULL, &old_handlers[i]) == -1)
                 return false;

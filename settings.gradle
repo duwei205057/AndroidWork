@@ -1,2 +1,2 @@
-include ':app', ':buildSrc', ':hack', ':hack', ':realmdb', ':native_crash_collector'
+include ':app', ':buildSrc', ':hack', ':hack', ':realmdb', ':native_crash_collector', ':pluginmodel'
 project(':realmdb').projectDir = new File('realm')

@@ -1,7 +1,12 @@
 package com.dw.media;
 
 import android.app.Activity;
+import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
@@ -10,8 +15,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,12 +28,19 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.dw.MainActivity;
+import com.dw.QuickAccessibilityService;
 import com.dw.R;
 
 import java.util.HashMap;
 
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+import static android.content.pm.PackageManager.DONT_KILL_APP;
+
 /**
  * Created by dw on 19-1-2.
+ * use videoView(extends SurfaceView implements MediaPlayerControl,class memeber mediaplayer)  MediaController
  */
 
 public class FlashActivity extends Activity implements View.OnClickListener {
@@ -97,11 +111,13 @@ public class FlashActivity extends Activity implements View.OnClickListener {
             }
         });
         avaterThread();
-
+        Log.d("xx","isAccessibilitySettingsOn===="+QuickAccessibilityService.isAccessibilitySettingsOn(this,QuickAccessibilityService.class.getCanonicalName()));
     }
 
     private void goHome() {
         startActivity(new Intent(this, MainActivity.class));
+//        startService(new Intent(this, QuickAccessibilityService.class));
+
         finish();// 销毁当前活动界面
     }
 
@@ -113,6 +129,7 @@ public class FlashActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+//        startActivity(new Intent(this, QuickAccessibilityService.class));
     }
 
     @Override
@@ -126,8 +143,23 @@ public class FlashActivity extends Activity implements View.OnClickListener {
             case R.id.btn_start:
                 Toast.makeText(this, "进入了主页", Toast.LENGTH_SHORT).show();
                 goHome();
+//                enable = !enable;
+//                setEnabledBlocking(this, QuickAccessibilityService.class, enable);
                 break;
         }
+    }
+
+    boolean enable = true;
+
+    public static void setEnabledBlocking(Context appContext, Class<?> componentClass, boolean enabled) {
+//        ComponentName component = new ComponentName(componentClass.getCanonicalName(), componentClass.getCanonicalName());
+        ComponentName component = new ComponentName(appContext, componentClass);
+        PackageManager packageManager = appContext.getPackageManager();
+        int newState = enabled ? COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED;
+//        int newState = enabled ? COMPONENT_ENABLED_STATE_ENABLED : COMPONENT_ENABLED_STATE_DISABLED;
+        // Blocks on IPC.
+        packageManager.setComponentEnabledSetting(component, newState, PackageManager.DONT_KILL_APP);
+//        packageManager.setApplicationEnabledSetting("com.dw.debug", newState, PackageManager.DONT_KILL_APP);
     }
 
 

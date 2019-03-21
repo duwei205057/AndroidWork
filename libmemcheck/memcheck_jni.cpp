@@ -61,10 +61,10 @@ void RegisterInlineHook() {
 
 void RegisterElfHook() {
     LOGE("RegisterElfHook");
-    elfHook("libsogouime.so", "malloc", (void*)my_malloc, &g_malloc);
-    elfHook("libsogouime.so", "free", (void*)my_free, &g_free);
-    elfHook("sogouime", "malloc", (void*)my_malloc, &g_malloc);
-    elfHook("sogouime", "free", (void*)my_free, &g_free);
+    elfHook("libmyso.so", "malloc", (void*)my_malloc, &g_malloc);
+    elfHook("libmyso.so", "free", (void*)my_free, &g_free);
+    elfHook("myso", "malloc", (void*)my_malloc, &g_malloc);
+    elfHook("myso", "free", (void*)my_free, &g_free);
 }
 
 static jint init_module(JNIEnv* env, jobject thiz) {
@@ -87,7 +87,7 @@ static JNINativeMethod gMethods[] = {
 };
 
 static int register_methods(JNIEnv* env) {
-    char const *const kClassPathName = "com/sogou/memcheck/MemCheck";
+    char const *const kClassPathName = "com/dw/memcheck/MemCheck";
     jclass clazz;
     clazz = env->FindClass(kClassPathName);
     if(clazz == NULL) {

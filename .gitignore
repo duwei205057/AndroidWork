@@ -9,3 +9,4 @@ build/
 */android_gradle_build.json
 local.properties
 */Makefile
+*/*.a

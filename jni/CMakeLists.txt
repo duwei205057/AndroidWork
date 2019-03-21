@@ -38,4 +38,7 @@ set_target_properties(myso PROPERTIES LINK_FLAGS "-llog")
 if (NOT TARGET crash_collector)
     add_subdirectory("${PROJECT_PATH}/libcrash_collect" "${PROJECT_PATH}/libcrash_collect")
 endif()
+if (NOT TARGET memcheck)
+    add_subdirectory("${PROJECT_PATH}/libmemcheck" "${PROJECT_PATH}/libmemcheck")
+endif()
 

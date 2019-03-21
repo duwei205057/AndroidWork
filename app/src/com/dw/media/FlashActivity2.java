@@ -29,6 +29,7 @@ import java.io.IOException;
 
 /**
  * Created by dw on 19-1-2.
+ * use SurfaceView MediaPlaer MediaController
  */
 
 public class FlashActivity2 extends Activity implements MediaController.MediaPlayerControl,
@@ -126,6 +127,7 @@ public class FlashActivity2 extends Activity implements MediaController.MediaPla
 
     }
 
+    //begin implements MediaPlayerControl
     @Override
     public void start() {
         if (null != mediaPlayer){
@@ -184,4 +186,6 @@ public class FlashActivity2 extends Activity implements MediaController.MediaPla
     public int getAudioSessionId() {
         return 0;
     }
+
+    //end implements MediaPlayerControl
 }

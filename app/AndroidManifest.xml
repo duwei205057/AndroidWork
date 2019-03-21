@@ -55,6 +55,31 @@
             </intent-filter>
         </receiver>
 
+        //此service,非调试功能时最好注释掉
+        <!--<service
+            android:name="com.dw.QuickAccessibilityService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="accessibility_service_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility"/>
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+        </service>-->
+
+        <!--<receiver android:name="com.dw.AppInstallReceiver"
+            android:label="@string/app_name" >
+            <intent-filter android:priority="9">
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>-->
+
         <meta-data
             android:name="versiondate"
             android:value="${CUR_DATE}"/>

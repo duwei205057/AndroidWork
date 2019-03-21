@@ -42,7 +42,7 @@ void* ReadMemory(uint8_t *local, ADDR* src, int size_in_int8) {
     return local;
 }
 
-static int index = 0;
+static int step = 0;
 multimap<int,int> memleak;
 
 void show_stack(size_t size, void *old_addr, void *new_addr, int op) {
@@ -53,15 +53,15 @@ void show_stack(size_t size, void *old_addr, void *new_addr, int op) {
     memcpy(pDst + 3, &uc, sizeof(long)*16);
     int ret = 1;
     int step = 0;
-    index ++;
-    LOGE("INDEX:%d -------------------------------------------------------------\n", index);
+    step ++;
+    LOGE("INDEX:%d -------------------------------------------------------------\n", step);
     while(ret > 0 && step < 6) {
         Dl_info info = {0};
         ret = stacktrace::Step(&sigctx);
         step++;
         dladdr((void *)sigctx.arm_pc, &info);
         if(info.dli_fname != 0 && (strstr(info.dli_fname, "memcheck") != 0)) {
-            LOGE("INDEX:%d [%08x] [%08x] size = %d malloc by [%08x]:%s\n",index, old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
+            LOGE("INDEX:%d [%08x] [%08x] size = %d malloc by [%08x]:%s\n",step, old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
             continue;
         }
         if(info.dli_fname != 0 && (strstr(info.dli_fname, CHECK_LIST) != 0)) {
@@ -73,12 +73,12 @@ void show_stack(size_t size, void *old_addr, void *new_addr, int op) {
             }
             if(op == MALLOC) {
                 //LOGE("[%08x] malloc %d by [%08x]:%s\n", addr, size, (char*)sigctx.arm_pc - (char*)dl_info.dli_fbase, dl_info.dli_fname);
-                LOGE("INDEX:%d [%08x] [%08x] size = %d malloc by [%08x]:%s\n",index, old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
+                LOGE("INDEX:%d [%08x] [%08x] size = %d malloc by [%08x]:%s\n",step, old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
                 memleak.insert(pair<int, int>((int)new_addr, (char*)sigctx.arm_pc - (char*)info.dli_fbase));
             } else if(op == REALLOC) {
-                    LOGE("INDEX:%d [%08x] [%08x] size = %d realloc by [%08x]:%s\n",index,  old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
+                    LOGE("INDEX:%d [%08x] [%08x] size = %d realloc by [%08x]:%s\n",step,  old_addr, new_addr, size, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
             } else if(op == FREE) {
-                LOGE("INDEX:%d [%08x] [%08x] free by [%08x]:%s\n",index,  old_addr, new_addr, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
+                LOGE("INDEX:%d [%08x] [%08x] free by [%08x]:%s\n",step,  old_addr, new_addr, (char*)sigctx.arm_pc - (char*)info.dli_fbase, info.dli_fname);
                 memleak.erase((int)old_addr);
             }
 //            break;

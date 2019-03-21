@@ -24,6 +24,7 @@ import com.dw.R;
 
 /**
  * Created by dw on 19-1-2.
+ * use SurfaceView MediaPlaer 自定义控制
  */
 
 public class FlashActivity1 extends Activity implements SurfaceHolder.Callback,

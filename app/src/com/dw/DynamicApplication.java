@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by dw on 17-7-10.
  */
-public class DynamicApplication extends Application{
+public class DynamicApplication extends Application {//RePluginApplication 使用replugin
 
     private static final String HACK_JAR = "hackdex.jar";
     public static DynamicApplication mRealApplication;

@@ -95,6 +95,15 @@ public class Inject {
         }
     }
 
+    /**
+     * jclasslib修改常量很简单，但是修改方法好像行不通
+     *
+     * javassist：修改方法特别简单，值得一试
+     *
+     * asm：听说要学习指令
+     * @param className
+     * @param path
+     */
     private static void injectClass(String className, String path) {
         println("className=="+className+" path== "+path);
         className = "com.dw.MoveView";
