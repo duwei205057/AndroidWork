@@ -23,7 +23,7 @@
 #include "FrameSequenceJNI.h"
 #include "Gifflen.h"
 
-#define JNI_PACKAGE "com/sogou/webp"
+#define JNI_PACKAGE "com/dw/webp"
 
 
 static struct {
