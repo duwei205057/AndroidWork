@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
- * Decodes webp {@link android.graphics.Bitmap Bitmaps} from {@link java.nio.ByteBuffer ByteBuffers}.
+ * Decodes webp {@link Bitmap Bitmaps} from {@link ByteBuffer ByteBuffers}.
  * For static lossless and transparent webp
  *
  */

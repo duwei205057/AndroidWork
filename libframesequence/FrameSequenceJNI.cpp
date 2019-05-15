@@ -23,7 +23,7 @@
 #include "FrameSequenceJNI.h"
 #include "Gifflen.h"
 
-#define JNI_PACKAGE "com/dw/webp"
+#define JNI_PACKAGE "com/sogou/webp"
 
 
 static struct {
@@ -49,7 +49,7 @@ static struct {
 static jint gifflen_init(JNIEnv *ioEnv, jobject ioThis,
                                                            jstring gifName,
                                                            jint w, jint h, jint numColors,
-                                                           jint quality) {
+                                                           jint quality, jint loopNum) {
     const char *str;
     str = ioEnv->GetStringUTFChars(gifName, NULL);
     if (str == NULL) {
@@ -57,7 +57,7 @@ static jint gifflen_init(JNIEnv *ioEnv, jobject ioThis,
     }
 
     Gifflen* gifflen = new Gifflen();
-    int state = gifflen->init(str, w, h, numColors, quality);
+    int state = gifflen->init(str, w, h, numColors, quality, loopNum);
     ioEnv->ReleaseStringUTFChars(gifName, str);
     if (state < 0) {
         delete gifflen;
@@ -258,7 +258,7 @@ static JNINativeMethod frameMethods[] = {
 
 static JNINativeMethod gifflenMethods[] = {
     {   "initNative",
-        "(Ljava/lang/String;IIII)I",
+        "(Ljava/lang/String;IIIII)I",
         (void*) gifflen_init
     },
     {   "closeNative",

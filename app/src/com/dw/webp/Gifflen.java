@@ -16,26 +16,15 @@
 package com.dw.webp;
 
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.List;
+
+//import com.sohu.inputmethod.sogou.BuildConfig;
 
 /**
  * Created by lchad on 2017/3/24.
@@ -44,6 +33,7 @@ import java.util.List;
 
 public class Gifflen {
 
+//    private final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "Gifflen";
 
     static {
@@ -51,7 +41,7 @@ public class Gifflen {
     }
 
     private static final int DEFAULT_COLOR = 256;
-    private static final int DEFAULT_QUALITY = 100;
+    private static final int DEFAULT_QUALITY = 10;
     private static final int DEFAULT_WIDTH = 320;
     private static final int DEFAULT_HEIGHT = 320;
     private static final int DEFAULT_DELAY = 500;
@@ -66,8 +56,6 @@ public class Gifflen {
     private String mPath;
 
     private long mNativeGifflen;
-
-    private String mTargetPath;
 
     private Handler mHandler;
 
@@ -99,7 +87,7 @@ public class Gifflen {
 
 
     private native int addFrameNative(int[] pixels, int delay, long gifflen);
-    private native int initNative(String path, int width, int height, int color, int quality);
+    private native int initNative(String path, int width, int height, int color, int quality, int loopNum);
     private native void closeNative(long gifflen);
 
 
@@ -111,10 +99,9 @@ public class Gifflen {
      * @param height  Gif 图片的高度.
      * @param color   Gif 图片的色域.
      * @param quality 进行色彩量化时的quality参数.
-     * @return 如果返回值是0, 就代表着执行失败.
      */
-    private void init(String path, int width, int height, int color, int quality) {
-        mNativeGifflen = initNative(path, width, height, color, quality);
+    private void init(String path, int width, int height, int color, int quality, int loopNum) {
+        mNativeGifflen = initNative(path, width, height, color, quality, loopNum);
     }
 
     /**
@@ -123,9 +110,9 @@ public class Gifflen {
      * @param pixels pixels array from bitmap
      * @return 是否成功.
      */
-    private int addFrame(int[] pixels, int delay) {
+    private int addFrame(int[] pixels, int delay) throws Exception {
         if (mNativeGifflen == 0) {
-            throw new IllegalStateException("attempted to use incorrectly built Gifflen");
+            throw new Exception("attempted to use incorrectly built Gifflen");
         }
         return addFrameNative(pixels, delay / 10, mNativeGifflen);
     }
@@ -133,9 +120,9 @@ public class Gifflen {
     /**
      * * native层做一些释放资源的操作.
      */
-    private void close() {
+    private void close() throws Exception {
         if (mNativeGifflen == 0) {
-            throw new IllegalStateException("attempted to use incorrectly built Gifflen");
+            throw new Exception("attempted to use incorrectly built Gifflen");
         }
         closeNative(mNativeGifflen);
     }
@@ -145,86 +132,50 @@ public class Gifflen {
      *
      */
     private boolean encodeFrameSequence(ByteBuffer byteBuffer) {
-        check(mWidth, mHeight, mPath);
         if(byteBuffer == null)
             return false;
         File file = new File(mPath);
         FrameSequence fs = null;
         FrameSequence.State fsState = null;
-        try {
-//                long startTime = System.currentTimeMillis();
-            fs = FrameSequence.decodeByteBuffer(byteBuffer);
-            if (fs == null) return false;
-            int realWidth = mWidth <= 0 ? fs.getWidth() : Math.min(mWidth, fs.getWidth());
-            int realHeight = mHeight <= 0 ? fs.getHeight() : Math.min(mHeight, fs.getHeight());
-            int[] pixels = new int[realWidth * realHeight];
-            Bitmap frameBitmap = Bitmap.createBitmap(fs.getWidth(), fs.getHeight(), Bitmap.Config.ARGB_8888);
-            fsState = fs.createState();
-            init(mPath, realWidth, realHeight, mColor, mQuality);
-            int t = 0;
-            for (int i = 0; i < fs.getFrameCount(); i++) {
-                int curDelay = (int)fsState.getFrame(i, frameBitmap, i - 2);
-                Bitmap bitmap = frameBitmap;
-                if (realWidth < frameBitmap.getWidth() || realHeight < frameBitmap.getHeight()) {
-                    bitmap = Bitmap.createScaledBitmap(frameBitmap, realWidth, realHeight, true);
-                }
-                if (i > fs.getFrameCount() / 3) {
-                    if (t <= 2) {
-                        OutputStream os = new FileOutputStream("/sdcard/frame"+t++);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-                        os.close();
-                    }
-                }
-
-                bitmap.getPixels(pixels, 0, realWidth, 0, 0, realWidth, realHeight);
-                int result = addFrame(pixels, curDelay);
-                if (bitmap != frameBitmap)
-                    bitmap.recycle();
-            }
-            frameBitmap.recycle();
-            close();
-//                Log.d("xx"," turn to gif cost "+(System.currentTimeMillis() - startTime));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if(fsState != null)
-                fsState.destroy();
-        }
-        return true;
-    }
-
-    /**
-     * 开始进行Gif生成
-     *
-     * @param files  传入的每一帧图片的File对象
-     * @return 是否成功
-     */
-    public boolean encodeFiles(List<File> files) {
-        check(mWidth, mHeight, mPath);
-        int state;
-        int[] pixels = new int[mWidth * mHeight];
-
-        init(mPath, mWidth, mHeight, mColor, mQuality);
-        int delay = getDelay();
-        for (File aFileList : files) {
-            Bitmap bitmap;
+        if(!file.exists()) {
             try {
-                bitmap = BitmapFactory.decodeStream(new FileInputStream(aFileList));
-            } catch (FileNotFoundException e) {
+                long startTime = System.currentTimeMillis();
+                fs = FrameSequence.decodeByteBuffer(byteBuffer);
+                if (fs == null) return false;
+                if (fs.getWidth() <= 0 || fs.getHeight() <= 0) return false;
+                //TODO 压缩尺寸过小,会有颜色丢失https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp 200
+                float wScale = (mWidth <= 0 || mWidth > fs.getWidth()) ? 1 : (float) mWidth / fs.getWidth();
+                float hScale = (mHeight <= 0 || mHeight > fs.getHeight()) ? 1 : (float) mHeight / fs.getHeight();
+                float scale = Math.min(wScale, hScale);
+                int realWidth = (int)(scale * fs.getWidth());
+                int realHeight = (int)(scale * fs.getHeight());
+
+                int[] pixels = new int[realWidth * realHeight];
+                Bitmap frameBitmap = Bitmap.createBitmap(fs.getWidth(), fs.getHeight(), Bitmap.Config.ARGB_8888);
+                fsState = fs.createState();
+                init(mPath, realWidth, realHeight, mColor, mQuality, fs.getDefaultLoopCount());
+                for (int i = 0; i < fs.getFrameCount(); i++) {
+                    int curDelay = (int)fsState.getFrame(i, frameBitmap, i - 2);
+                    Bitmap bitmap = frameBitmap;
+                    if (realWidth < frameBitmap.getWidth() || realHeight < frameBitmap.getHeight()) {
+                        bitmap = Bitmap.createScaledBitmap(frameBitmap, realWidth, realHeight, true);
+                    }
+                    bitmap.getPixels(pixels, 0, realWidth, 0, 0, realWidth, realHeight);
+                    addFrame(pixels, curDelay);
+                    if (bitmap != frameBitmap)
+                        bitmap.recycle();
+                }
+                frameBitmap.recycle();
+                close();
+                LOGD(" turn to gif cost "+(System.currentTimeMillis() - startTime) +" total"+fs.getFrameCount()+"frame,"+fs.getWidth()+"x"+fs.getHeight()+",bytes:"+(fs.getFrameCount() * fs.getWidth() * fs.getHeight()));
+            } catch (Exception e) {
+                e.printStackTrace();
                 return false;
+            } finally {
+                if(fsState != null)
+                    fsState.destroy();
             }
-
-            if (mWidth < bitmap.getWidth() || mHeight < bitmap.getHeight()) {
-                bitmap = Bitmap.createScaledBitmap(bitmap, mWidth, mHeight, true);
-            }
-            bitmap.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight);
-            addFrame(pixels, delay);
-            bitmap.recycle();
         }
-
-        close();
-
         return true;
     }
 
@@ -287,10 +238,6 @@ public class Gifflen {
             build().encodeFrameSequence(byteBuffer);
         }
 
-        public void encodeFiles(List<File> files) {
-            build().encodeFiles(files);
-        }
-
         private Gifflen build() {
             if (TextUtils.isEmpty(path)) {
                 throw new IllegalStateException("the path value is invalid!!");
@@ -306,34 +253,19 @@ public class Gifflen {
                 quality = DEFAULT_QUALITY;
             }
 
-            if (this.width <= 0) {
-                throw new IllegalStateException("the width value is invalid!!");
-            }
-            if (this.height <= 0) {
-                throw new IllegalStateException("the height value is invalid!!");
-            }
-
             return new Gifflen(this.path, this.color, this.quality, this.delay, width, height, onEncodeFinishListener);
         }
     }
 
-    private void check(final int width, final int height, String targetPath) {
-        if (targetPath != null && targetPath.length() > 0) {
-            mTargetPath = targetPath;
-        } else {
-            throw new IllegalStateException("the target path is invalid!!");
-        }
-        if (width <= 0 || height <= 0) {
-            throw new IllegalStateException("the width or height value is invalid!!");
-        }
-    }
-
+    /**
+     * called from native
+     */
     public void onEncodeFinish() {
         if (mOnEncodeFinishListener != null) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    mOnEncodeFinishListener.onEncodeFinish(mTargetPath);
+                    mOnEncodeFinishListener.onEncodeFinish(mPath);
                 }
             });
         }
@@ -341,6 +273,11 @@ public class Gifflen {
 
     public interface OnEncodeFinishListener {
         void onEncodeFinish(String path);
+    }
+
+    private void LOGD(String message) {
+//        if (DEBUG)
+//            Log.d("xx",message);
     }
 
 }

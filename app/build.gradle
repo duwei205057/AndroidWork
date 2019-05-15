@@ -212,7 +212,7 @@ dependencies {
 //    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     compile 'org.aspectj:aspectjtools:1.8.1'
     compile project(':native_crash_collector')
-    compile 'com.qihoo360.replugin:replugin-host-lib:2.2.1' // 集成 RePlugin 添加的配置
+//    compile 'com.qihoo360.replugin:replugin-host-lib:2.2.1' // 集成 RePlugin 添加的配置
 }
 ext {
     local = 'Hello from build.gradle'

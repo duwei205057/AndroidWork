@@ -31,7 +31,7 @@ private:
     int GIF_LZW_compressor(DIB *srcimg, unsigned int numColors, FILE *handle, int interlace);
 
 public:
-    int init(const char * gifName, int w, int h, int numColors, int quality);
+    int init(const char * gifName, int w, int h, int numColors, int quality, int loopNum);
     void close();
     int addFrame(int* data, int length, int delay);
 };

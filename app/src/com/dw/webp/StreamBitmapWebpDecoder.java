@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Decodes Webp {@link android.graphics.Bitmap Bitmaps} from {@link java.io.InputStream InputStreams}.
+ * Decodes Webp {@link Bitmap Bitmaps} from {@link InputStream InputStreams}.
  * For static lossless and transparent webp
  *
  */

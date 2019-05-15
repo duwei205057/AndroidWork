@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,6 +24,7 @@ import java.util.List;
 public class GestureView extends View {
 
     GestureDetector mGestureDetector;
+    Handler mHandler = new Handler() ;
 
     public GestureView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -145,6 +147,7 @@ public class GestureView extends View {
                 mPath = new Path();
                 mPathList.add(mPath);
                 mPath.moveTo(x, y);
+                mHandler.postAtFrontOfQueue(mRunnable);
                 break;
             case MotionEvent.ACTION_MOVE:
                 mPath.lineTo(x, y);
@@ -162,4 +165,11 @@ public class GestureView extends View {
         invalidate();
         return true;
     }
+
+    Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("xx","dosomething!!!!!!!");
+        }
+    };
 }

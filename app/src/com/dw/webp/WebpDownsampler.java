@@ -1,7 +1,6 @@
 package com.dw.webp;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -48,14 +47,14 @@ public class WebpDownsampler {
         mProvider = new GifBitmapProvider(bitmapPool, byteArrayPool);
     }
 
-    public boolean handles(InputStream is, Options options) throws IOException{
+    public boolean handles(InputStream is, Options options) throws IOException {
 
         WebpHeaderParser.WebpImageType webpType = WebpHeaderParser.getType(is, mArrayPool);
         // handle lossless and transparent webp
         return shouldDecode(webpType, options);
     }
 
-    public boolean handles(ByteBuffer byteBuffer, Options options) throws IOException{
+    public boolean handles(ByteBuffer byteBuffer, Options options) throws IOException {
 
         WebpHeaderParser.WebpImageType webpType = WebpHeaderParser.getType(byteBuffer);
         // handle lossless and transparent webp

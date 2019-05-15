@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <dlfcn.h>
 #include "exception_handler.h"
+#include "../utils/memcheck.h"
 
 using namespace native_crash_collector;
 
@@ -22,47 +23,6 @@ const char* get_current_data() {
     timeinfo = localtime(&rawtime);
     char *time_s = asctime(timeinfo);
     return time_s;
-}
-
-
-int check_mem_readable(unsigned long addr, int len)
-{
-    pid_t pid ;
-    char access, maps[32] , buff[1024];
-    unsigned long start_addr, end_addr, last_addr;
-    FILE *fmap;
-
-    pid = getpid();
-    sprintf(maps, "/proc/%d/maps", pid);
-    fmap = fopen(maps, "rb");
-    if(!fmap){
-        printf("open %s file failed!/n", maps);
-        return 0;
-    }
-
-    while(fgets(buff, sizeof(buff)-1, fmap) != NULL) {
-        /* "%*c"表示忽略第一个字符 */
-        sscanf(buff, "%lx-%lx %*c%c", &start_addr, &end_addr, &access);
-        if((addr >= start_addr) && (addr <= end_addr)){
-            if('w' != access){
-                fclose(fmap);
-                return 0;
-            }
-
-            if((addr + len) < end_addr){
-                fclose(fmap);
-                return 1;
-            }else {
-                last_addr = end_addr;
-                len = len - (end_addr - addr);
-                addr = last_addr;
-            }
-        }
-    }
-
-    fclose(fmap);
-    return 0;
-
 }
 
 bool IsReadable(addr_s addr, int size_in_byte) {
@@ -105,8 +65,8 @@ void WriteMemoryNearby(ReportWriter *rw, addr_s addr, size_t ctx_before, size_t 
         if (IsReadable(addr_pt, wordLineBytes)) {
             read_memory(memLine, (addr_s *)addr_pt, wordLineBytes);
             rw->Write(format, addr_pt);
-            for (i=0;i< sizeof(memLine);i++) {
-                rw->Write(" %08x", *(memLine + i));
+            for (i=0;i< sizeof(memLine)/4;i++) {
+                rw->Write(" %08x", *(uint32_t*)(memLine + i*4));
             }
             rw->Write("\n");
             addr_pt += wordLineBytes;
@@ -123,8 +83,8 @@ void WriteMemoryNearby(ReportWriter *rw, addr_s addr, size_t ctx_before, size_t 
     } else {
         read_memory(memLine, (addr_s *)addr_pt, wordLineBytes);
         rw->Write(curformat, addr_pt);
-        for (i=0;i< sizeof(memLine);i++) {
-            rw->Write(" %08x", *(memLine + i));
+        for (i=0;i< sizeof(memLine)/4;i++) {
+            rw->Write(" %08x", *(uint32_t*)(memLine + i*4));
         }
         rw->Write("\n");
         addr_pt += wordLineBytes;
@@ -133,8 +93,8 @@ void WriteMemoryNearby(ReportWriter *rw, addr_s addr, size_t ctx_before, size_t 
             if (IsReadable(addr_pt, wordLineBytes)) {
                 read_memory(memLine, (addr_s *)addr_pt, wordLineBytes);
                 rw->Write(format, addr_pt);
-                for (i=0;i< sizeof(memLine);i++) {
-                    rw->Write(" %08x", *(memLine + i));
+                for (i=0;i< sizeof(memLine)/4;i++) {
+                    rw->Write(" %08x", *(uint32_t*)(memLine + i*4));
                 }
                 rw->Write("\n");
                 addr_pt += wordLineBytes;
@@ -175,28 +135,6 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     }
 
     rw->Write("\n******Native Crash Report******\n");
-
-    /*siginfo_t {
-            int      si_signo;    *//* Signal number *//*
-            int      si_errno;    *//* An errno value *//*
-            int      si_code;     *//* Signal code *//*
-            int      si_trapno;   *//* Trap number that caused
-                                        hardware-generated signal
-                                        (unused on most architectures) *//*
-            pid_t    si_pid;      *//* Sending process ID *//*
-            uid_t    si_uid;      *//* Real user ID of sending process *//*
-            int      si_status;   *//* Exit value or signal *//*
-            clock_t  si_utime;    *//* User time consumed *//*
-            clock_t  si_stime;    *//* System time consumed *//*
-            sigval_t si_value;    *//* Signal value *//*
-            int      si_int;      *//* POSIX.1b signal *//*
-            void    *si_ptr;      *//* POSIX.1b signal *//*
-            int      si_overrun;  *//* Timer overrun count; POSIX.1b timers *//*
-            int      si_timerid;  *//* Timer ID; POSIX.1b timers *//*
-            void    *si_addr;     *//* Memory location which caused fault *//*
-            int      si_band;     *//* Band event *//*
-            int      si_fd;       *//* File descriptor *//*
-    }*/
 
 #if defined(__aarch64__)
     const addr_s pc = (addr_s) sig_ctx->pc;
@@ -343,12 +281,29 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
     rw->Write("\n\n[Backtrace]  \n");
     int ret = 1;
     int step = 0;
-    while(ret > 0 &&  step < MAX_STEP) {
+    bool bFirst = true;
+    addr_s pc_real = 0;
+    while(ret >= 0 &&  step < MAX_STEP) {
+        pc_real = pc;
+        if ( !bFirst ) {
+            pc_real = get_real_pc(sig_ctx->arm_pc);
+        }
         memset(dlip, 0, sizeof(dlip));
-        dladdr((void *)sig_ctx->arm_pc, dlip);
-        CRASH_LOGE("  #%02d pc=%08lx %s \n", step, sig_ctx->arm_pc, dlip->dli_fname);
-        CRASH_LOGE("  #%02d %08lx %s \n", step, sig_ctx->arm_pc-(addr_s )dlip->dli_fbase, dlip->dli_fname);
-        rw->Write("  #%02d %08x %s \n", step++, sig_ctx->arm_pc-(addr_s )dlip->dli_fbase, dlip->dli_fname);
+        dladdr((void *)pc_real, dlip);
+        CRASH_LOGE("  #%02d pc=%08lx offset=%08lx %s \n", step, pc_real, sig_ctx->arm_pc-(addr_s )dlip->dli_fbase, dlip->dli_fname);
+        rw->Write("  #%02d %08x %s \n", step++, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname);
+        //correct 1:use lr directly
+        if (step == 1 && dlip->dli_fname == NULL) {
+            sig_ctx->arm_pc = sig_ctx->arm_lr;
+            pc_real = get_real_pc(sig_ctx->arm_pc);
+            memset(dlip, 0, sizeof(dlip));
+            dladdr((void *)pc_real, dlip);
+            if(dlip->dli_fname != NULL) {
+                CRASH_LOGE("  $%02d %08x %s %s  \n", step, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
+                rw->Write("  $%02d %08x %s\n", step++, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname);
+            }
+        }
+        //corect 2:scan stack to find nearest code
         if(step <= 2 && dlip->dli_fname == NULL) {
             int stack_offset = 0;
             uint8_t local[4] = {0};
@@ -356,10 +311,12 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
                 uint32_t *data = (uint32_t *) read_memory(local, (addr_s *) (sp + stack_offset * 4),
                                                           4);
                 if(data == NULL) break;
+                pc_real = get_real_pc(*data);
                 memset(dlip, 0, sizeof(dlip));
-                dladdr((void *)(*data), dlip);
+                dladdr((void *)pc_real, dlip);
                 if(dlip->dli_fname != NULL) {
-                    rw->Write("  $%02d %08x %s %s  \n", step++, *data-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
+                    CRASH_LOGE("  $%02d %08x %s %s  \n", step, *data-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
+                    rw->Write("  $%02d %08x %s %s  \n", step++, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
                 }
                 stack_offset++;
             }
@@ -386,12 +343,13 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
                 uint32_t *data = (uint32_t *) read_memory(local, (addr_s *) (sp + stack_offset * 4),
                                                           4);
                 if(data == NULL) break;
+                pc_real = get_real_pc(*data);
                 memset(dlip, 0, sizeof(dlip));
-                dladdr((void *)(*data), dlip);
+                dladdr((void *)pc_real, dlip);
                 if(dlip->dli_fname != NULL) {
                     sig_ctx->arm_sp += stack_offset * 4 + 4;
                     sig_ctx->arm_pc = *data;
-                    rw->Write("  $%02d %08x %s %s  \n", step++, *data-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
+                    rw->Write("  $%02d %08x %s %s  \n", step++, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
                     ret = 1;
                     break;
                 }
@@ -399,7 +357,10 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
             }
         }
 
-        ret = stacktrace::Step(sig_ctx);
+        ret = stacktrace::Step(sig_ctx, !bFirst);
+        if ( bFirst ) {
+            bFirst = false;
+        }
         if(ret == -2) {
             int stack_offset = 0;
             uint8_t local[4] = {0};
@@ -407,12 +368,13 @@ void handle_crash(char *filepath, char *head_info, char *dump_java_info ,void *u
                 uint32_t *data = (uint32_t *) read_memory(local, (addr_s *) (sig_ctx->arm_sp +
                                                                              stack_offset * 4), 4);
                 if(data == NULL) break;
+                pc_real = get_real_pc(*data);
                 memset(dlip, 0, sizeof(dlip));
-                dladdr((void *)(*data), dlip);
+                dladdr((void *)pc_real, dlip);
                 if(dlip->dli_fname != NULL) {
                     sig_ctx->arm_sp += stack_offset * 4 + 4;
                     sig_ctx->arm_pc = *data;
-                    rw->Write("  $%02d %08x %s %s  \n", step++, *data-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
+                    rw->Write("  $%02d %08x %s %s  \n", step++, pc_real-(addr_s )dlip->dli_fbase, dlip->dli_fname, dlip->dli_sname);
                     ret = 1;
                     break;
                 }

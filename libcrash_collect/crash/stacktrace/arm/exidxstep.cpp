@@ -12,7 +12,9 @@ int arm_exidx_step(t_cursor *c) {
   ret = arm_exidx_extract(c, buf);
   if(ret > 0)
     ret = arm_exidx_decode(buf, ret, c);
-  if(c->step_status == STEP_STOP||ret == -1) {
+  if(c->step_status == STEP_STOP){
+      return -3;
+  } else if (ret == -1) {
     return -1;
   }else if(c->step_status == STEP_PC_LR){
     return -2;
@@ -119,26 +121,24 @@ int arm_exidx_extract (t_cursor *c, uint8_t *buf) {
       buf[nbuf++] = extal_value >> 8;
       buf[nbuf++] = extal_value;
     }else {
-      /* mark (not check, have a bug)
-       * TODO: this has a bug.
+      /*
        * generic model:
        *  +-+----------------------+ +-----------------------
        *  |0|    prs_fnc_offset    | | prs_data
        *  +-+----------------------+ +-----------------------
        *  31 30                    0
        */
-      /*
-      tbl_entry_addr = (get_off_pre31(extal_value) + tbl_entry_addr + 4);
-      extal_value = *(uint32_t *)tbl_entry_addr;
+      tbl_entry_addr += 4; //skip exception func
+      extal_value = *(uint32_t *)(tbl_entry_addr);
+      CRASH_LOGD("extal_value = %08x", extal_value);
 
       n_add_insn = extal_value >> 24;
-      buf[nbuf++] = extal_value >> 16;
-      buf[nbuf++] = extal_value >> 8;
-      buf[nbuf++] = extal_value;
+      uint32_t n_tmp = n_add_insn > 3 ? 3 : n_add_insn;
+      for (uint8_t i = 0; i < n_tmp; i++) {
+          buf[nbuf++] = extal_value >> (16 - i * 8);
+      }
       tbl_entry_addr += 4;
-      */
-      //bug so rerurn -1
-      return -1;
+      n_add_insn -= n_tmp;
     }
 
     for (uint8_t i = 0; i < n_add_insn; i++) {
@@ -320,7 +320,7 @@ int arm_exidx_apply_cmd (arm_exbuf_data *edata, t_cursor *c) {
       for (i = 0; i < 16; i++)
         if (edata->data & (1 << i)) {
           /* pop r[i] */
-          CRASH_LOGD("pop r[%d] c->regs[ARM_SP]==%08lx\n", i, *(uint32_t *)c->regs[ARM_SP]);
+          CRASH_LOGD("pop r[%d]=*(sp--)==%08lx\n", i, *(uint32_t *)c->regs[ARM_SP]);
           c->regs[i] = *(uint32_t *)c->regs[ARM_SP];
           c->regs[ARM_SP] += 4;
         }
@@ -328,8 +328,8 @@ int arm_exidx_apply_cmd (arm_exbuf_data *edata, t_cursor *c) {
       break;
 
     case ARM_EXIDX_CMD_REG_TO_SP:
-      CRASH_LOGD("ARM_EXIDX_CMD_REG_TO_SP  sp = %08x\n", edata->data);
-      c->regs[ARM_SP] = (unsigned long) &c->regs[edata->data];
+      CRASH_LOGD("ARM_EXIDX_CMD_REG_TO_SP  sp = c->regs[%d] = %08lx\n", edata->data, c->regs[edata->data]);
+      c->regs[ARM_SP] = c->regs[edata->data];
       break;
 
     case ARM_EXIDX_CMD_VFP_POP:

@@ -75,6 +75,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -195,6 +197,21 @@ public class MainActivity extends Activity {
         Handler h = new Handler(mHandlerThread.getLooper());
         registerReceiver(mReceiver, mIntentFilter, null, h);
         getApplicationContext().registerReceiver(mScreenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        h.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("xx"," int other thread");
+                try {
+                    URL url = new URL("http://qs.shouji.sogou.com/gettpl/0978c499e4fb8b16c6be6d1be8b5fbc2");
+                    URLConnection conn = url.openConnection();
+                    conn.connect();
+                    conn.getInputStream();
+                    Log.d("xx"," int other thread");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 //        copyFile();
 //        readWeb();
     }

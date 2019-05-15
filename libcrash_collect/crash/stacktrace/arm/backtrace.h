@@ -11,7 +11,7 @@
 #include "sys_bits.h"
 #include "exidxstep.h"
 
-int step(sigcontext *sig_context);
+int step(sigcontext *sig_context, bool bNextCode);
 
 #endif
 #endif

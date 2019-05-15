@@ -178,7 +178,7 @@ int Gifflen::GIF_LZW_compressor(DIB *srcimg, unsigned int numColors, FILE *handl
     return 0;
 }
 
-int Gifflen::init(const char * gifName, int w, int h, int numColors, int quality) {
+int Gifflen::init(const char * gifName, int w, int h, int numColors, int quality, int loopNum) {
     __android_log_print(ANDROID_LOG_VERBOSE, "gifflen", "gifName=%s w=%d h=%d numColors=%d quality=%d f", gifName, w, h, numColors, quality);
     if ((pGif = fopen(gifName, "wb")) == NULL) {
         return -1;
@@ -218,7 +218,9 @@ int Gifflen::init(const char * gifName, int w, int h, int numColors, int quality
     fwrite("NETSCAPE2.0", 1, 11, pGif);
     s[0] = 3;
     s[1] = 1;
-    s[2] = s[3] = s[4] = 0;
+    s[2] = loopNum & 0xFF;
+    s[3] = loopNum / 0x100;
+    s[4] = 0;
     fwrite(s, 1, 5, pGif);
     return 0;
 }

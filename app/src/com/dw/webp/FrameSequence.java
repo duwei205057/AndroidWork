@@ -18,7 +18,6 @@ package com.dw.webp;
 
 import android.graphics.Bitmap;
 import android.support.annotation.Keep;
-import android.util.Log;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -162,7 +161,8 @@ public class FrameSequence {
             if (mNativeState == 0) {
                 throw new IllegalStateException("attempted to draw destroyed FrameSequenceState");
             }
-            return nativeGetFrame(mNativeState, frameNr, output, previousFrameNr);
+            long result = nativeGetFrame(mNativeState, frameNr, output, previousFrameNr);
+            return result;
         }
     }
 }

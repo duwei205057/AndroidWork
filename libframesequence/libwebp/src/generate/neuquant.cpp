@@ -161,14 +161,6 @@ void NeuQuant::unbiasnet() {
         }
         network[i][3] = i;            /* record colour no */
     }
-
-    __android_log_print(ANDROID_LOG_DEBUG, "gifflen", "----------------beging------------%d", netsize);
-    for (i = 0; i < netsize; i++) {
-
-        __android_log_print(ANDROID_LOG_DEBUG, "gifflen", "%d %d %d %d", network[i][0], network[i][1], network[i][2], network[i][3]);
-
-    }
-    __android_log_write(ANDROID_LOG_DEBUG, "gifflen", "----------------end------------");
 }
 
 

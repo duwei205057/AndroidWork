@@ -8,7 +8,7 @@
 #endif
 
 namespace stacktrace {
-  int Step(sigcontext *sig_context);
+  int Step(sigcontext *sig_context, bool b);
 }
 #endif
 

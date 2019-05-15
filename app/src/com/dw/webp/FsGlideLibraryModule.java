@@ -14,6 +14,7 @@ import com.bumptech.glide.module.LibraryGlideModule;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+//uncomment this to enable module
 @GlideModule
 public class FsGlideLibraryModule extends LibraryGlideModule {
     @Override
@@ -29,10 +30,7 @@ public class FsGlideLibraryModule extends LibraryGlideModule {
                 resources.getDisplayMetrics(), arrayPool, bitmapPool);
         final ByteBufferBitmapWebpDecoder byteBufferBitmapDecoder = new ByteBufferBitmapWebpDecoder(webpDownsampler);
         final StreamBitmapWebpDecoder streamBitmapDecoder = new StreamBitmapWebpDecoder(webpDownsampler, arrayPool);
-        registry /* FrameSequences */
-                .prepend(ByteBuffer.class, FrameSequence.class, bufferFsDecoder)
-                .prepend(InputStream.class, FrameSequence.class, streamFsDecoder)
-                /* FrameSequencesDrawables */
+        registry /* FrameSequencesDrawables */
                 .prepend(ByteBuffer.class, FrameSequenceDrawable.class,
                         new FsDrawableDecoder<>(bitmapPool, bufferFsDecoder))
                 .prepend(InputStream.class, FrameSequenceDrawable.class,
@@ -42,10 +40,7 @@ public class FsGlideLibraryModule extends LibraryGlideModule {
                 .append(ByteBuffer.class, Bitmap.class, byteBufferBitmapDecoder)
                 .append(InputStream.class, NinePatchBitmap.class, new NinePatchBitmapDecoder<InputStream>())
                 .append(ByteBuffer.class, NinePatchBitmap.class, new NinePatchBitmapDecoder<ByteBuffer>())
-                /* Transcodes */
-                .register(FrameSequence.class, FrameSequenceDrawable.class, new FsDrawableTranscoder(bitmapPool))
                 /*Encoder*/
-                .register(FrameSequenceDrawable.class, new FsDrawableEncoder())
-                .register(FrameSequence.class, new FrameSequenceEncoder());
+                .register(FrameSequenceDrawable.class, new FsDrawableEncoder());
     }
 }
