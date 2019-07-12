@@ -204,23 +204,6 @@ static jlong JNICALL nativeGetFrame(
     return delayMs;
 }
 
-static jbyteArray nativeGetByteData (JNIEnv* env, jobject clazz, jlong frameSequenceLong) {
-    FrameSequence* frameSequence = reinterpret_cast<FrameSequence*>(frameSequenceLong);
-    WebPData data = frameSequence->getByteData();
-    if (data.size > 0) {
-        size_t length = data.size;
-        jbyte *byteResult = new jbyte[length];
-        for (int i = 0; i < length; i++) {
-            byteResult[i] = data.bytes[i];
-        }
-        jbyteArray jretArr = env->NewByteArray(data.size);
-        env->SetByteArrayRegion(jretArr, 0, data.size, byteResult);
-        delete[] byteResult;
-        return jretArr;
-    }
-    return NULL;
-}
-
 static JNINativeMethod frameMethods[] = {
     {   "nativeDecodeByteArray",
         "([BII)L" JNI_PACKAGE "/FrameSequence;",
@@ -249,10 +232,6 @@ static JNINativeMethod frameMethods[] = {
     {   "nativeDestroyState",
         "(J)V",
         (void*) nativeDestroyState
-    },
-    {   "nativeGetByteData",
-        "(J)[B",
-        (void*) nativeGetByteData
     },
 };
 

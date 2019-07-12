@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.aop.DebugTrace;
 import com.dw.DynamicApplication;
+import com.dw.memcheck.MemCheck;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,13 @@ import java.io.OutputStream;
 public class NativeInterface {
 
     private static NativeInterface mInstance = new NativeInterface();
+    private static MemCheck memCheck = new MemCheck();
 
     static {
         System.loadLibrary("myso");
         Log.d("xx","NativeInterface  loadlibrary pid=="+ Process.myPid());
+        System.loadLibrary("memcheck");
+        memCheck.initModule();
     }
 
 //    static {

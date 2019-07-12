@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 //import com.sohu.inputmethod.sogou.BuildConfig;
@@ -127,6 +128,11 @@ public class Gifflen {
         closeNative(mNativeGifflen);
     }
 
+    private boolean encodeFrameSequence(InputStream inputStream) {
+        if(inputStream == null)
+            return false;
+        return encodeFrameSequence(FrameSequence.decodeStream(inputStream));
+    }
     /**
      * 开始进行Gif生成
      *
@@ -134,13 +140,15 @@ public class Gifflen {
     private boolean encodeFrameSequence(ByteBuffer byteBuffer) {
         if(byteBuffer == null)
             return false;
+        return encodeFrameSequence(FrameSequence.decodeByteBuffer(byteBuffer));
+    }
+
+    private boolean encodeFrameSequence(FrameSequence fs) {
         File file = new File(mPath);
-        FrameSequence fs = null;
         FrameSequence.State fsState = null;
         if(!file.exists()) {
             try {
                 long startTime = System.currentTimeMillis();
-                fs = FrameSequence.decodeByteBuffer(byteBuffer);
                 if (fs == null) return false;
                 if (fs.getWidth() <= 0 || fs.getHeight() <= 0) return false;
                 //TODO 压缩尺寸过小,会有颜色丢失https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp 200
@@ -236,6 +244,10 @@ public class Gifflen {
 
         public void encodeFrameSequence(ByteBuffer byteBuffer) {
             build().encodeFrameSequence(byteBuffer);
+        }
+
+        public void encodeFrameSequence(InputStream inputStream) {
+            build().encodeFrameSequence(inputStream);
         }
 
         private Gifflen build() {

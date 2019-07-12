@@ -64,10 +64,6 @@ public:
         return mRawByteBuffer;
     }
 
-    virtual WebPData getByteData() const {
-        return mData;
-    }
-
     virtual FrameSequenceState* createState() const;
 
     WebPDemuxer* getDemuxer() const { return mDemux; }

@@ -38,7 +38,7 @@ public class ByteBufferFsDecoder implements ResourceDecoder<ByteBuffer, FrameSeq
         source.reset();  // reset the Buffer for twice read
         if (imageType == ImageHeaderParser.ImageType.GIF) {
             // GIF
-            return false;
+            return true;
         }
 
         if (options.get(DISABLE_WEBP) ||

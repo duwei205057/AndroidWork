@@ -53,6 +53,7 @@ import com.dw.glide.GlideActivity;
 import com.dw.http.Test;
 import com.dw.js.AndroidJavaScript;
 import com.dw.js.JSActivity;
+import com.dw.memcheck.MemCheck;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;

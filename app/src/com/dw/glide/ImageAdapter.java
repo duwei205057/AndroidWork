@@ -56,7 +56,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         holder.imageView.setTag(R.id.webp_image,url);
         holder.textView.setText(url);
 //        loadImage(holder.target, url);
-        loadImage(holder.imageView, url);
+//        loadImage(holder.imageView, url);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             "https://www.gstatic.com/webp/gallery3/5_webp_a.webp",
     };
     private static final String[] ANIM_WEBP = {
-            //"https://raw.githubusercontent.com/1290846731/RecordMySelf/master/chect.webp",
+            //"https://raw.githubusercontent.com/1290846731/RecordMySelf/master/chect.webp",//只循环一次
             "https://www.gstatic.com/webp/animated/1.webp",
             "https://mathiasbynens.be/demo/animated-webp-supported.webp",
             "https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp",

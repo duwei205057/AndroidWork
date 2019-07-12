@@ -1,5 +1,6 @@
 package com.dw.glide;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +9,8 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,11 +26,26 @@ import android.widget.Toast;
 
 import com.aop.DebugTrace;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.signature.EmptySignature;
 import com.dw.R;
 import com.dw.gif.BaseGifImageView;
+import com.dw.webp.BlurTransformation;
 import com.dw.webp.FrameSequence;
 import com.dw.webp.FrameSequenceDrawable;
 import com.dw.webp.Gifflen;
+import com.dw.webp.TransformUrl;
+import com.dw.webp.WebpModule;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,9 +55,11 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -59,6 +79,7 @@ public class GlideActivity extends Activity {
 
     private int mColor = 256;
     private TypedArray mDrawableList;
+    BaseGifImageView imageView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +92,7 @@ public class GlideActivity extends Activity {
         mWebpAdapter = new ImageAdapter(this);
         mRecyclerView.setAdapter(mWebpAdapter);
         mDrawableList = getResources().obtainTypedArray(R.array.source);
+        imageView = (BaseGifImageView) findViewById(R.id.imageView);
     }
 
     @Override
@@ -83,6 +105,154 @@ public class GlideActivity extends Activity {
         super.onResume();
     }
 
+    public void getImage(View view) {
+//        preload();
+//        getCache();
+        load();
+//        loadWebp();
+//        loadLocal();
+//        getCache2();
+//        load1();
+//        preload1();
+//        getCache();
+    }
+
+    private void preload() {
+        Glide.with(this)
+                .load("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif")
+                .downloadOnly(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(File resource, Transition<? super File> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                    }
+                });
+    }
+
+    private void preload1() {
+        Glide.with(this)
+                .load("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif")
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
+                .preload();
+    }
+
+    private void load() {
+        Glide.with(this)
+                .load("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif")
+//                .load("file:///sdcard/frame0")
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL).override(200))
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                        if (resource instanceof Animatable) {
+                            ((Animatable)resource).start();
+                        }
+                        imageView.setImageDrawable(resource);
+                    }
+                });
+    }
+
+    /**
+     * 读取本地资源(不需要磁盘缓存)
+     */
+    private void loadLocal() {
+        Glide.with(this)
+                .load("file:///sdcard/frame0")
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                        if (resource instanceof Animatable) {
+                            ((Animatable)resource).start();
+                        }
+                        imageView.setImageDrawable(resource);
+                    }
+                });
+    }
+
+    /**
+     * 需灌色或高斯的bitmap //不需要分享
+     */
+    private void load1() {
+        Glide.with(this.getApplicationContext())
+                .load("http://pic19.nipic.com/20120322/8863808_112842518157_2.jpg")
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL).transform(new BlurTransformation(5)).override(300,150))
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                        if (resource instanceof Animatable) {
+                            ((Animatable)resource).start();
+                        }
+                        imageView.setImageDrawable(resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        super.onLoadFailed(errorDrawable);
+                    }
+                });
+    }
+
+    private void loadWebp() {
+        Glide.with(this)
+                .load(new TransformUrl("https://www.gstatic.com/webp/animated/1.webp"))
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                        if (resource instanceof Animatable) {
+                            ((Animatable)resource).start();
+                        }
+                        imageView.setImageDrawable(resource);
+                    }
+                });
+    }
+
+    /**
+     * 静态webp 需转bitmap
+     */
+    private void loadWebp2() {
+        Glide.with(this)
+                .load("https://www.gstatic.com/webp/gallery3/1_webp_ll.webp")
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.DATA))
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        Log.d("xx"," enter  run()---------------");
+                        if (resource instanceof Animatable) {
+                            ((Animatable)resource).start();
+                        }
+                        imageView.setImageDrawable(resource);
+                    }
+                });
+    }
+
+    private void getCache() {
+//        Glide.getPhotoCacheDir()
+        DataCacheKey dataCacheKey = new DataCacheKey(new GlideUrl("https://www.gstatic.com/webp/animated/1.webp"), EmptySignature.obtain());
+        File file = WebpModule.getGlobalDiskCache().get(dataCacheKey);
+        Log.d("xx"," enter  run()---------------");
+    }
+
+    //get()方法不允许在主线程调用
+    @Deprecated
+    private void getCache2() {
+        try {
+            File f = Glide.with(this).asFile()
+                    .load("https://78.media.tumblr.com/a0c1be3183449f0d207a022c28f4bbf7/tumblr_p1p2cduAiA1wmghc4o1_500.gif")
+                    .apply(RequestOptions.priorityOf(Priority.HIGH).onlyRetrieveFromCache(true)).submit().get();//get()方法不允许在主线程调用
+            Log.d("xx"," enter  run()---------------");
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+/*
     public void getImage(View view) {
         final BaseGifImageView imageView = (BaseGifImageView) findViewById(R.id.imageView);
         Glide.with(view.getContext())
@@ -142,6 +312,7 @@ public class GlideActivity extends Activity {
         }).start();
 
     }
+*/
 
 
 

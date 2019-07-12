@@ -11,7 +11,7 @@ LOCAL_SRC_FILES := \
 	Registry.cpp \
 	Stream.cpp  \
 	Gifflen.cpp  \
-#	FrameSequence_gif.cpp \
+	FrameSequence_gif.cpp \
 
 CXX11_FLAGS := -std=c++11
 LOCAL_CFLAGS += $(CXX11_FLAGS)
@@ -26,7 +26,7 @@ LOCAL_LDLIBS := -latomic -llog -ljnigraphics
 LOCAL_LDFLAGS += $(GLIDE_CPP_LDFLAGS)
 LOCAL_LDFLAGS += -Wl,--version-script=$(LOCAL_PATH)/dynsym.map
 
-#LOCAL_SHARED_LIBRARIES += gif
+LOCAL_SHARED_LIBRARIES += gif
 
 ifeq ($(FRAMESEQUENCE_INCLUDE_WEBP),true)
 	LOCAL_SRC_FILES += FrameSequence_webp.cpp
@@ -35,7 +35,7 @@ endif
 
 include $(BUILD_SHARED_LIBRARY)
 
-#$(call import-module,giflib)
+$(call import-module,giflib)
 
 ifeq ($(FRAMESEQUENCE_INCLUDE_WEBP),true)
     $(call import-module,libwebp)

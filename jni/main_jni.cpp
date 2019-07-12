@@ -114,9 +114,9 @@ jstring get_StringFromNative(JNIEnv *env, jobject jobj) {
 //    int y = 5 / x;
 //    x =+ y;
 
-    char * exception = NULL;
-    strcmp(exception, "anr");
-    sprintf(exception, "anr");
+//    char * exception = NULL;
+//    strcmp(exception, "anr");
+//    sprintf(exception, "anr");
 //    kill(getpid(), SIGABRT);
 //    __android_log_assert("a","b",NULL);
     return env->NewStringUTF("string from native");

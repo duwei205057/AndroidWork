@@ -56,7 +56,7 @@ android {
             path "../jni/CMakeLists.txt"
         }
 //        ndkBuild {
-//            path "../libframesequence/Android.mk"
+//            path "../libmemcheck/Android.mk"
 //        }
     }
     dexOptions {

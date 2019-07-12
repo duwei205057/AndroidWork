@@ -51,7 +51,6 @@ public:
     virtual int getFrameCount() const = 0;
     virtual int getDefaultLoopCount() const = 0;
     virtual jobject getRawByteBuffer() const = 0;
-    virtual WebPData getByteData() const = 0;
 
     virtual FrameSequenceState* createState() const = 0;
 };
