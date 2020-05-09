@@ -4,12 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -20,13 +24,18 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Process;
+import android.os.StatFs;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -324,6 +333,43 @@ public class MainActivity extends Activity {
         Test test = new Test();
         test.httpsConnect();
 
+        //根据包名跳转到系统自带的应用程序信息界面
+//        Uri packageURI = Uri.parse("package:" + "com.dw.debug");
+//        Intent intent =  new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+//        startActivity(intent);
+
+        // 跳转到应用程序界面
+//        Intent intent =  new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
+//        startActivity(intent);
+
+        // 跳转存储设置界面【内部存储】 OR 跳转 存储设置 【记忆卡存储】
+        Intent intent =  new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS);
+//        Intent intent =  new Intent(Settings.ACTION_MEMORY_CARD_SETTINGS);
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (resolveInfo != null) {
+            startActivity(intent);
+        }
+        Log.d("xx","DataDir ="+getMemoryInfo(new File("/data/data")));
+        Log.d("xx","SdcardDir ="+getMemoryInfo(new File("/sdcard/")));
+    }
+
+    private String getMemoryInfo(File path) {
+        // 获得一个磁盘状态对象
+        StatFs stat = new StatFs(path.getPath());
+
+        long blockSize = stat.getBlockSize();    // 获得一个扇区的大小
+
+        long totalBlocks = stat.getBlockCount();    // 获得扇区的总数
+
+        long availableBlocks = stat.getAvailableBlocks();    // 获得可用的扇区数量
+
+        // 总空间
+        String totalMemory = Formatter.formatFileSize(this, totalBlocks * blockSize);
+        // 可用空间
+        String availableMemory = Formatter.formatFileSize(this, availableBlocks * blockSize);
+
+        return "总空间: " + totalMemory + "\n可用空间: " + availableMemory;
     }
 
     public void showMotionView(View view){
@@ -537,6 +583,81 @@ public class MainActivity extends Activity {
         mList.addHeaderView(head);
     }
 
+    public static final String ACTION_ADD_SHORTCUT = "com.android.launcher.action.INSTALL_SHORTCUT";
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void addShortcut(View view) {
+        Intent addShortcutIntent = new Intent(ACTION_ADD_SHORTCUT);
+        // 不允许重复创建，不是根据快捷方式的名字判断重复的
+        addShortcutIntent.putExtra("duplicate", false);
+
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Shortcut Name");
+
+        //图标
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(this, R.mipmap.ic_launcher));
+
+        // 设置关联程序
+        Intent launcherIntent = new Intent();
+        launcherIntent.setClass(this, JSActivity.class);
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launcherIntent);
+
+        // 发送广播
+        sendBroadcast(addShortcutIntent);
+
+
+        addShortcutIntent = new Intent(ACTION_ADD_SHORTCUT);
+        // 不允许重复创建，不是根据快捷方式的名字判断重复的
+        addShortcutIntent.putExtra("duplicate", true);
+
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Shortcut Name1");
+
+        //图标
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(this, R.mipmap.aa));
+
+        // 设置关联程序
+        launcherIntent = new Intent();
+        launcherIntent.setClass(this, JSActivity.class);
+        launcherIntent.putExtra("adb", "efg");
+        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launcherIntent);
+
+        // 发送广播
+        sendBroadcast(addShortcutIntent);
+
+        /*@SuppressLint("WrongConstant") ShortcutManager shortcutManager = (ShortcutManager) this.getSystemService(Context.SHORTCUT_SERVICE);
+
+        if (shortcutManager.isRequestPinShortcutSupported()) {
+            Intent shortcutInfoIntent = new Intent(this, JSActivity.class);
+            shortcutInfoIntent.setAction(Intent.ACTION_VIEW); //action必须设置，不然报错
+
+            ShortcutInfo info = new ShortcutInfo.Builder(this, "The only id")
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
+                    .setShortLabel("Short Label")
+                    .setIntent(shortcutInfoIntent)
+                    .build();
+
+            //当添加快捷方式的确认弹框弹出来时，将被回调
+            PendingIntent shortcutCallbackIntent = PendingIntent.getBroadcast(this, 0, new Intent(this, MyReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+            shortcutManager.requestPinShortcut(info, shortcutCallbackIntent.getIntentSender());
+        }*/
+
+
+        //使用ShortcutManagerCompat添加桌面快捷方式,需要support.v4
+        /*if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
+            Intent shortcutInfoIntent = new Intent(context, ShortcutActivity.class);
+            shortcutInfoIntent.setAction(Intent.ACTION_VIEW); //action必须设置，不然报错
+
+            ShortcutInfoCompat info = new ShortcutInfoCompat.Builder(context, "The only id")
+                    .setIcon(R.mipmap.ic_shortcut)
+                    .setShortLabel("Short Label")
+                    .setIntent(shortcutInfoIntent)
+                    .build();
+
+            //当添加快捷方式的确认弹框弹出来时，将被回调
+            PendingIntent shortcutCallbackIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, MyReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            ShortcutManagerCompat.requestPinShortcut(context, info, shortcutCallbackIntent.getIntentSender());
+        }*/
+    }
+
     private void execShellCmd(String cmd) {
 
         try {
@@ -559,6 +680,8 @@ public class MainActivity extends Activity {
     private void LOGD(String message){
         Log.d("xx", message);
     }
+
+
 
     @Override
     protected void onDestroy() {

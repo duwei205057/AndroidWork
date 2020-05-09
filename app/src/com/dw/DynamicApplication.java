@@ -7,6 +7,10 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Process;
+import android.os.StatFs;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import com.dw.block.BlockDetectByChoreographer;
@@ -59,12 +63,16 @@ public class DynamicApplication extends Application {//RePluginApplication 使�
 //        BlockDetectByPrinter.start();
 
 
-        Log.d("xx","attachBaseContext pid="+android.os.Process.myPid()+" am.processName="+getProcessName(base, android.os.Process.myPid())+" FilesDir="+base.getFilesDir());
+        Log.d("xx","attachBaseContext pid="+ Process.myPid()+" am.processName="+getProcessName(base, Process.myPid())+" FilesDir="+base.getFilesDir());
         Log.d("xx","attachBaseContext availableProcessors="+ PingBackUtils.getNumberOfCPUCores()+" ABI="+ PingBackUtils.getDeviceCpuABI()+
                 /*" ABIs="+ Arrays.toString(Build.SUPPORTED_ABIS) +*/ " MaxFre="+Arrays.toString(PingBackUtils.getCPUMaxFreqKHz()) +
                 " MaxHeap="+Runtime.getRuntime().maxMemory()+" cpuName="+PingBackUtils.getCpuName());
         Log.d("xx","max mem ="+Runtime.getRuntime().maxMemory()+" total mem ="+Runtime.getRuntime().totalMemory()+" free mem ="+Runtime.getRuntime().freeMemory());
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.d("xx","DataDir ="+getMemoryInfo(new File("/data/data")));
+            Log.d("xx","SdcardDir ="+getMemoryInfo(new File("/sdcard/")));
+//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityManager activityService = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
             ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
             activityService.getMemoryInfo(info);
@@ -79,7 +87,7 @@ public class DynamicApplication extends Application {//RePluginApplication 使�
                 Log.d("xx","exists hackdex.jar");
                 List<File> files = new ArrayList<>();
                 files.add(hackJarPath);
-                com.dw.InstallDex.installFixDexes(this,getClassLoader(),optimiseFile,files,true);
+                InstallDex.installFixDexes(this,getClassLoader(),optimiseFile,files,true);
             }
             String sourceDir = base.getPackageManager().getApplicationInfo("com.dw.debug", 0).sourceDir;
             Log.d("xx","sourceDir="+sourceDir);
@@ -146,6 +154,25 @@ public class DynamicApplication extends Application {//RePluginApplication 使�
         }
 
         return pName;
+    }
+
+
+    private String getMemoryInfo(File path) {
+        // 获得一个磁盘状态对象
+        StatFs stat = new StatFs(path.getPath());
+
+        long blockSize = stat.getBlockSize();    // 获得一个扇区的大小
+
+        long totalBlocks = stat.getBlockCount();    // 获得扇区的总数
+
+        long availableBlocks = stat.getAvailableBlocks();    // 获得可用的扇区数量
+
+        // 总空间
+        String totalMemory = Formatter.formatFileSize(this, totalBlocks * blockSize);
+        // 可用空间
+        String availableMemory = Formatter.formatFileSize(this, availableBlocks * blockSize);
+
+        return "总空间: " + totalMemory + "\n可用空间: " + availableMemory;
     }
 
 }

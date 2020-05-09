@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -23,6 +25,12 @@ public class JSActivity extends Activity {
 //        setContentView(MainActivity.mMove);
 //        WebView web = MainActivity.mWebView;
         WebView web = (WebView)findViewById(R.id.web);
+        web.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
 //		web.loadUrl("http://www.google.com");
 
         web.setWebChromeClient(new WebChromeClient() {
@@ -38,8 +46,8 @@ public class JSActivity extends Activity {
         web.addJavascriptInterface(new AndroidJavaScript(getApplicationContext()), "Hehe");
 
 //        web.loadUrl("https://account.sogou.com/connect/login?type=wap&provider=qq&client_id=2003&thirdInfo=&third_appid=");
-//		web.loadUrl("https://www.baidu.com/");
-		web.loadUrl("file:///android_asset/serve.html");
+		web.loadUrl("https://www.baidu.com/");
+//		web.loadUrl("file:///android_asset/serve.html");
         web.getSettings().setJavaScriptEnabled(true);
 
     }

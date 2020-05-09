@@ -121,6 +121,12 @@
                     android:onClick="startFragment"
                     android:text="startFragment" />
 
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="addShortcut"
+                    android:text="addShortcut" />
+
                 <EditText
                     android:id="@+id/et_user_name"
                     android:layout_width="wrap_content"

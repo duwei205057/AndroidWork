@@ -14,7 +14,8 @@ CMD="${CMAKE_TOOL_LOCATION} \
 -DANDROID_STL='c++_static'  \
 -DSGIME_PLATFORM='ANDROID' \
 -DANDROID_ARM_NEON='true' \
--DWITH_CRASH_LOG='true'"
+-DWITH_CRASH_LOG='true' \
+-DNOENCRYPT='true'"
 echo "CMD=${CMD}"
 ${CMD}
 else
