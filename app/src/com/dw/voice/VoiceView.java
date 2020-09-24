@@ -92,6 +92,7 @@ public class VoiceView extends View {
 
     private void initView(){
         mAm1 = AnimationUtils.loadAnimation(mContext, R.anim.voiceinput_speaking_anim);
+        mAm1.setFillAfter(true);
         mAm2 = AnimationUtils.loadAnimation(mContext,R.anim.voiceinput_speaking_anim);
         mAm3 = AnimationUtils.loadAnimation(mContext,R.anim.voiceinput_speaking_anim);
         mDrawableCircle = mContext.getResources().getDrawable(R.drawable.voiceinput_circle);

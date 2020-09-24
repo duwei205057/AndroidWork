@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,25 +20,21 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Icon;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Process;
 import android.os.StatFs;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,22 +45,18 @@ import com.aop.DebugTrace;
 import com.database.DBActivity;
 import com.database.IntroExampleActivity;
 import com.database.SomeFileObserver;
-import com.dw.block.BlockDetectByPrinter;
 import com.dw.crash.NativeInterface;
 import com.dw.databinding.ActivityMainBinding;
 import com.dw.fragments.BookListActivity;
 import com.dw.gif.GifActivity;
 import com.dw.glide.GlideActivity;
 import com.dw.http.Test;
-import com.dw.js.AndroidJavaScript;
 import com.dw.js.JSActivity;
-import com.dw.memcheck.MemCheck;
 import com.dw.resizeicon.ResizeUtils;
 import com.dw.touchable.MotionActivity;
 import com.dw.utils.RedoWorker;
 import com.dw.voice.VoiceContainerActivity;
 import com.inject.hack.HackLoad;
-import com.sogou.nativecrashcollector.BacKTraceFactory;
 import com.sogou.nativecrashcollector.BackTrace;
 import com.sogou.nativecrashcollector.NativeCrashManager;
 
@@ -87,15 +75,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -434,6 +414,7 @@ public class MainActivity extends Activity {
         if (b2 != null && !b2.isRecycled()) b2.recycle();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void test1(Bitmap bitmap){
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
@@ -538,6 +519,8 @@ public class MainActivity extends Activity {
 //        }).start();
         String s = getStringFromNative();
         Button b = (Button)view;
+        Animation bigger = AnimationUtils.loadAnimation(this, R.anim.scale_big);
+        b.startAnimation(bigger);
 //        b.setText(b.getText()+"_"+s);
     }
 
@@ -573,6 +556,7 @@ public class MainActivity extends Activity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void setListData(){
         View head = new View(this);
         head.setBackground(new ColorDrawable(Color.RED));

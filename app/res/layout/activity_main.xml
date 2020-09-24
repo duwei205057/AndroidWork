@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="testDy"
                 android:text="Click me"/><!--android:layout_below="@id/text"    android:text="@{(bean == null)? @string/app_name :bean.firstText}"-->
-            <LinearLayout
+            <com.dw.DragLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/button"
@@ -155,7 +155,24 @@
                     android:id="@+id/surface"
                     android:layout_width="match_parent"
                     android:layout_height="400dp" />
-            </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:clipChildren="false">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:background="@android:color/holo_blue_dark"
+                        android:layout_centerInParent="true">
+                        <com.dw.MyImageView
+                            android:layout_width="50dp"
+                            android:layout_height="150dp"
+                            android:src="@color/colorRed">
+                        </com.dw.MyImageView>
+                    </LinearLayout>
+                </RelativeLayout>
+
+            </com.dw.DragLinearLayout>
         </RelativeLayout>
     </ScrollView>
     <!--android:focusable="true"
